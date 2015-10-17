@@ -3,7 +3,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  */
-package com.agapsys.web.toolkit;
+package com.agapsys.agrest;
 
 import com.agapsys.agrest.modules.CorsModule;
 import com.agapsys.sevlet.test.ApplicationContext;

@@ -1,6 +1,7 @@
  // Copyright (C) 2015 Agapsys Tecnologia
-package com.agapsys.web.toolkit;
+package com.agapsys.agrest;
 
+import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 
