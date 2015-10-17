@@ -51,10 +51,14 @@ public abstract class AbstractDtoEntity {
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================	
-	public Long id;
+	public Long id = null;
+	
+	public AbstractDtoEntity() {}
 	
 	public AbstractDtoEntity(EntityObject obj) {
-		this.id = obj.getId();
+		if (obj != null) {
+			this.id = obj.getId();
+		}
 	}
 	// =========================================================================
 }
