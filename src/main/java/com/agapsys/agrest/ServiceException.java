@@ -6,6 +6,12 @@
 
 package com.agapsys.agrest;
 
+import com.agapsys.web.toolkit.AbstractService;
+
+/**
+ * Exceptions intended to be thrown by an {@linkplain AbstractService}
+ * @author Leandro Oliveira (leandro@agapsys.com)
+ */
 public class ServiceException extends CheckedRestError {
 	public ServiceException(Integer code, String message) {
 		super(code, message);

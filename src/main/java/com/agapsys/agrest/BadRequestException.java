@@ -6,6 +6,10 @@
 
 package com.agapsys.agrest;
 
+/**
+ * Exception intended to be thrown by a servlet if HTTP request is invalid.
+ * @author Leandro Oliveira (leandro@agapsys.com)
+ */
 public class BadRequestException extends UncheckedRestError {
 	public BadRequestException(ServiceException ex) {
 		super(ex.getCode(), ex.getMessage());
