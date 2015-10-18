@@ -7,6 +7,10 @@
 package com.agapsys.agrest;
 
 public class BadRequestException extends UncheckedRestError {
+	public BadRequestException(ServiceException ex) {
+		super(ex.getCode(), ex.getMessage());
+	}
+	
 	public BadRequestException(Integer code, String message) {
 		super(code, message);
 	}
