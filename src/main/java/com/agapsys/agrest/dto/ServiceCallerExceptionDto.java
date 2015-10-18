@@ -6,13 +6,13 @@
 
 package com.agapsys.agrest.dto;
 
-import com.agapsys.agrest.services.ServiceCallerException;
+import com.agapsys.agrest.services.ServiceException;
 
 public class ServiceCallerExceptionDto {
 	public int    errorCode;
 	public String message;
 	
-	public ServiceCallerExceptionDto(ServiceCallerException ex) {
+	public ServiceCallerExceptionDto(ServiceException ex) {
 		this.errorCode = ex.getErrorCode();
 		this.message   = ex.getMessage();
 	}

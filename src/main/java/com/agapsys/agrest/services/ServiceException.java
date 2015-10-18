@@ -10,14 +10,14 @@ package com.agapsys.agrest.services;
  * An exception thrown due to an invalid service call.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class ServiceCallerException extends RuntimeException {
+public class ServiceException extends RuntimeException {
 	private final int errorCode;
 
-	public ServiceCallerException(int errorCode) {
+	public ServiceException(int errorCode) {
 		this.errorCode = errorCode;
 	}
 
-	public ServiceCallerException(int errorCode, String message) {
+	public ServiceException(int errorCode, String message) {
 		super(message);
 		this.errorCode = errorCode;
 	}
