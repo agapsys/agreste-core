@@ -6,13 +6,13 @@
 
 package com.agapsys.agrest.servlets;
 
-import com.agapsys.agrest.dto.ServiceCallerExceptionDto;
-import com.agapsys.agrest.services.ServiceException;
+import com.agapsys.agrest.dto.BadRequestExceptionDto;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
 import com.agapsys.web.toolkit.utils.ObjectSerializer;
 import javax.servlet.http.HttpServletResponse;
+import org.hibernate.service.spi.ServiceException;
 
 public abstract class TransactionalBaseServlet extends TransactionalServlet {
 	private final LazyInitializer<ObjectSerializer> serializer = new LazyInitializer<ObjectSerializer>() {
@@ -30,7 +30,7 @@ public abstract class TransactionalBaseServlet extends TransactionalServlet {
 	public void onError( HttpExchange exchange, Throwable t) {
 		if (t instanceof ServiceException) {
 			exchange.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			sendObject(exchange, new ServiceCallerExceptionDto((ServiceException) t));
+			sendObject(exchange, new BadRequestExceptionDto((BadRequestException) t));
 		} else if (t instanceof BadRequestException) {
 			exchange.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		} else {

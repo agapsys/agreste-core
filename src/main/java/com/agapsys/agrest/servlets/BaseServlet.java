@@ -6,8 +6,7 @@
 
 package com.agapsys.agrest.servlets;
 
-import com.agapsys.agrest.dto.ServiceCallerExceptionDto;
-import com.agapsys.agrest.services.ServiceException;
+import com.agapsys.agrest.dto.BadRequestExceptionDto;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
@@ -28,17 +27,15 @@ public abstract class BaseServlet extends TransactionalServlet {
 	
 	@Override
 	public void onError( HttpExchange exchange, Throwable t) {
-		if (t instanceof ServiceException) {
+		if (t instanceof BadRequestException) {
 			exchange.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			sendObject(exchange, new ServiceCallerExceptionDto((ServiceException) t));
-		} else if (t instanceof BadRequestException) {
-			exchange.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			sendObject(exchange, new BadRequestExceptionDto((BadRequestException) t));
 		} else {
 			super.onError(exchange, t);
 		}
 	}
 	
-	public <T> T readObject(HttpExchange exchange, Class<T> targetClass) {
+	public <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
 		try {
 			return serializer.getInstance().readObject(exchange.getRequest(), targetClass);
 		} catch (ObjectSerializer.BadRequestException ex) {
