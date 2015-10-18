@@ -7,22 +7,23 @@
 package com.agapsys.agrest.servlets;
 
 public class BadRequestException extends RuntimeException {
-	private final Integer errorCode;
+	public final Integer code;
 	
-	public BadRequestException(Integer errorCode) {
-		this.errorCode = errorCode;
-	}
-
-	public BadRequestException(Integer errorCode, String message) {
+	public BadRequestException(Integer code, String message) {
 		super(message);
-		this.errorCode = errorCode;
-	}
-
-	BadRequestException() {
-		errorCode = null;
+		this.code = code;
 	}
 	
-	public int getErrorCode() {
-		return errorCode;
+	public BadRequestException() {
+		this(null, null);
 	}
+	
+	public BadRequestException(String message) {
+		this(null, message);
+	}
+
+	public Integer getCode() {
+		return code;
+	}
+	
 }

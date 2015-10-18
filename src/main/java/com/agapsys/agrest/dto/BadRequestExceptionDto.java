@@ -9,11 +9,11 @@ package com.agapsys.agrest.dto;
 import com.agapsys.agrest.servlets.BadRequestException;
 
 public class BadRequestExceptionDto {
-	public int    errorCode;
 	public String message;
+	public Integer code;
 	
 	public BadRequestExceptionDto(BadRequestException ex) {
-		this.errorCode = ex.getErrorCode();
-		this.message   = ex.getMessage();
+		this.message = ex.getMessage();
+		this.code = ex.getCode();
 	}
 }
