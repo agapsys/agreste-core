@@ -6,7 +6,9 @@
 
 package com.agapsys.agrest.servlets;
 
-public class BadRequestException extends RuntimeException {
+import com.agapsys.agrest.CodeException;
+
+public class BadRequestException extends RuntimeException implements CodeException {
 	public final Integer code;
 	
 	public BadRequestException(Integer code, String message) {
@@ -22,6 +24,7 @@ public class BadRequestException extends RuntimeException {
 		this(null, message);
 	}
 
+	@Override
 	public Integer getCode() {
 		return code;
 	}

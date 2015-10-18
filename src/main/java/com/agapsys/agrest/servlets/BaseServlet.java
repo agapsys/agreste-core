@@ -6,6 +6,7 @@
 
 package com.agapsys.agrest.servlets;
 
+import com.agapsys.agrest.CodeException;
 import com.agapsys.agrest.dto.BadRequestExceptionDto;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
@@ -27,7 +28,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 	
 	@Override
 	public void onError( HttpExchange exchange, Throwable t) {
-		if (t instanceof BadRequestException) {
+		if (t instanceof CodeException) {
 			exchange.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
 			sendObject(exchange, new BadRequestExceptionDto((BadRequestException) t));
 		} else {
