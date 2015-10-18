@@ -6,13 +6,13 @@
 package com.agapsys.agrest;
 
 /**
- * Represents an exception represented by a code.
+ * Represents an error in REST application
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public interface CodeException {
-	/** Return exception code. */
+public interface RestError {
+	/** @return error code. */
 	public Integer getCode();
 	
-	/** Return exception message. */
+	/** @return error message. */
 	public String getMessage();
 }

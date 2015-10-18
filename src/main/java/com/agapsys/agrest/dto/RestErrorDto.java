@@ -6,14 +6,14 @@
 
 package com.agapsys.agrest.dto;
 
-import com.agapsys.agrest.servlets.BadRequestException;
+import com.agapsys.agrest.RestError;
 
-public class BadRequestExceptionDto {
+public class RestErrorDto {
 	public String message;
 	public Integer code;
 	
-	public BadRequestExceptionDto(BadRequestException ex) {
-		this.message = ex.getMessage();
-		this.code = ex.getCode();
+	public RestErrorDto(RestError error) {
+		this.message = error.getMessage();
+		this.code = error.getCode();
 	}
 }

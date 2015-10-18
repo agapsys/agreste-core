@@ -6,8 +6,9 @@
 
 package com.agapsys.agrest.servlets;
 
-import com.agapsys.agrest.CodeException;
-import com.agapsys.agrest.dto.BadRequestExceptionDto;
+import com.agapsys.agrest.BadRequestException;
+import com.agapsys.agrest.RestError;
+import com.agapsys.agrest.dto.RestErrorDto;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
@@ -28,9 +29,9 @@ public abstract class BaseServlet extends TransactionalServlet {
 	
 	@Override
 	public void onError( HttpExchange exchange, Throwable t) {
-		if (t instanceof CodeException) {
+		if (t instanceof RestError) {
 			exchange.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			sendObject(exchange, new BadRequestExceptionDto((BadRequestException) t));
+			sendObject(exchange, new RestErrorDto((RestError) t));
 		} else {
 			super.onError(exchange, t);
 		}
