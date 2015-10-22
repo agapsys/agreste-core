@@ -11,8 +11,8 @@ import com.agapsys.web.toolkit.AbstractApplication;
 public class PasswordResetSenderModule extends AbstractCodeSenderModule {
 	// CLASS SCOPE =============================================================
 	// SETTINGS-----------------------------------------------------------------
-	public static final String KEY_SUBJECT = "agapsys.webtoolkit.passwordResetSender.subject";
-	public static final String KEY_MESSAGE = "agapsys.webtoolkit.passwordResetSender.text";
+	public static final String KEY_SUBJECT = "agapsys.agrest.passwordResetSender.subject";
+	public static final String KEY_MESSAGE = "agapsys.agrest.passwordResetSender.text";
 	// -------------------------------------------------------------------------
 
 	// DEFAULT VALUES ----------------------------------------------------------	

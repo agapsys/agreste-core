@@ -11,8 +11,8 @@ import com.agapsys.web.toolkit.AbstractApplication;
 public class EmailConfirmSenderModule extends AbstractCodeSenderModule {
 	// CLASS SCOPE =============================================================
 	// SETTINGS-----------------------------------------------------------------
-	public static final String KEY_SUBJECT = "agapsys.webtoolkit.emailConfirmSender.subject";
-	public static final String KEY_MESSAGE = "agapsys.webtoolkit.emailConfirmSender.text";
+	public static final String KEY_SUBJECT = "agapsys.agrest.emailConfirmSender.subject";
+	public static final String KEY_MESSAGE = "agapsys.agrest.emailConfirmSender.text";
 	// -------------------------------------------------------------------------
 
 	// DEFAULT VALUES ----------------------------------------------------------	

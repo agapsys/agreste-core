@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CorsModule extends AbstractModule {
 	// CLASS SCOPE =============================================================
-	public static final String KEY_ALLOWED_ORIGINS = "agapsys.webtoolkit.cors.allowedOrigins";
-	public static final String KEY_ALLOWED_METHODS = "agapsys.webtoolkit.cors.allowedMethods";
-	public static final String KEY_ALLOWED_HEADERS = "agapsys.webtoolkit.cors.allowedHeaders";
+	public static final String KEY_ALLOWED_ORIGINS = "agapsys.agrest.cors.allowedOrigins";
+	public static final String KEY_ALLOWED_METHODS = "agapsys.agrest.cors.allowedMethods";
+	public static final String KEY_ALLOWED_HEADERS = "agapsys.agrest.cors.allowedHeaders";
 	
 	private static final String HEADER_ALLOWED_ORIGINS = "Access-Control-Allow-Origin";
 	private static final String HEADER_ALLOWED_METHODS = "Access-Control-Allow-Methods"; 
@@ -102,6 +102,8 @@ public class CorsModule extends AbstractModule {
 	}
 
 	public void putCorsHeaders(HttpServletResponse resp) {
+		if (!isRunning()) throw new RuntimeException("Module is not running");
+		
 		if (allowedOrigins != null && !allowedOrigins.trim().isEmpty())
 			resp.setHeader(HEADER_ALLOWED_ORIGINS, allowedOrigins);
 		
