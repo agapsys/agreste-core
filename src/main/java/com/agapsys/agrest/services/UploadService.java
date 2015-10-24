@@ -153,10 +153,8 @@ public class UploadService extends AbstractService {
 		while(!sessionFiles.isEmpty()) {
 			File sessionFile = sessionFiles.get(0);
 			sessionFiles.remove(0);
-			sessionFile.delete();
+			if (!sessionFile.delete()) throw new RuntimeException("Failiure removing session file: " + sessionFile.getAbsolutePath());
 		}
-		
-		sessionFiles.clear();		
 	}
 
 	/**
