@@ -122,9 +122,10 @@ public class UploadService extends AbstractService {
 			counter++;
 		}
 		
-		file.renameTo(new File(getOutputDirectory(), tmpFilename));
-		getSessionFiles(req).add(file);
-		return file;
+		File newFile = new File(getOutputDirectory(), tmpFilename);
+		file.renameTo(newFile);
+		getSessionFiles(req).add(newFile);
+		return newFile;
 	}
 	
 	/**
