@@ -7,9 +7,7 @@
 package com.agapsys.agrest;
 
 import com.agapsys.agrest.services.UploadService;
-import com.agapsys.sevlet.test.ApplicationContext;
-import com.agapsys.sevlet.test.FormUrlEncodedPost;
-import com.agapsys.sevlet.test.MultipartEntityPost;
+import com.agapsys.sevlet.test.MultipartPost;
 import com.agapsys.sevlet.test.ServletContainer;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
@@ -17,7 +15,6 @@ import com.agapsys.web.action.dispatcher.HttpMethod;
 import com.agapsys.web.action.dispatcher.WebAction;
 import com.agapsys.web.toolkit.AbstractService;
 import java.io.File;
-import java.nio.charset.Charset;
 import javax.servlet.annotation.WebServlet;
 import org.junit.After;
 import org.junit.Before;
@@ -41,12 +38,7 @@ public class UploadServiceTest {
 	
 	@Before
 	public void before() {
-		sc = new ServletContainer();
-
-		ApplicationContext context = new ApplicationContext();
-		context.registerServlet(UploadServlet.class);
-		
-		sc.registerContext(context, "/");
+		sc = ServletContainer.getInstance(UploadServlet.class);
 		sc.startServer();
 	}
 	
@@ -57,10 +49,10 @@ public class UploadServiceTest {
 	
 	@Test
 	public void test() {
-		MultipartEntityPost post = new MultipartEntityPost(sc, "/upload");
+		MultipartPost post = new MultipartPost(sc, "/upload");
 		File file = new File("/home/leandro-agapsys/me-color.png");
 		post.addFile(file);
-		sc.doEntityRequest(post);
+		sc.doRequest(post);
 	}
 	// =========================================================================
 }
