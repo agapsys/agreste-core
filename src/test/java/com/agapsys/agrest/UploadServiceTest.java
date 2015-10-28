@@ -7,7 +7,7 @@
 package com.agapsys.agrest;
 
 import com.agapsys.agrest.services.UploadService;
-import com.agapsys.sevlet.test.MultipartPost;
+import com.agapsys.http.MultipartRequest.MultipartPost;
 import com.agapsys.sevlet.test.ServletContainer;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
@@ -49,7 +49,7 @@ public class UploadServiceTest {
 	
 	@Test
 	public void test() {
-		MultipartPost post = new MultipartPost(sc, "/upload");
+		MultipartPost post = new MultipartPost("/upload");
 		File file = new File("/home/leandro-agapsys/me-color.png");
 		post.addFile(file);
 		sc.doRequest(post);

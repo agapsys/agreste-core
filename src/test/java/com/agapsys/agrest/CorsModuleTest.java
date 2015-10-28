@@ -6,10 +6,10 @@
 package com.agapsys.agrest;
 
 import com.agapsys.agrest.modules.CorsModule;
+import com.agapsys.http.HttpGet;
+import com.agapsys.http.HttpHeader;
+import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.sevlet.test.ApplicationContext;
-import com.agapsys.sevlet.test.HttpGet;
-import com.agapsys.sevlet.test.HttpRequest.HttpHeader;
-import com.agapsys.sevlet.test.HttpResponse;
 import com.agapsys.sevlet.test.ServletContainer;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
@@ -82,7 +82,7 @@ public class CorsModuleTest {
 	
 	@Test
 	public void testCorsHeaders() {
-		HttpResponse resp = sc.doRequest(new HttpGet(sc, "/get"));
+		StringResponse resp = sc.doRequest(new HttpGet("/get"));
 		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
 		
 		HttpHeader allowOriginHeader = resp.getFirstHeader("Access-Control-Allow-Origin");
