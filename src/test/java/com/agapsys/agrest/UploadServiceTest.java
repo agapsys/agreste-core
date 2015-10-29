@@ -15,6 +15,8 @@ import com.agapsys.web.action.dispatcher.HttpMethod;
 import com.agapsys.web.action.dispatcher.WebAction;
 import com.agapsys.web.toolkit.AbstractService;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import org.junit.After;
 import org.junit.Before;
@@ -27,8 +29,14 @@ public class UploadServiceTest {
 		private final UploadService uploadService = AbstractService.getService(UploadService.class);
 		
 		@WebAction(httpMethods = HttpMethod.POST, defaultAction = true)
-		public void upload(HttpExchange exchange) {
-			uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse());
+		public void upload(HttpExchange exchange) throws IOException {
+			uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse(), null);
+			List<File> sessionFiles = uploadService.getSessionFiles(exchange.getRequest());
+			if (!sessionFiles.isEmpty()) {
+				for (File file : sessionFiles) {
+					exchange.getResponse().getWriter().println(file.getAbsolutePath());
+				}
+			}
 		}
 	}
 	// =========================================================================
@@ -50,7 +58,7 @@ public class UploadServiceTest {
 	@Test
 	public void test() {
 		MultipartPost post = new MultipartPost("/upload");
-		File file = new File("/home/leandro-agapsys/me-color.png");
+		File file = new File("test-res/logo_box.png");
 		post.addFile(file);
 		sc.doRequest(post);
 	}

@@ -33,6 +33,10 @@ public class UploadService extends AbstractService {
 	protected static final long DEFAULT_MAX_FILE_SIZE  = -1; // No limit
 	
 	private static final String ATTR_SESSION_FILES = "com.agapsys.agrest.sessionFiles";
+	
+	public static interface OnFormFieldListener {
+		public void onFormField(String name, String value);
+	}
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================
@@ -72,14 +76,6 @@ public class UploadService extends AbstractService {
 	protected  String getAllowedContentTypes() {
 		return "*";
 	}
-
-	/**
-	 * Called when a form field is received during upload. 
-	 * Default implementation does nothing.
-	 * @param name field name
-	 * @param value field value
-	 */
-	protected void onFormField(String name, String value) {}
 	
 	/**
 	 * Returns the encoding used for form fields
@@ -162,8 +158,10 @@ public class UploadService extends AbstractService {
 	 * Process a request to receive files
 	 * @param req HTTP request
 	 * @param resp HTTP response
+	 * @param onFormFieldListener listener called when a form field is received
+	 * @throws BadRequestException if given request if not multipart/form-data
 	 */
-	public void receiveFiles(HttpServletRequest req, HttpServletResponse resp) throws BadRequestException {
+	public void receiveFiles(HttpServletRequest req, HttpServletResponse resp, OnFormFieldListener onFormFieldListener) throws BadRequestException {
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(0); // All files will be written to disk
 		factory.setRepository(getOutputDirectory());
@@ -178,7 +176,8 @@ public class UploadService extends AbstractService {
 			List<FileItem> fileItems = upload.parseRequest(req);
 			for (FileItem fi : fileItems) {
 				if (fi.isFormField()) {
-					onFormField(fi.getFieldName(), fi.getString(getFieldEncoding()));
+					if (onFormFieldListener != null)
+						onFormFieldListener.onFormField(fi.getFieldName(), fi.getString(getFieldEncoding()));
 				} else {
 					boolean acceptRequest = getAllowedContentTypes().equals("*");
 					
