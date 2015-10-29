@@ -194,9 +194,7 @@ public class UploadService extends AbstractService {
 					if (!acceptRequest) throw new BadRequestException("Unsupported content-type: " + fi.getContentType());
 
 					File tmpFile = ((DiskFileItem)fi).getStoreLocation();
-					File destFile = processFile(req, fi.getName(), tmpFile);
-					
-					getSessionFiles(req).add(destFile);
+					processFile(req, fi.getName(), tmpFile);
 				}
 			}
 			
