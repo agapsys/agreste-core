@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
+import com.agapsys.web.toolkit.utils.BadRequestException;
 import javax.servlet.http.HttpServletResponse;
 
 public class UploadServiceTest {
@@ -46,7 +47,7 @@ public class UploadServiceTest {
 		}
 		
 		@WebAction(httpMethods = HttpMethod.POST)
-		public void upload(HttpExchange exchange) throws IOException {
+		public void upload(HttpExchange exchange) throws IOException, BadRequestException {
 			uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse(), null);
 			List<File> sessionFiles = uploadService.getSessionFiles(exchange.getRequest());
 			if (!sessionFiles.isEmpty()) {
