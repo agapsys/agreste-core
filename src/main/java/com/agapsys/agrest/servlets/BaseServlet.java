@@ -8,9 +8,7 @@ package com.agapsys.agrest.servlets;
 
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
-import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.toolkit.utils.BadRequestException;
-import com.agapsys.web.toolkit.utils.ObjectSerializer;
 import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
