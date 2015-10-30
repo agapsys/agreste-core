@@ -15,38 +15,31 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class BaseServlet extends ActionServlet {
-	private final LazyInitializer<ObjectSerializer> serializer = new LazyInitializer<ObjectSerializer>() {
+	// CLASS SCOPE =============================================================
+	static class OnErrorController {
+		public void onError(ActionServlet actionServlet, HttpExchange exchange, Throwable t) {
+			if (t instanceof BadRequestException) {
+				HttpServletResponse resp = exchange.getResponse();
 
-		@Override
-		protected ObjectSerializer getLazyInstance(Object... params) {
-			return _getSerializer();
+				resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+				try {
+					resp.getWriter().print(t.getMessage());
+				} catch (IOException ex) {
+					throw new RuntimeException(ex);
+				}
+			} else {
+				actionServlet.onError(exchange, t);
+			}
 		}
-		
-	};
+	}
 	
-	protected abstract ObjectSerializer _getSerializer();
+	static final OnErrorController ON_ERROR_CONTROLLER = new OnErrorController();
+	// =========================================================================
 	
+	// INSTANCE SCOPE ==========================================================
 	@Override
 	public void onError(HttpExchange exchange, Throwable t) {
-		if (t instanceof BadRequestException) {
-			HttpServletResponse resp = exchange.getResponse();
-			
-			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			try {
-				resp.getWriter().print(t.getMessage());
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
-			}
-		} else {
-			super.onError(exchange, t);
-		}
+		ON_ERROR_CONTROLLER.onError(this, exchange, t);
 	}
-	
-	public <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
-		return serializer.getInstance().readObject(exchange.getRequest(), targetClass);
-	}
-	
-	public void sendObject(HttpExchange exchange, Object obj) {
-		serializer.getInstance().writeObject(exchange.getResponse(), obj);
-	}
+	// =========================================================================
 }
