@@ -52,7 +52,7 @@ public class UploadService extends AbstractService {
 	/**
 	 * Returns the maximum size of an uploaded file.
 	 * @return the maximum size of an upload file or -1 if there is no limit.
-	 * Default implementation returns {@link AbstractUploadServlet#DEFAULT_MAX_FILE_SIZE}
+	 * Default implementation returns {@link UploadService#DEFAULT_MAX_FILE_SIZE}
 	 */
 	protected long getMaxFileSize() {
 		return DEFAULT_MAX_FILE_SIZE;
@@ -62,7 +62,7 @@ public class UploadService extends AbstractService {
 	/**
 	 * Returns the maximum size of upload bundle (when multiple files are uploaded).
 	 * @return the maximum size of upload bundle (when multiple files are uploaded) or -1 if there is no limit.
-	 * Default implementation returns {@link AbstractUploadServlet#DEFAULT_TOTAL_MAX_SIZE}
+	 * Default implementation returns {@link UploadService#DEFAULT_TOTAL_MAX_SIZE}
 	 */
 	protected long getTotalMaxSize() {
 		return DEFAULT_TOTAL_MAX_SIZE;
