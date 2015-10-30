@@ -6,6 +6,8 @@
 
 package com.agapsys.agrest.entities;
 
-public interface EntityObject {
+import java.io.Serializable;
+
+public interface EntityObject extends Serializable {
 	public Long getId();
 }
