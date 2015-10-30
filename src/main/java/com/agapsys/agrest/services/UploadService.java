@@ -6,8 +6,8 @@
 
 package com.agapsys.agrest.services;
 
-import com.agapsys.agrest.BadRequestException;
 import com.agapsys.web.toolkit.AbstractService;
+import com.agapsys.web.toolkit.utils.BadRequestException;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 import java.io.UnsupportedEncodingException;

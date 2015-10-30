@@ -6,12 +6,12 @@
 
 package com.agapsys.agrest.servlets;
 
-import com.agapsys.agrest.BadRequestException;
-import com.agapsys.agrest.dto.RestErrorDto;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
+import com.agapsys.web.toolkit.utils.BadRequestException;
 import com.agapsys.web.toolkit.utils.ObjectSerializer;
+import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class BaseServlet extends ActionServlet {
@@ -27,21 +27,23 @@ public abstract class BaseServlet extends ActionServlet {
 	protected abstract ObjectSerializer _getSerializer();
 	
 	@Override
-	public void onError( HttpExchange exchange, Throwable t) {
+	public void onError(HttpExchange exchange, Throwable t) {
 		if (t instanceof BadRequestException) {
-			exchange.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST);
-			sendObject(exchange, new RestErrorDto((BadRequestException) t));
+			HttpServletResponse resp = exchange.getResponse();
+			
+			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+			try {
+				resp.getWriter().print(t.getMessage());
+			} catch (IOException ex) {
+				throw new RuntimeException(ex);
+			}
 		} else {
 			super.onError(exchange, t);
 		}
 	}
 	
 	public <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
-		try {
-			return serializer.getInstance().readObject(exchange.getRequest(), targetClass);
-		} catch (ObjectSerializer.BadRequestException ex) {
-			throw new BadRequestException();
-		}
+		return serializer.getInstance().readObject(exchange.getRequest(), targetClass);
 	}
 	
 	public void sendObject(HttpExchange exchange, Object obj) {
