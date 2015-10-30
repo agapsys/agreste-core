@@ -6,9 +6,6 @@
 
 package com.agapsys.agrest;
 
-import com.agapsys.agrest.modules.CorsModule;
-import com.agapsys.agrest.modules.EmailConfirmSenderModule;
-import com.agapsys.agrest.modules.PasswordResetSenderModule;
 import com.agapsys.utils.console.ConsoleColor;
 import com.agapsys.utils.console.FormatEscapeBuilder;
 import java.util.logging.Level;
@@ -26,19 +23,6 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 		java.util.logging.Logger.getLogger("org.hibernate").setLevel(getHibernateLogLevel());
 		
 		super.beforeApplicationStart();
-		
-		Class emailConfirmSenderModuleClass  = getEmailConfirmSenderModuleClass();
-		Class passwordResetSenderModuleClass = getPasswordResetSenderModuleClass();
-		Class corsModuleClass                = getCorsModuleClass();
-		
-		if (emailConfirmSenderModuleClass != null)
-			registerModule(emailConfirmSenderModuleClass);
-		
-		if (passwordResetSenderModuleClass != null)
-			registerModule(passwordResetSenderModuleClass);
-		
-		if (corsModuleClass != null)
-			registerModule(corsModuleClass);
 	}
 	
 	/**
@@ -47,41 +31,5 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 	 */
 	protected Level getHibernateLogLevel() {
 		return Level.OFF;
-	}
-	
-	protected Class<? extends EmailConfirmSenderModule> getEmailConfirmSenderModuleClass() {
-		return EmailConfirmSenderModule.class;
-	}
-	
-	protected Class<? extends PasswordResetSenderModule> getPasswordResetSenderModuleClass() {
-		return PasswordResetSenderModule.class;
-	}
-	
-	protected Class<? extends CorsModule> getCorsModuleClass() {
-		return CorsModule.class;
-	}
-	
-	/**
-	 * Return The email confirm sender module used by this application
-	 * @return The email confirm sender module used by this application. If there is no such module, returns null. 
-	 */
-	public final EmailConfirmSenderModule getEmailConfirmSenderModule() {
-		return (EmailConfirmSenderModule) getModuleInstance(getEmailConfirmSenderModuleClass());
-	}
-
-	/**
-	 * Return The password reset sender module used by this application 
-	 * @return The password reset sender module used by this application. If there is no such module, returns null.
-	 */
-	public final PasswordResetSenderModule getPasswordResetSenderModule() {
-		return (PasswordResetSenderModule) getModuleInstance(getPasswordResetSenderModuleClass());
-	}
-	
-	/**
-	 * Return The CORS module used by this application
-	 * @return The CORS module used by this application. If there is no such module, returns null.
-	 */
-	public final CorsModule getCorsModule() {
-		return (CorsModule) getModuleInstance(getCorsModuleClass());
 	}
 }
