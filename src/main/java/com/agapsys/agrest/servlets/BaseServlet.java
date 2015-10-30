@@ -8,13 +8,13 @@ package com.agapsys.agrest.servlets;
 
 import com.agapsys.agrest.BadRequestException;
 import com.agapsys.agrest.dto.RestErrorDto;
+import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
-import com.agapsys.web.action.dispatcher.TransactionalServlet;
 import com.agapsys.web.toolkit.utils.ObjectSerializer;
 import javax.servlet.http.HttpServletResponse;
 
-public abstract class BaseServlet extends TransactionalServlet {
+public abstract class BaseServlet extends ActionServlet {
 	private final LazyInitializer<ObjectSerializer> serializer = new LazyInitializer<ObjectSerializer>() {
 
 		@Override
