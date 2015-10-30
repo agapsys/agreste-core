@@ -207,4 +207,15 @@ public class UploadService extends AbstractService {
 			throw new RuntimeException(ex);
 		}
 	}
+
+	/**
+	 * Process a request to receive files.
+	 * This is a convenience method for receiveFiles(req, resp, null).
+	 * @param req HTTP request
+	 * @param resp HTTP response
+	 * @throws BadRequestException if given request if not multipart/form-data
+	 */
+	public void receiveFiles(HttpServletRequest req, HttpServletResponse resp) throws BadRequestException {
+		receiveFiles(req, resp, null);
+	}
 }
