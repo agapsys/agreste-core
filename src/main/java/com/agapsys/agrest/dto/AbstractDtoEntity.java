@@ -8,13 +8,25 @@ package com.agapsys.agrest.dto;
 
 import com.agapsys.agrest.entities.EntityObject;
 import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public abstract class AbstractDtoEntity {
 	// CLASS SCOPE =============================================================
 	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection) {
 		try {
-			Collection<T> destCollection = entityCollection.getClass().newInstance();
+			Collection<T> destCollection;
 			
+			if (entityCollection instanceof Set) {
+				destCollection = new LinkedHashSet<>();
+			} else if (entityCollection instanceof List) {
+				destCollection = new LinkedList<>();
+			} else {
+				throw new UnsupportedOperationException("Unsupported collection: " + entityCollection.getClass().getName());
+			} 
+						
 			for (EntityObject entityObject : entityCollection) {
 				destCollection.add(dtoClass.getConstructor(entityObject.getClass()).newInstance(entityObject));
 			}
