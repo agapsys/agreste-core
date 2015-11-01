@@ -3,9 +3,12 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  */
+
 package com.agapsys.agrest;
 
 import com.agapsys.agrest.services.UploadService;
+import com.agapsys.http.HttpClient;
+import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.http.MultipartRequest.MultipartPost;
 import com.agapsys.sevlet.test.ServletContainer;
@@ -14,6 +17,7 @@ import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.HttpMethod;
 import com.agapsys.web.action.dispatcher.WebAction;
 import com.agapsys.web.toolkit.AbstractService;
+import com.agapsys.web.toolkit.utils.BadRequestException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,14 +28,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import com.agapsys.http.HttpClient;
-import com.agapsys.http.HttpGet;
-import com.agapsys.web.toolkit.utils.BadRequestException;
-import javax.servlet.http.HttpServletResponse;
 
 public class UploadServiceTest {
 
