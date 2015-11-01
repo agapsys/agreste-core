@@ -134,7 +134,7 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 		return new MessageBuilder(sender, recipient).setMimeSubtype("html").setSubject(finalSubject).setText(finalMessage).build();
 	}
 	
-	public final void sendCode(String code, InternetAddress recipient) {
+	public void sendCode(String code, InternetAddress recipient) {
 		if (code == null || code.trim().isEmpty())
 			throw new IllegalArgumentException("Null/Empty code");
 		
