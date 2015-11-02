@@ -21,5 +21,9 @@ public class ServiceManager {
 	
 	public Service getService(String id) {
 		return (Service) serviceSingletonManager.getSingleton(id);
-	} 
+	}
+	
+	public void clear() {
+		serviceSingletonManager.clear();
+	}
 }
