@@ -11,7 +11,6 @@ import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 
 public class TestWebApplication extends AbstractWebApplication {
-	private static final boolean CREATE_DIRECTORY       = false;
 	private static final boolean CREATE_PROPERTIES_FILE = false;
 	private static final boolean LOAD_PROPERTIES_FILE   = false;
 	
@@ -39,7 +38,4 @@ public class TestWebApplication extends AbstractWebApplication {
 	protected boolean isPropertiesFileCreationEnabled() {
 		return CREATE_PROPERTIES_FILE;
 	}
-
-	@Override
-	protected void beforeApplicationStart() {} // Ignore all modules
 }

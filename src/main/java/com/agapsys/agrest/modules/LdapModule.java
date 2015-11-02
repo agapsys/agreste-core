@@ -27,12 +27,9 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 public class LdapModule extends AbstractModule {
-
-	@Override
-	public String getTitle() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
 	// CLASS SCOPE =============================================================
+	public static final String MODULE_ID = LdapModule.class.getName();
+
 	public static class LdapException extends Exception {
 		// CLASS SCOPE =========================================================
 		public static enum LdapExceptionType {
@@ -147,6 +144,11 @@ public class LdapModule extends AbstractModule {
 	private String searchPattern      = null;
 	private String searchUserDn       = null;
 	private String searchUserPassword = null;	
+	
+	@Override
+	public String getTitle() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 	
 	protected String getDefaultLdapUrl() {
 		return DEFAULT_LDAP_URL;
