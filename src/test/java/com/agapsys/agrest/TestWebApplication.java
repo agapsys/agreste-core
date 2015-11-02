@@ -29,11 +29,6 @@ public class TestWebApplication extends AbstractWebApplication {
 	public String getDirectoryAbsolutePath() {
 		return new File(FileUtils.DEFAULT_TEMPORARY_FOLDER, "." + getName()).getAbsolutePath();
 	}
-	
-	@Override
-	protected boolean isDirectoryCreationEnabled() {
-		return CREATE_DIRECTORY;
-	}
 
 	@Override
 	protected boolean isPropertiesFileLoadingEnabled() {

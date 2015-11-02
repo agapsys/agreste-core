@@ -6,8 +6,6 @@
 
 package com.agapsys.agrest.modules;
 
-import com.agapsys.web.toolkit.AbstractApplication;
-
 public class PasswordResetSenderModule extends AbstractCodeSenderModule {
 	// CLASS SCOPE =============================================================
 	// SETTINGS-----------------------------------------------------------------
@@ -22,9 +20,6 @@ public class PasswordResetSenderModule extends AbstractCodeSenderModule {
 	// =========================================================================
 
 	// INSTANCE SCOPE ==========================================================
-	public PasswordResetSenderModule(AbstractApplication application) {
-		super(application);
-	}
 	
 	@Override
 	protected String getDefaultSubject() {
@@ -44,6 +39,11 @@ public class PasswordResetSenderModule extends AbstractCodeSenderModule {
 	@Override
 	protected String getPropertiesMessageKey() {
 		return KEY_MESSAGE;
+	}
+
+	@Override
+	public String getTitle() {
+		return "Password reset sender module";
 	}
 	// =========================================================================
 }

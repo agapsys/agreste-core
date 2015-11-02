@@ -8,12 +8,10 @@ package com.agapsys.agrest.modules;
 
 import com.agapsys.mail.Message;
 import com.agapsys.mail.MessageBuilder;
-import com.agapsys.web.toolkit.AbstractApplication;
 import com.agapsys.web.toolkit.AbstractModule;
+import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.SmtpModule;
-import java.util.LinkedHashSet;
 import java.util.Properties;
-import java.util.Set;
 import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
 
@@ -34,29 +32,7 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	// INSTANCE SCOPE ==========================================================
 	private String subject;
 	private String message;
-	
-	public AbstractCodeSenderModule(AbstractApplication application) {
-		super(application);
-	}
-
-	/** @return the SMTP module class used by this module. */
-	protected Class<? extends SmtpModule> getSmtpModuleClass() {
-		return SmtpModule.class;
-	}
-	
-	@Override
-	protected Set<Class<? extends AbstractModule>> getMandatoryDependencies() {
-		Set<Class<? extends AbstractModule>> superMandatoryDeps = super.getMandatoryDependencies();
 		
-		Set<Class<? extends AbstractModule>> deps = new LinkedHashSet<>();
-		if (superMandatoryDeps != null)
-			deps.addAll(superMandatoryDeps);
-		
-		deps.add(getSmtpModuleClass());
-		
-		return deps;
-	}
-	
 	protected String getDefaultSubject() {
 		return DEFAULT_SUBJECT;
 	}
@@ -88,12 +64,12 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	
 	private SmtpModule getSmtpModule() {
 		// Since SMTP module is a mandatory dependency there is no need to check if it is null
-		return (SmtpModule) getApplication().getModuleInstance(getSmtpModuleClass());
+		return (SmtpModule) getApplication().getModule(SmtpModule.DEFAULT_MODULE_ID);
 	}
 
 	@Override
-	protected void onStart() {
-		Properties appProperties = getApplication().getProperties();
+	protected void onStart(AbstractWebApplication webApp) {
+		Properties appProperties = webApp.getProperties();
 		
 		subject = appProperties.getProperty(getPropertiesSubjectKey());
 		if (subject == null || subject.trim().isEmpty())

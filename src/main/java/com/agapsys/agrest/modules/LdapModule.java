@@ -7,8 +7,8 @@
 package com.agapsys.agrest.modules;
 
 import com.agapsys.agrest.modules.LdapModule.LdapException.LdapExceptionType;
-import com.agapsys.web.toolkit.AbstractApplication;
 import com.agapsys.web.toolkit.AbstractModule;
+import com.agapsys.web.toolkit.AbstractWebApplication;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,6 +27,11 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 public class LdapModule extends AbstractModule {
+
+	@Override
+	public String getTitle() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 	// CLASS SCOPE =============================================================
 	public static class LdapException extends Exception {
 		// CLASS SCOPE =========================================================
@@ -141,13 +146,7 @@ public class LdapModule extends AbstractModule {
 	private String searchBaseDn       = null;
 	private String searchPattern      = null;
 	private String searchUserDn       = null;
-	private String searchUserPassword = null;
-	
-	
-	public LdapModule(AbstractApplication application) {
-		super(application);
-	}
-	
+	private String searchUserPassword = null;	
 	
 	protected String getDefaultLdapUrl() {
 		return DEFAULT_LDAP_URL;
@@ -205,8 +204,8 @@ public class LdapModule extends AbstractModule {
 	}
 	
 	@Override
-	protected void onStart() {
-		Properties appProperties = getApplication().getProperties();
+	protected void onStart(AbstractWebApplication webApp) {
+		Properties appProperties = webApp.getProperties();
 		
 		ldapUrl            = appProperties.getProperty(KEY_LDAP_URL,             DEFAULT_LDAP_URL);
 		searchBaseDn       = appProperties.getProperty(KEY_SEARCH_BASE_DN,       DEFAULT_SEARCH_BASE_DN);

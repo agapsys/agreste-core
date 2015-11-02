@@ -6,8 +6,8 @@
 
 package com.agapsys.agrest.modules;
 
-import com.agapsys.web.toolkit.AbstractApplication;
 import com.agapsys.web.toolkit.AbstractModule;
+import com.agapsys.web.toolkit.AbstractWebApplication;
 import java.util.Properties;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,6 +17,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CorsModule extends AbstractModule {
 	// CLASS SCOPE =============================================================
+	public static final String DEFAULT_MODULE_ID = CorsModule.class.getName();
+	
 	public static final String KEY_ALLOWED_ORIGINS = "agapsys.agrest.cors.allowedOrigins";
 	public static final String KEY_ALLOWED_METHODS = "agapsys.agrest.cors.allowedMethods";
 	public static final String KEY_ALLOWED_HEADERS = "agapsys.agrest.cors.allowedHeaders";
@@ -35,9 +37,6 @@ public class CorsModule extends AbstractModule {
 	private String allowedMethods;
 	private String allowedHeaders;
 	
-	public CorsModule(AbstractApplication application) {
-		super(application);
-	}
 	
 	protected String getDefaultAllowedOrigin() {
 		return DEFAULT_ALLOWED_ORIGINS;
@@ -75,7 +74,7 @@ public class CorsModule extends AbstractModule {
 	}
 	
 	@Override
-	protected void onStart() {
+	protected void onStart(AbstractWebApplication webApp) {
 		Properties appProperties = getApplication().getProperties();
 		allowedOrigins = appProperties.getProperty(KEY_ALLOWED_ORIGINS, DEFAULT_ALLOWED_ORIGINS);
 		allowedMethods = appProperties.getProperty(KEY_ALLOWED_METHODS, DEFAULT_ALLOWED_METHODS);
@@ -112,6 +111,11 @@ public class CorsModule extends AbstractModule {
 		
 		if (allowedHeaders != null && !allowedHeaders.trim().isEmpty())
 			resp.setHeader(HEADER_ALLOWED_HEADERS, allowedHeaders);
+	}
+
+	@Override
+	public String getTitle() {
+		return "CORS module";
 	}
 	// =========================================================================
 }

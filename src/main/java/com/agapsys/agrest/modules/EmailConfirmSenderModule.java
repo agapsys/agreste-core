@@ -6,8 +6,6 @@
 
 package com.agapsys.agrest.modules;
 
-import com.agapsys.web.toolkit.AbstractApplication;
-
 public class EmailConfirmSenderModule extends AbstractCodeSenderModule {
 	// CLASS SCOPE =============================================================
 	// SETTINGS-----------------------------------------------------------------
@@ -21,11 +19,7 @@ public class EmailConfirmSenderModule extends AbstractCodeSenderModule {
 	// -------------------------------------------------------------------------
 	// =========================================================================
 
-	// INSTANCE SCOPE ==========================================================
-	public EmailConfirmSenderModule(AbstractApplication application) {
-		super(application);
-	}
-	
+	// INSTANCE SCOPE ==========================================================	
 	@Override
 	protected String getDefaultSubject() {
 		return DEFAULT_SUBJECT;
@@ -44,6 +38,11 @@ public class EmailConfirmSenderModule extends AbstractCodeSenderModule {
 	@Override
 	protected String getPropertiesMessageKey() {
 		return KEY_MESSAGE;
+	}
+
+	@Override
+	public String getTitle() {
+		return "Email confirm sender module";
 	}
 	// =========================================================================
 }

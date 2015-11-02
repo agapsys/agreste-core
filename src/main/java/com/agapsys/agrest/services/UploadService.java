@@ -6,7 +6,7 @@
 
 package com.agapsys.agrest.services;
 
-import com.agapsys.web.toolkit.AbstractService;
+import com.agapsys.web.toolkit.SingletonManager.Singleton;
 import com.agapsys.web.toolkit.utils.BadRequestException;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
@@ -27,7 +27,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * Upload service.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class UploadService extends AbstractService {
+public class UploadService implements Singleton {
 	// CLASS SCOPE =============================================================
 	protected static final long DEFAULT_TOTAL_MAX_SIZE = -1; // No limit
 	protected static final long DEFAULT_MAX_FILE_SIZE  = -1; // No limit
