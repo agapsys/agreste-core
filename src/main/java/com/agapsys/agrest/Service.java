@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest.services;
+package com.agapsys.agrest;
 
 import com.agapsys.web.toolkit.SingletonManager;
 import com.agapsys.web.toolkit.SingletonManager.Singleton;
