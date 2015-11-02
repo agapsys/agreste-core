@@ -34,15 +34,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class UploadServiceTest {
+	private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
+	
 	static {
-		Service.registerService(UploadService.SERVICE_ID, UploadService.class);
+		SERVICE_MANAGER.registerService(UploadService.SERVICE_ID, UploadService.class);
 	}
 	
 	// CLASS SCOPE =============================================================
 	@WebServlet("/upload/*")
 	public static class UploadServlet extends ActionServlet {
 		
-		private final UploadService uploadService = (UploadService) Service.getInstance(UploadService.SERVICE_ID);
+		private final UploadService uploadService = (UploadService) SERVICE_MANAGER.getService(UploadService.SERVICE_ID);
 
 		@WebAction
 		public void finish(HttpExchange exchange) {

@@ -11,6 +11,8 @@ import com.agapsys.utils.console.FormatEscapeBuilder;
 import java.util.logging.Level;
 
 public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.AbstractWebApplication {
+	private static final ServiceManager serviceManager = new ServiceManager();
+
 	@Override
 	public void log(LogType logType, String message, Object... args) {
 		FormatEscapeBuilder feb = new FormatEscapeBuilder().setFgColor(ConsoleColor.YELLOW);
@@ -32,4 +34,16 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 	protected Level getHibernateLogLevel() {
 		return Level.OFF;
 	}
+	
+	public void registerService(String id, Class<? extends Service> serviceClass) {
+		serviceManager.registerService(id, serviceClass);
+	}
+	
+	public <T extends Service> T getService(Class<T> serviceClass) {
+		return serviceManager.getService(serviceClass);
+	}
+	
+	public Service getService(String id) {
+		return serviceManager.getService(id);
+	} 
 }

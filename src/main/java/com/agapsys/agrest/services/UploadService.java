@@ -27,7 +27,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * Upload service.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class UploadService extends Service {
+public class UploadService implements Service {
 	// CLASS SCOPE =============================================================
 	public static final String SERVICE_ID = UploadService.class.getName();
 	
