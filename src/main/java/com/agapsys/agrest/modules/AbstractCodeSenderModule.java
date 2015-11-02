@@ -10,6 +10,7 @@ import com.agapsys.mail.Message;
 import com.agapsys.mail.MessageBuilder;
 import com.agapsys.web.toolkit.AbstractModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
+import com.agapsys.web.toolkit.Defs;
 import com.agapsys.web.toolkit.SmtpModule;
 import java.util.Properties;
 import java.util.regex.Pattern;
@@ -63,8 +64,7 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	}
 	
 	private SmtpModule getSmtpModule() {
-		// Since SMTP module is a mandatory dependency there is no need to check if it is null
-		return (SmtpModule) getApplication().getModule(SmtpModule.MODULE_ID);
+		return (SmtpModule) getApplication().getModule(Defs.SMTP_MODULE_ID);
 	}
 
 	@Override
