@@ -17,8 +17,8 @@ public abstract class Service implements Singleton {
 		SINGLETON_MANAGER.registerSingleton(id, serviceClass);
 	}
 	
-	public static Service getInstance(Class<? extends Service> serviceClass) {
-		return (Service) SINGLETON_MANAGER.getSingleton(serviceClass);
+	public static <T extends Service> T getInstance(Class<T> serviceClass) {
+		return (T) SINGLETON_MANAGER.getSingleton(serviceClass);
 	}
 	
 	public static Service getInstance(String id) {
