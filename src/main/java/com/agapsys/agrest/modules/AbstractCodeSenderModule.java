@@ -64,7 +64,7 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	
 	private SmtpModule getSmtpModule() {
 		// Since SMTP module is a mandatory dependency there is no need to check if it is null
-		return (SmtpModule) getApplication().getModule(SmtpModule.DEFAULT_MODULE_ID);
+		return (SmtpModule) getApplication().getModule(SmtpModule.MODULE_ID);
 	}
 
 	@Override
