@@ -75,7 +75,7 @@ public class CorsModule extends AbstractModule {
 	
 	@Override
 	protected void onStart(AbstractWebApplication webApp) {
-		Properties appProperties = getApplication().getProperties();
+		Properties appProperties = webApp.getProperties();
 		allowedOrigins = appProperties.getProperty(KEY_ALLOWED_ORIGINS, DEFAULT_ALLOWED_ORIGINS);
 		allowedMethods = appProperties.getProperty(KEY_ALLOWED_METHODS, DEFAULT_ALLOWED_METHODS);
 		allowedHeaders = appProperties.getProperty(KEY_ALLOWED_HEADERS, DEFAULT_ALLOWED_HEADERS);
