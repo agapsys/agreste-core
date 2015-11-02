@@ -11,7 +11,14 @@ import com.agapsys.utils.console.FormatEscapeBuilder;
 import java.util.logging.Level;
 
 public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.AbstractWebApplication {
-	private static final ServiceManager serviceManager = new ServiceManager();
+	// CLASS SCOPE =============================================================
+	public static AbstractWebApplication getInstance() {
+		return (AbstractWebApplication) com.agapsys.web.toolkit.AbstractWebApplication.getInstance();
+	}
+	// =========================================================================
+	
+	// INSTANCE SCOPE ==========================================================
+	private final ServiceManager serviceManager = new ServiceManager();
 
 	@Override
 	public void log(LogType logType, String message, Object... args) {
@@ -45,5 +52,6 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 	
 	public Service getService(String id) {
 		return serviceManager.getService(id);
-	} 
+	}
+	// =========================================================================
 }
