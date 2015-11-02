@@ -9,7 +9,7 @@ package com.agapsys.agrest;
 import com.agapsys.web.toolkit.SingletonManager;
 
 public class ServiceManager {
-	private static final SingletonManager serviceSingletonManager = new SingletonManager();
+	private final SingletonManager serviceSingletonManager = new SingletonManager();
 
 	public void registerService(String id, Class<? extends Service> serviceClass) {
 		serviceSingletonManager.registerSingleton(id, serviceClass);
