@@ -6,11 +6,11 @@
 
 package com.agapsys.agrest.modules;
 
+import com.agapsys.agrest.Defs;
 import com.agapsys.mail.Message;
 import com.agapsys.mail.MessageBuilder;
 import com.agapsys.web.toolkit.AbstractModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
-import com.agapsys.web.toolkit.Defs;
 import com.agapsys.web.toolkit.SmtpModule;
 import java.util.Properties;
 import java.util.regex.Pattern;
