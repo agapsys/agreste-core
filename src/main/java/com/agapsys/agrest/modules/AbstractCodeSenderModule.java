@@ -6,12 +6,12 @@
 
 package com.agapsys.agrest.modules;
 
-import com.agapsys.agrest.Defs;
 import com.agapsys.mail.Message;
 import com.agapsys.mail.MessageBuilder;
 import com.agapsys.web.toolkit.AbstractModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.SmtpModule;
+import com.agapsys.web.toolkit.WebToolkit;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
@@ -64,7 +64,7 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	}
 	
 	private SmtpModule getSmtpModule() {
-		return (SmtpModule) getApplication().getModule(Defs.SMTP_MODULE_ID);
+		return (SmtpModule) getApplication().getModule(WebToolkit.SMTP_MODULE_ID);
 	}
 
 	@Override
