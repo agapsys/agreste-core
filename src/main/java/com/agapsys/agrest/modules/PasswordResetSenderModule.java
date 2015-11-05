@@ -8,8 +8,6 @@ package com.agapsys.agrest.modules;
 
 public class PasswordResetSenderModule extends AbstractCodeSenderModule {
 	// CLASS SCOPE =============================================================
-	public static final String MODULE_ID = PasswordResetSenderModule.class.getName();
-	
 	// SETTINGS-----------------------------------------------------------------
 	public static final String KEY_SUBJECT = "agapsys.agrest.passwordResetSender.subject";
 	public static final String KEY_MESSAGE = "agapsys.agrest.passwordResetSender.text";
@@ -22,11 +20,6 @@ public class PasswordResetSenderModule extends AbstractCodeSenderModule {
 	// =========================================================================
 
 	// INSTANCE SCOPE ==========================================================
-	@Override
-	public String getTitle() {
-		return "Password reset sender module";
-	}
-	
 	@Override
 	protected String getDefaultSubject() {
 		return DEFAULT_SUBJECT;

@@ -10,8 +10,8 @@ import com.agapsys.mail.Message;
 import com.agapsys.mail.MessageBuilder;
 import com.agapsys.web.toolkit.AbstractModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
+import com.agapsys.web.toolkit.Module;
 import com.agapsys.web.toolkit.SmtpModule;
-import com.agapsys.web.toolkit.WebToolkit;
 import java.util.Properties;
 import java.util.regex.Pattern;
 import javax.mail.internet.InternetAddress;
@@ -28,11 +28,19 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	private static final String DEFAULT_SUBJECT = String.format("[%s] Code sender", APP_NAME_TOKEN);
 	private static final String DEFAULT_MESSAGE = String.format("<p>In order to complete your request, please click on the following link: </p><p><a href=\"http://localhost:8080/app?email=%s&code=%s\">http://localhost:8080/app?email=%s&code=%s</a></p>", EMAIL_TOKEN, CODE_TOKEN, EMAIL_TOKEN, CODE_TOKEN);
 	// -------------------------------------------------------------------------
+	
+	private static final Class<? extends Module>[] DEPENDENCIES = new Class[] {SmtpModule.class};
 	// =========================================================================
 
 	// INSTANCE SCOPE ==========================================================
 	private String subject;
 	private String message;
+	private final SmtpModule smtpModule = getModule(SmtpModule.class);
+
+	@Override
+	public Class<? extends Module>[] getDependencies() {
+		return DEPENDENCIES;
+	}
 		
 	protected String getDefaultSubject() {
 		return DEFAULT_SUBJECT;
@@ -46,38 +54,21 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	protected abstract String getPropertiesMessageKey();
 	
 	@Override
-	public Properties getDefaultSettings() {
+	public Properties getDefaultProperties() {
 		Properties properties = new Properties();
 		
-		String defaultSubject = getDefaultSubject();
-		if (defaultSubject == null || defaultSubject.trim().isEmpty())
-			throw new RuntimeException("Null/Empty default subject");
-				
-		String defaultMessage = getDefaultMessage();
-		if (defaultMessage == null || defaultMessage.trim().isEmpty())
-			throw new RuntimeException("Null/Empty default message");
-		
-		properties.setProperty(getPropertiesSubjectKey(), defaultSubject);
-		properties.setProperty(getPropertiesMessageKey(), defaultMessage);
+		properties.setProperty(getPropertiesSubjectKey(), getDefaultSubject());
+		properties.setProperty(getPropertiesMessageKey(), getDefaultMessage());
 		
 		return properties;
-	}
-	
-	private SmtpModule getSmtpModule() {
-		return (SmtpModule) getApplication().getModule(WebToolkit.SMTP_MODULE_ID);
 	}
 
 	@Override
 	protected void onStart(AbstractWebApplication webApp) {
 		Properties appProperties = webApp.getProperties();
 		
-		subject = appProperties.getProperty(getPropertiesSubjectKey());
-		if (subject == null || subject.trim().isEmpty())
-			subject = getDefaultSubject();
-		
-		message = appProperties.getProperty(getPropertiesMessageKey());
-		if (message == null || message.trim().isEmpty())
-			message = getDefaultMessage();
+		subject = getMandatoryProperty(appProperties, getPropertiesSubjectKey());
+		message = getMandatoryProperty(appProperties, getPropertiesMessageKey());
 	}
 
 	@Override
@@ -96,13 +87,13 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	
 	private String replaceTokens(String str, String code, String email) {
 		return str
-			.replaceAll(Pattern.quote(APP_NAME_TOKEN), getApplication().getName())
+			.replaceAll(Pattern.quote(APP_NAME_TOKEN), getWebApplication().getName())
 			.replaceAll(Pattern.quote(CODE_TOKEN), code)
 			.replaceAll(Pattern.quote(EMAIL_TOKEN), email);
 	}
 	
 	protected Message getMessage(String code, InternetAddress recipient) {
-		InternetAddress sender = getSmtpModule().getSender();
+		InternetAddress sender = smtpModule.getSender();
 		
 		String finalSubject = replaceTokens(getSubject(), code, recipient.getAddress());
 		String finalMessage = replaceTokens(getMessage(), code, recipient.getAddress());
@@ -118,7 +109,7 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 			throw new IllegalArgumentException("Null recipient");
 		
 		if (isRunning()) {
-			getSmtpModule().sendMessage(getMessage(code, recipient));
+			smtpModule.sendMessage(getMessage(code, recipient));
 		} else {
 			throw new RuntimeException("Module is not running");
 		}

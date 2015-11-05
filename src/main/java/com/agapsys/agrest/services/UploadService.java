@@ -6,7 +6,7 @@
 
 package com.agapsys.agrest.services;
 
-import com.agapsys.agrest.Service;
+import com.agapsys.web.toolkit.AbstractService;
 import com.agapsys.web.toolkit.utils.BadRequestException;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
@@ -27,10 +27,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * Upload service.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class UploadService implements Service {
+public class UploadService extends AbstractService {
 	// CLASS SCOPE =============================================================
-	public static final String SERVICE_ID = UploadService.class.getName();
-	
 	protected static final long DEFAULT_TOTAL_MAX_SIZE = -1; // No limit
 	protected static final long DEFAULT_MAX_FILE_SIZE  = -1; // No limit
 	

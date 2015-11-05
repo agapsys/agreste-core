@@ -18,11 +18,27 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================
-	private final ServiceManager serviceManager = new ServiceManager();
-
 	@Override
 	public void log(LogType logType, String message, Object... args) {
-		FormatEscapeBuilder feb = new FormatEscapeBuilder().setFgColor(ConsoleColor.YELLOW);
+		ConsoleColor fgColor;
+		switch (logType) {
+			case INFO:
+				fgColor = ConsoleColor.CYAN;
+				break;
+				
+			case WARNING:
+				fgColor = ConsoleColor.YELLOW;
+				break;
+				
+			case ERROR:
+				fgColor = ConsoleColor.RED;
+				break;
+				
+			default:
+				throw new UnsupportedOperationException("Unsupported type: " + logType.name());
+				
+		}
+		FormatEscapeBuilder feb = new FormatEscapeBuilder().setFgColor(fgColor);
 		message = feb.escape(String.format(message, args));
 		super.log(logType, message);
 	}
@@ -40,18 +56,6 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 	 */
 	protected Level getHibernateLogLevel() {
 		return Level.OFF;
-	}
-	
-	public void registerService(String id, Class<? extends Service> serviceClass) {
-		serviceManager.registerService(id, serviceClass);
-	}
-	
-	public <T extends Service> T getService(Class<T> serviceClass) {
-		return serviceManager.getService(serviceClass);
-	}
-	
-	public Service getService(String id) {
-		return serviceManager.getService(id);
 	}
 	// =========================================================================
 }

@@ -44,7 +44,7 @@ public class CorsModuleTest {
 		@Override
 		protected void beforeApplicationStart() {
 			super.beforeApplicationStart();
-			registerModule(CorsModule.MODULE_ID, CorsModule.class);
+			registerModule(CorsModule.class);
 		}
 	}
 	
@@ -53,7 +53,7 @@ public class CorsModuleTest {
 
 		@Override
 		public void beforeAction(HttpExchange exchange) {
-			CorsModule corsModule = (CorsModule) TestApplication.getInstance().getModule(CorsModule.MODULE_ID);
+			CorsModule corsModule = (CorsModule) TestApplication.getInstance().getModule(CorsModule.class);
 			corsModule.putCorsHeaders(exchange.getResponse());
 		}
 		

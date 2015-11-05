@@ -16,6 +16,7 @@ import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.HttpMethod;
 import com.agapsys.web.action.dispatcher.WebAction;
+import com.agapsys.web.toolkit.SingletonManager;
 import com.agapsys.web.toolkit.utils.BadRequestException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,17 +35,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class UploadServiceTest {
-	private static final ServiceManager SERVICE_MANAGER = new ServiceManager();
-	
-	static {
-		SERVICE_MANAGER.registerService(UploadService.SERVICE_ID, UploadService.class);
-	}
+	private static final SingletonManager SINGLETON_MANAGER = new SingletonManager();
 	
 	// CLASS SCOPE =============================================================
 	@WebServlet("/upload/*")
 	public static class UploadServlet extends ActionServlet {
 		
-		private final UploadService uploadService = (UploadService) SERVICE_MANAGER.getService(UploadService.SERVICE_ID);
+		private final UploadService uploadService = (UploadService) SINGLETON_MANAGER.getSingleton(UploadService.class);
 
 		@WebAction
 		public void finish(HttpExchange exchange) {

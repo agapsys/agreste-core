@@ -17,8 +17,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CorsModule extends AbstractModule {
 	// CLASS SCOPE =============================================================
-	public static final String MODULE_ID = CorsModule.class.getName();
-	
 	public static final String KEY_ALLOWED_ORIGINS = "agapsys.agrest.cors.allowedOrigins";
 	public static final String KEY_ALLOWED_METHODS = "agapsys.agrest.cors.allowedMethods";
 	public static final String KEY_ALLOWED_HEADERS = "agapsys.agrest.cors.allowedHeaders";
@@ -37,11 +35,6 @@ public class CorsModule extends AbstractModule {
 	private String allowedMethods;
 	private String allowedHeaders;
 	
-	@Override
-	public String getTitle() {
-		return "CORS module";
-	}
-	
 	protected String getDefaultAllowedOrigin() {
 		return DEFAULT_ALLOWED_ORIGINS;
 	}
@@ -55,7 +48,7 @@ public class CorsModule extends AbstractModule {
 	}
 	
 	@Override
-	public Properties getDefaultSettings() {
+	public Properties getDefaultProperties() {
 		Properties defaultProperties = new Properties();
 		
 		String defaultAllowedOrigins = getDefaultAllowedOrigin();
