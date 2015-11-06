@@ -6,7 +6,7 @@
 
 package com.agapsys.agrest;
 
-import com.agapsys.agrest.modules.CorsModule;
+import com.agapsys.agreste.modules.CorsModule;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;

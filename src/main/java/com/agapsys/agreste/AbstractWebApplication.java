@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest;
+package com.agapsys.agreste;
 
 import com.agapsys.utils.console.ConsoleColor;
 import com.agapsys.utils.console.FormatEscapeBuilder;

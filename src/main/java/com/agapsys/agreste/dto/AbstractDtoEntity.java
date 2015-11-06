@@ -4,9 +4,9 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest.dto;
+package com.agapsys.agreste.dto;
 
-import com.agapsys.agrest.entities.EntityObject;
+import com.agapsys.agreste.entities.EntityObject;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;

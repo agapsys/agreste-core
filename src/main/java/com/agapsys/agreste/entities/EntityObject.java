@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest.entities;
+package com.agapsys.agreste.entities;
 
 import java.io.Serializable;
 

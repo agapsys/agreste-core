@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest.services;
+package com.agapsys.agreste.services;
 
 import com.agapsys.web.toolkit.AbstractService;
 import com.agapsys.web.toolkit.utils.BadRequestException;

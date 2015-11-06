@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest.modules;
+package com.agapsys.agreste.modules;
 
 import com.agapsys.mail.Message;
 import com.agapsys.mail.MessageBuilder;

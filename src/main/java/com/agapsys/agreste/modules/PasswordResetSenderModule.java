@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest.modules;
+package com.agapsys.agreste.modules;
 
 public class PasswordResetSenderModule extends AbstractCodeSenderModule {
 	// CLASS SCOPE =============================================================

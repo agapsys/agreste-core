@@ -6,6 +6,7 @@
 
 package com.agapsys.agrest;
 
+import com.agapsys.agreste.AbstractWebApplication;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 

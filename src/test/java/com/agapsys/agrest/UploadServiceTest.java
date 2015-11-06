@@ -6,7 +6,7 @@
 
 package com.agapsys.agrest;
 
-import com.agapsys.agrest.services.UploadService;
+import com.agapsys.agreste.services.UploadService;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse.StringResponse;
