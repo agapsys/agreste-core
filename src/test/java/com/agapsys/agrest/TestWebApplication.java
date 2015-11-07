@@ -11,8 +11,6 @@ import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 
 public class TestWebApplication extends AbstractWebApplication {
-	private static final boolean CREATE_PROPERTIES_FILE = false;
-	private static final boolean LOAD_PROPERTIES_FILE   = false;
 	
 	@Override
 	public String getName() {
@@ -27,15 +25,5 @@ public class TestWebApplication extends AbstractWebApplication {
 	@Override
 	public String getDirectoryAbsolutePath() {
 		return new File(FileUtils.DEFAULT_TEMPORARY_FOLDER, "." + getName()).getAbsolutePath();
-	}
-
-	@Override
-	protected boolean isPropertiesFileLoadingEnabled() {
-		return LOAD_PROPERTIES_FILE;
-	}
-	
-	@Override
-	protected boolean isPropertiesFileCreationEnabled() {
-		return CREATE_PROPERTIES_FILE;
 	}
 }

@@ -13,7 +13,7 @@ import java.util.logging.Level;
 public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.AbstractWebApplication {
 	// CLASS SCOPE =============================================================
 	public static AbstractWebApplication getInstance() {
-		return (AbstractWebApplication) com.agapsys.web.toolkit.AbstractWebApplication.getInstance();
+		return (AbstractWebApplication) com.agapsys.web.toolkit.AbstractWebApplication.getRunningInstance();
 	}
 	// =========================================================================
 	
