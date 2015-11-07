@@ -35,8 +35,8 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 	// INSTANCE SCOPE ==========================================================
 	private String subject;
 	private String message;
-	private final SmtpModule smtpModule = getModule(SmtpModule.class);
-
+	private SmtpModule smtpModule;
+	
 	@Override
 	public Class<? extends Module>[] getDependencies() {
 		return DEPENDENCIES;
@@ -69,6 +69,7 @@ public abstract class AbstractCodeSenderModule extends AbstractModule {
 		
 		subject = getMandatoryProperty(appProperties, getPropertiesSubjectKey());
 		message = getMandatoryProperty(appProperties, getPropertiesMessageKey());
+		smtpModule = getModule(SmtpModule.class);
 	}
 
 	@Override
