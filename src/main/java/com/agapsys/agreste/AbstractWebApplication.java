@@ -6,8 +6,10 @@
 
 package com.agapsys.agreste;
 
+import com.agapsys.utils.console.Console;
 import com.agapsys.utils.console.ConsoleColor;
 import com.agapsys.utils.console.FormatEscapeBuilder;
+import com.agapsys.web.toolkit.utils.DateUtils;
 import java.util.logging.Level;
 
 public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.AbstractWebApplication {
@@ -23,7 +25,7 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 		ConsoleColor fgColor;
 		switch (logType) {
 			case INFO:
-				fgColor = ConsoleColor.CYAN;
+				fgColor = ConsoleColor.GREEN;
 				break;
 				
 			case WARNING:
@@ -39,8 +41,9 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 				
 		}
 		FormatEscapeBuilder feb = new FormatEscapeBuilder().setFgColor(fgColor);
-		message = feb.escape(String.format(message, args));
-		super.log(logType, message);
+		String logTypeStr = feb.escape(String.format("[%s]", logType.name()));		
+		
+		Console.printlnf("%s %s %s", DateUtils.getLocalTimestamp(), logTypeStr, String.format(message, args));
 	}
 	
 	@Override
