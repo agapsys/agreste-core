@@ -9,17 +9,13 @@ package com.agapsys.agreste;
 import com.agapsys.utils.console.Console;
 import com.agapsys.utils.console.ConsoleColor;
 import com.agapsys.utils.console.FormatEscapeBuilder;
+import com.agapsys.web.toolkit.AbstractWebApplication;
+import com.agapsys.web.toolkit.AbstractWebApplication.LogType;
+import static com.agapsys.web.toolkit.AbstractWebApplication.LogType.ERROR;
 import com.agapsys.web.toolkit.utils.DateUtils;
 import java.util.logging.Level;
 
-public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.AbstractWebApplication {
-	// CLASS SCOPE =============================================================
-	public static AbstractWebApplication getInstance() {
-		return (AbstractWebApplication) com.agapsys.web.toolkit.AbstractWebApplication.getRunningInstance();
-	}
-	// =========================================================================
-	
-	// INSTANCE SCOPE ==========================================================
+public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 	@Override
 	public void log(LogType logType, String message, Object... args) {
 		ConsoleColor fgColor;
@@ -60,5 +56,4 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 	protected Level getHibernateLogLevel() {
 		return Level.OFF;
 	}
-	// =========================================================================
 }

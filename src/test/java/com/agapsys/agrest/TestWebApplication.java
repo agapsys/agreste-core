@@ -6,11 +6,11 @@
 
 package com.agapsys.agrest;
 
-import com.agapsys.agreste.AbstractWebApplication;
+import com.agapsys.agreste.AbstractAgrestApplication;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 
-public class TestWebApplication extends AbstractWebApplication {
+public class TestWebApplication extends AbstractAgrestApplication {
 	
 	@Override
 	public String getName() {
