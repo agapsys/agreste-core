@@ -15,6 +15,7 @@ import com.agapsys.sevlet.test.ServletContainer;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
+import com.agapsys.web.toolkit.AbstractWebApplication;
 import java.util.Properties;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
@@ -53,7 +54,7 @@ public class CorsModuleTest {
 
 		@Override
 		public void beforeAction(HttpExchange exchange) {
-			CorsModule corsModule = (CorsModule) TestApplication.getInstance().getModule(CorsModule.class);
+			CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
 			corsModule.putCorsHeaders(exchange.getResponse());
 		}
 		
