@@ -11,9 +11,15 @@ import java.lang.reflect.Field;
 public abstract class AbstractDto {
 	// CLASS SCOPE =============================================================
 	public static class DtoValidationException extends RuntimeException {
-
-		public DtoValidationException(String message) {
-			super(message);
+		private final String fieldName;
+		
+		DtoValidationException(String fieldName) {
+			super("Required field: " + fieldName);
+			this.fieldName = fieldName;
+		}
+		
+		public String getFieldName() {
+			return fieldName;
 		}
 	}
 	// =========================================================================
@@ -21,29 +27,48 @@ public abstract class AbstractDto {
 	// INSTANCE SCOPE ==========================================================
 	public void validate() throws DtoValidationException {
 		Field[] fields = getClass().getDeclaredFields();
+		
 		for (Field field : fields) {
-			DtoRequired[] annotations = field.getAnnotationsByType(DtoRequired.class);
-			DtoRequired annotation;
 			
-			if (annotations.length != 0)
-				annotation = annotations[0];
-			else
-				annotation = null;
+			field.setAccessible(true);
 			
-			if (annotation != null) {
-				try {
+			try {
+				
+				if (AbstractDto.class.isAssignableFrom(field.getType())) {
+					AbstractDto dtoField = (AbstractDto) field.get(this);
+					if (dtoField != null) {
+						try {
+							dtoField.validate();
+						} catch (DtoValidationException ex) {
+							String fullPathFieldName = String.format("%s.%s", field.getName(), ex.getFieldName());
+							throw new DtoValidationException(fullPathFieldName);
+						}
+					}
+				}
+
+				DtoRequired[] annotations = field.getAnnotationsByType(DtoRequired.class);
+				DtoRequired annotation;
+
+				if (annotations.length != 0)
+					annotation = annotations[0];
+				else
+					annotation = null;
+
+				if (annotation != null) {
 					if (field.get(this) == null)
-						throw new DtoValidationException("Required field: " + field.getName());
+						throw new DtoValidationException(field.getName());
 
 					if (field.getType() == String.class) {
 						String str = (String) field.get(this);
 
 						if (str.trim().isEmpty() && !annotation.acceptEmpty())
-							throw new DtoValidationException("Required field: " + field.getName());
+							throw new DtoValidationException(field.getName());
 					}
-				} catch (IllegalAccessException | IllegalArgumentException ex) {
-					throw new RuntimeException(ex);
+
 				}
+
+			} catch (IllegalAccessException | IllegalArgumentException ex) {
+				throw new RuntimeException(ex);
 			}
 		}
 	}

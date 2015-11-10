@@ -40,6 +40,19 @@ public class AbstractDtoTest {
 		@DtoRequired(acceptEmpty = true)
 		public String strField;
 	}
+	
+	
+	public static class InnerDto extends AbstractDto {
+		public String strField;
+		
+		public RequiredDto requiredDto;
+	}
+	
+	public static class ComplexDto extends AbstractDto {
+		private int intField;
+		
+		public InnerDto innerDto;
+	}
 	// =========================================================================
 
 	// INSTANCE SCOPE ==========================================================	
@@ -71,7 +84,7 @@ public class AbstractDtoTest {
 		
 		Assert.assertNotNull(validationError);
 		Assert.assertEquals("Required field: intField", validationError.getMessage());
-		
+		// ----------------------------
 		validationError = null;
 		dto.intField = 2;
 		
@@ -83,7 +96,7 @@ public class AbstractDtoTest {
 		
 		Assert.assertNotNull(validationError);
 		Assert.assertEquals("Required field: strField", validationError.getMessage());
-		
+		// ----------------------------
 		validationError = null;
 		dto.strField = "";
 		
@@ -95,7 +108,7 @@ public class AbstractDtoTest {
 		
 		Assert.assertNotNull(validationError);
 		Assert.assertEquals("Required field: strField", validationError.getMessage());
-		
+		// ----------------------------
 		validationError = null;
 		dto.strField = "test";
 		
@@ -109,7 +122,7 @@ public class AbstractDtoTest {
 	}
 	
 	@Test
-	public void PartiallyRequired1() {
+	public void partiallyRequired1() {
 		PartiallyRequiredDto1 dto = new PartiallyRequiredDto1();
 		DtoValidationException validationError = null;
 		
@@ -121,7 +134,7 @@ public class AbstractDtoTest {
 		
 		Assert.assertNotNull(validationError);
 		Assert.assertEquals("Required field: strField", validationError.getMessage());
-		
+		// ----------------------------
 		validationError = null;
 		dto.strField = "";
 		
@@ -133,7 +146,7 @@ public class AbstractDtoTest {
 		
 		Assert.assertNotNull(validationError);
 		Assert.assertEquals("Required field: strField", validationError.getMessage());
-		
+		// ----------------------------
 		validationError = null;
 		dto.strField = "test";
 		
@@ -147,7 +160,7 @@ public class AbstractDtoTest {
 	}
 	
 	@Test
-	public void PartiallyRequired2() {
+	public void partiallyRequired2() {
 		PartiallyRequiredDto2 dto = new PartiallyRequiredDto2();
 		DtoValidationException validationError = null;
 		
@@ -159,7 +172,7 @@ public class AbstractDtoTest {
 		
 		Assert.assertNotNull(validationError);
 		Assert.assertEquals("Required field: strField", validationError.getMessage());
-		
+		// ----------------------------
 		validationError = null;
 		dto.strField = "";
 		
@@ -170,6 +183,43 @@ public class AbstractDtoTest {
 		}
 		
 		Assert.assertNull(validationError);
+	}
+	
+	@Test
+	public void complexDto() {
+		ComplexDto dto = new ComplexDto();
+		DtoValidationException validationError = null;
+		
+		try {
+			dto.validate();
+		} catch (DtoValidationException ex) {
+			validationError = ex;
+		}
+		
+		Assert.assertNull(validationError);
+		// ----------------------------
+		validationError = null;
+		dto.innerDto = new InnerDto();
+		
+		try {
+			dto.validate();
+		} catch (DtoValidationException ex) {
+			validationError = ex;
+		}
+		
+		Assert.assertNull(validationError);
+		// ----------------------------
+		validationError = null;
+		dto.innerDto.requiredDto = new RequiredDto();
+		
+		try {
+			dto.validate();
+		} catch (DtoValidationException ex) {
+			validationError = ex;
+		}
+		
+		Assert.assertNotNull(validationError);
+		Assert.assertEquals("Required field: innerDto.requiredDto.intField", validationError.getMessage());
 	}
 	// =========================================================================
 }
