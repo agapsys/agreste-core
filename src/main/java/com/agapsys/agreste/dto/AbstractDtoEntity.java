@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractDtoEntity {
+public abstract class AbstractDtoEntity extends AbstractDto {
 	// CLASS SCOPE =============================================================
 	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection) {
 		try {
@@ -72,5 +72,15 @@ public abstract class AbstractDtoEntity {
 			this.id = obj.getId();
 		}
 	}
+	
+	@Override
+	public void validate() throws DtoValidationException {
+		if (this.id == null)
+			throw new DtoValidationException("Missing object ID");
+		
+		super.validate();
+	}
 	// =========================================================================
+
+	
 }
