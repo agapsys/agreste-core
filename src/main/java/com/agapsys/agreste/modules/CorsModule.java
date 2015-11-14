@@ -91,10 +91,13 @@ public class CorsModule extends AbstractModule {
 	public void putCorsHeaders(HttpServletResponse resp) {
 		if (!isRunning()) throw new RuntimeException("Module is not running");
 		
-		if (allowedMethods != null && !allowedMethods.trim().isEmpty())
+		String _allowedMethod = getAllowedMethods();
+		String _allowedHeaders = getAllowedHeaders();
+		
+		if (_allowedMethod != null && !_allowedMethod.trim().isEmpty())
 			resp.setHeader(HEADER_ALLOWED_METHODS, getAllowedMethods());
 		
-		if (allowedHeaders != null && !allowedHeaders.trim().isEmpty())
+		if (_allowedHeaders != null && !_allowedHeaders.trim().isEmpty())
 			resp.setHeader(HEADER_ALLOWED_HEADERS, getAllowedHeaders());
 		
 		for (String allowedOrigin : getAllowedOrigins())
