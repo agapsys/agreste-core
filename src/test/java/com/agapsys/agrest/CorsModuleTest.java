@@ -16,6 +16,7 @@ import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
 import com.agapsys.web.toolkit.AbstractWebApplication;
+import java.util.List;
 import java.util.Properties;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
@@ -30,7 +31,7 @@ public class CorsModuleTest {
 	@WebListener
 	public static class TestApplication extends TestWebApplication {
 		public static final String VAL_ALLOWED_HEADERS = "testHeaders";
-		public static final String VAL_ALLOWED_ORIGINS = "testOrigins";
+		public static final String VAL_ALLOWED_ORIGINS = "testOrigin1, testOrigin2";
 		public static final String VAL_ALLOWED_METHODS = "testMethods";
 		
 		@Override
@@ -87,15 +88,16 @@ public class CorsModuleTest {
 		StringResponse resp = sc.doRequest(new HttpGet("/get"));
 		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
 		
-		HttpHeader allowOriginHeader = resp.getFirstHeader("Access-Control-Allow-Origin");
+		List<HttpHeader> allowedOrigins = resp.getHeaders("Access-Control-Allow-Origin");
 		HttpHeader allowMethodsHeader = resp.getFirstHeader("Access-Control-Allow-Methods");
 		HttpHeader allowHeadersHeader = resp.getFirstHeader("Access-Control-Allow-Headers");
 		
-		Assert.assertNotNull(allowOriginHeader);
+		Assert.assertEquals(2, allowedOrigins.size());
 		Assert.assertNotNull(allowMethodsHeader);
 		Assert.assertNotNull(allowHeadersHeader);
 		
-		Assert.assertEquals(TestApplication.VAL_ALLOWED_ORIGINS, allowOriginHeader.getValue());
+		Assert.assertEquals("testOrigin1", allowedOrigins.get(0).getValue());
+		Assert.assertEquals("testOrigin2", allowedOrigins.get(1).getValue());
 		Assert.assertEquals(TestApplication.VAL_ALLOWED_METHODS, allowMethodsHeader.getValue());
 		Assert.assertEquals(TestApplication.VAL_ALLOWED_HEADERS, allowHeadersHeader.getValue());
 	}
