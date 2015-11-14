@@ -141,59 +141,17 @@ public class LdapModule extends AbstractModule {
 	private String searchBaseDn       = null;
 	private String searchPattern      = null;
 	private String searchUserDn       = null;
-	private String searchUserPassword = null;	
-	
-	protected String getDefaultLdapUrl() {
-		return DEFAULT_LDAP_URL;
-	}
-	
-	protected String getDefaultSearchBaseDn() {
-		return DEFAULT_SEARCH_BASE_DN;
-	}
-	
-	protected String getDefaultSearchPattern() {
-		return DEFAULT_SEARCH_PATTERN;
-	}
-	
-	protected String getDefaultSearchUserDn() {
-		return DEFAULT_SEARCH_USER_DN;
-	}
-	
-	protected String getDefaultSearchUserPassword() {
-		return DEFAULT_SEARCH_USER_PASSWORD;
-	}
-	
+	private String searchUserPassword = null;
 	
 	@Override
 	public Properties getDefaultProperties() {
 		Properties defaultProperties = new Properties();
 		
-		String defaultLdapUrl = getDefaultLdapUrl();
-		if (defaultLdapUrl == null)
-			defaultLdapUrl = DEFAULT_LDAP_URL;
-		
-		String defaultLdapSearchBaseDn = getDefaultSearchBaseDn();
-		if (defaultLdapSearchBaseDn == null)
-			defaultLdapSearchBaseDn = DEFAULT_SEARCH_BASE_DN;
-		
-		String defaultSearchPattern = getDefaultSearchPattern();
-		if (defaultSearchPattern == null)
-			defaultSearchPattern = DEFAULT_SEARCH_PATTERN;
-		
-		
-		String defaultSearchUserDn = getDefaultSearchUserDn();
-		if (defaultSearchUserDn == null)
-			defaultSearchUserDn = DEFAULT_SEARCH_USER_DN;
-		
-		String defaultSearchUserPassword = getDefaultSearchUserPassword();
-		if (defaultSearchUserPassword == null)
-			defaultSearchUserPassword = DEFAULT_SEARCH_USER_PASSWORD;
-		
-		defaultProperties.setProperty(KEY_LDAP_URL,             defaultLdapUrl.trim());
-		defaultProperties.setProperty(KEY_SEARCH_BASE_DN,       defaultLdapSearchBaseDn.trim());
-		defaultProperties.setProperty(KEY_SEARCH_PATTERN,       defaultSearchPattern.trim());
-		defaultProperties.setProperty(KEY_SEARCH_USER_DN,       defaultSearchUserDn.trim());
-		defaultProperties.setProperty(KEY_SEARCH_USER_PASSWORD, defaultSearchUserPassword.trim());
+		defaultProperties.setProperty(KEY_LDAP_URL,             DEFAULT_LDAP_URL);
+		defaultProperties.setProperty(KEY_SEARCH_BASE_DN,       DEFAULT_SEARCH_BASE_DN);
+		defaultProperties.setProperty(KEY_SEARCH_PATTERN,       DEFAULT_SEARCH_PATTERN);
+		defaultProperties.setProperty(KEY_SEARCH_USER_DN,       DEFAULT_SEARCH_USER_DN);
+		defaultProperties.setProperty(KEY_SEARCH_USER_PASSWORD, DEFAULT_SEARCH_USER_PASSWORD);
 		
 		return defaultProperties;
 	}
