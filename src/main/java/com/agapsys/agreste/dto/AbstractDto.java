@@ -13,7 +13,7 @@ public abstract class AbstractDto {
 	public static class DtoValidationException extends RuntimeException {
 		private final String fieldName;
 		
-		public DtoValidationException(String fieldName) {
+		DtoValidationException(String fieldName) {
 			super("Required field: " + fieldName);
 			this.fieldName = fieldName;
 		}
