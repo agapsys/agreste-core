@@ -72,15 +72,5 @@ public abstract class AbstractDtoEntity extends AbstractDto {
 			this.id = obj.getId();
 		}
 	}
-	
-	@Override
-	public void validate() throws DtoValidationException {
-		if (this.id == null)
-			throw new DtoValidationException("id");
-		
-		super.validate();
-	}
 	// =========================================================================
-
-	
 }
