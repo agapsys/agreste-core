@@ -7,8 +7,8 @@
 package com.agapsys.agrest.dto;
 
 import com.agapsys.agreste.dto.AbstractDto;
-import com.agapsys.agreste.dto.AbstractDto.DtoValidationException;
 import com.agapsys.agreste.dto.DtoRequired;
+import com.agapsys.agreste.dto.DtoValidationException;
 import org.junit.Assert;
 import org.junit.Test;
 

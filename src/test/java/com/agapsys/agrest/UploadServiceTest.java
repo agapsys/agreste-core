@@ -17,7 +17,7 @@ import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.HttpMethod;
 import com.agapsys.web.action.dispatcher.WebAction;
 import com.agapsys.web.toolkit.SingletonManager;
-import com.agapsys.web.toolkit.utils.BadRequestException;
+import com.agapsys.web.toolkit.BadRequestException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
