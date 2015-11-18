@@ -41,12 +41,12 @@ public abstract class BaseServlet extends TransactionalServlet {
 	
 	@Override
 	public boolean onError(HttpExchange exchange, Throwable t) {
-		super.onError(exchange, t);
-				
+		super.onError(exchange, t); // <-- closes JpaTransaction associated with the request
+
 		if (t instanceof BadRequestException || t instanceof ServiceException) {
 			HttpServletResponse resp = exchange.getResponse();
 			logRequest(exchange, LogType.WARNING, t.getMessage());
-
+			
 			int code;
 			
 			if (t instanceof BadRequestException) {
@@ -124,8 +124,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 	protected void clearSessionUser(HttpExchange exchange) {
 		getUserManager().clearSessionUser(exchange);
 	}
-	
-	
+		
 	protected String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
