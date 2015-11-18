@@ -9,22 +9,7 @@ package com.agapsys.agreste.dto;
 import java.lang.reflect.Field;
 
 public abstract class AbstractDto {
-	// CLASS SCOPE =============================================================
-	public static class DtoValidationException extends RuntimeException {
-		private final String fieldName;
-		
-		DtoValidationException(String fieldName) {
-			super("Required field: " + fieldName);
-			this.fieldName = fieldName;
-		}
-		
-		public String getFieldName() {
-			return fieldName;
-		}
-	}
-	// =========================================================================
-
-	// INSTANCE SCOPE ==========================================================
+	
 	public void validate() throws DtoValidationException {
 		Field[] fields = getClass().getDeclaredFields();
 		
@@ -72,5 +57,4 @@ public abstract class AbstractDto {
 			}
 		}
 	}
-	// =========================================================================
 }
