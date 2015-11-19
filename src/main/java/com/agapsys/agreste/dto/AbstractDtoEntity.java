@@ -15,15 +15,15 @@ import java.util.Set;
 
 public abstract class AbstractDtoEntity extends AbstractDto {
 	// CLASS SCOPE =============================================================
-	public static interface DtoCollectionFilter {
-		public boolean isAccepted(EntityObject entityObject);
+	public static interface EntityCollectionFilter<T extends EntityObject> {
+		public boolean isAccepted(T entityObject);
 	}
 	
 	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection) {
 		return getDtoCollection(dtoClass, entityCollection, null);
 	}
 	
-	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection, DtoCollectionFilter filter) {
+	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection, EntityCollectionFilter filter) {
 		try {
 			Collection<T> destCollection;
 			
