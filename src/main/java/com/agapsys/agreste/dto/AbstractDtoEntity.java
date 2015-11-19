@@ -15,7 +15,15 @@ import java.util.Set;
 
 public abstract class AbstractDtoEntity extends AbstractDto {
 	// CLASS SCOPE =============================================================
+	public static interface DtoCollectionFilter {
+		public boolean isAccepted(EntityObject entityObject);
+	}
+	
 	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection) {
+		return getDtoCollection(dtoClass, entityCollection, null);
+	}
+	
+	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection, DtoCollectionFilter filter) {
 		try {
 			Collection<T> destCollection;
 			
@@ -28,7 +36,9 @@ public abstract class AbstractDtoEntity extends AbstractDto {
 			} 
 						
 			for (EntityObject entityObject : entityCollection) {
-				destCollection.add(dtoClass.getConstructor(entityObject.getClass()).newInstance(entityObject));
+				if (filter == null || filter.isAccepted(entityObject)) {
+					destCollection.add(dtoClass.getConstructor(entityObject.getClass()).newInstance(entityObject));
+				}
 			}
 			
 			return destCollection;
