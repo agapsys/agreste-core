@@ -11,7 +11,8 @@ import javax.persistence.EntityManager;
 public abstract class AbstractEntity implements EntityObject {
 
 	@Override
-	public void save(EntityManager em) {
+	public EntityObject save(EntityManager em) {
 		em.persist(this);
+		return this;
 	}
 }

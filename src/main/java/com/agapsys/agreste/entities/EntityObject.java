@@ -12,5 +12,5 @@ import javax.persistence.EntityManager;
 public interface EntityObject extends Serializable {
 	public Long getId();
 	
-	public void save(EntityManager em);
+	public EntityObject save(EntityManager em);
 }
