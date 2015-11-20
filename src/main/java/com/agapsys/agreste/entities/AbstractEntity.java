@@ -6,6 +6,12 @@
 
 package com.agapsys.agreste.entities;
 
-import com.agapsys.web.action.dispatcher.SessionUser;
+import javax.persistence.EntityManager;
 
-public abstract class AbstractUser extends AbstractEntity implements SessionUser {}
+public abstract class AbstractEntity implements EntityObject {
+
+	@Override
+	public void save(EntityManager em) {
+		em.persist(this);
+	}
+}
