@@ -6,6 +6,7 @@
 
 package com.agapsys.agreste.entities;
 
+import com.agapsys.jpa.AbstractEntity;
 import com.agapsys.web.action.dispatcher.SessionUser;
 
 public abstract class AbstractUser extends AbstractEntity implements SessionUser {}

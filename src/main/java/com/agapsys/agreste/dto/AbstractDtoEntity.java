@@ -6,7 +6,7 @@
 
 package com.agapsys.agreste.dto;
 
-import com.agapsys.agreste.entities.EntityObject;
+import com.agapsys.jpa.EntityObject;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -52,9 +52,9 @@ public abstract class AbstractDtoEntity extends AbstractDto {
 		}
 	}
 	
-	public static Collection<Long> getIdCollection(Collection<? extends EntityObject> entityCollection) {
+	public static Collection<Object> getIdCollection(Collection<? extends EntityObject> entityCollection) {
 		try {
-			Collection<Long> destCollection = entityCollection.getClass().newInstance();
+			Collection<Object> destCollection = entityCollection.getClass().newInstance();
 			
 			for (EntityObject entityObject : entityCollection) {
 				destCollection.add(entityObject.getId());
@@ -73,7 +73,7 @@ public abstract class AbstractDtoEntity extends AbstractDto {
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================	
-	public Long id = null;
+	public Object id = null;
 	
 	public AbstractDtoEntity() {}
 	
