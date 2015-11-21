@@ -73,13 +73,13 @@ public abstract class AbstractEntityDto extends AbstractDto {
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================	
-	public Long id = null;
+	public Object id = null;
 	
 	public AbstractEntityDto() {}
 	
 	public AbstractEntityDto(EntityObject obj) {
 		if (obj != null) {
-			this.id = (Long) obj.getId();
+			this.id = obj.getId();
 		}
 	}
 	// =========================================================================
