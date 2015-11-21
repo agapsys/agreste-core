@@ -6,7 +6,7 @@
 
 package com.agapsys.agrest.dto;
 
-import com.agapsys.agreste.dto.AbstractDto;
+import com.agapsys.agreste.dto.AbstractDtoObject;
 import com.agapsys.agreste.dto.DtoRequired;
 import com.agapsys.agreste.dto.DtoValidationException;
 import org.junit.Assert;
@@ -14,12 +14,12 @@ import org.junit.Test;
 
 public class AbstractDtoTest {
 	// CLASS SCOPE =============================================================
-	public static class OptionalDto extends AbstractDto {
+	public static class OptionalDto extends AbstractDtoObject {
 		public Integer intField;
 		public String strField;
 	}
 	
-	public static class RequiredDto extends AbstractDto {
+	public static class RequiredDto extends AbstractDtoObject {
 		@DtoRequired
 		public Integer intField;
 		
@@ -27,14 +27,14 @@ public class AbstractDtoTest {
 		public String strField;
 	}
 	
-	public static class PartiallyRequiredDto1 extends AbstractDto {
+	public static class PartiallyRequiredDto1 extends AbstractDtoObject {
 		public Integer intField;
 		
 		@DtoRequired
 		public String strField;
 	}
 	
-	public static class PartiallyRequiredDto2 extends AbstractDto {
+	public static class PartiallyRequiredDto2 extends AbstractDtoObject {
 		public Integer intField;
 		
 		@DtoRequired(acceptEmpty = true)
@@ -42,13 +42,13 @@ public class AbstractDtoTest {
 	}
 	
 	
-	public static class InnerDto extends AbstractDto {
+	public static class InnerDto extends AbstractDtoObject {
 		public String strField;
 		
 		public RequiredDto requiredDto;
 	}
 	
-	public static class ComplexDto extends AbstractDto {
+	public static class ComplexDto extends AbstractDtoObject {
 		private int intField;
 		
 		public InnerDto innerDto;
