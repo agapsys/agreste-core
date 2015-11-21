@@ -13,17 +13,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public abstract class AbstractDtoEntity extends AbstractDto {
+public abstract class AbstractEntityDto extends AbstractDto {
 	// CLASS SCOPE =============================================================
 	public static interface EntityCollectionFilter<T extends EntityObject> {
 		public boolean isAccepted(T entityObject);
 	}
 	
-	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection) {
+	public static <T extends AbstractEntityDto> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection) {
 		return getDtoCollection(dtoClass, entityCollection, null);
 	}
 	
-	public static <T extends AbstractDtoEntity> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection, EntityCollectionFilter filter) {
+	public static <T extends AbstractEntityDto> Collection<T> getDtoCollection(Class<T> dtoClass, Collection<? extends EntityObject> entityCollection, EntityCollectionFilter filter) {
 		try {
 			Collection<T> destCollection;
 			
@@ -75,11 +75,17 @@ public abstract class AbstractDtoEntity extends AbstractDto {
 	// INSTANCE SCOPE ==========================================================	
 	public Object id = null;
 	
-	public AbstractDtoEntity() {}
+	public AbstractEntityDto() {}
 	
-	public AbstractDtoEntity(EntityObject obj) {
+	public AbstractEntityDto(EntityObject obj) {
 		if (obj != null) {
 			this.id = obj.getId();
+		}
+	}
+	
+	public AbstractEntityDto(EntityObject obj, Class<?> idClass) {
+		if (obj != null) {
+			this.id = idClass.cast(obj.getId());
 		}
 	}
 	// =========================================================================
