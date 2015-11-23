@@ -7,8 +7,9 @@
 package com.agapsys.agreste.services;
 
 import com.agapsys.web.toolkit.BadRequestException;
+import com.agapsys.web.toolkit.ClientException;
 
-public class InvalidDataException extends ServiceException {
+public class InvalidDataException extends ClientException {
 	
 	// CLASS SCOPE =============================================================
 	public static final int CODE = BadRequestException.CODE;

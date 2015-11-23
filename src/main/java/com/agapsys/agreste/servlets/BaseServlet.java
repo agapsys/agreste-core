@@ -7,7 +7,6 @@
 package com.agapsys.agreste.servlets;
 
 import com.agapsys.agreste.entities.AbstractUser;
-import com.agapsys.agreste.services.ServiceException;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
@@ -15,6 +14,7 @@ import com.agapsys.web.toolkit.AbstractExceptionReporterModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.AbstractWebApplication.LogType;
 import com.agapsys.web.toolkit.BadRequestException;
+import com.agapsys.web.toolkit.ClientException;
 import com.agapsys.web.toolkit.GsonSerializer;
 import com.agapsys.web.toolkit.HttpUtils;
 import com.agapsys.web.toolkit.Module;
@@ -43,17 +43,11 @@ public abstract class BaseServlet extends TransactionalServlet {
 	public boolean onError(HttpExchange exchange, Throwable t) {
 		super.onError(exchange, t); // <-- closes JpaTransaction associated with the request
 
-		if (t instanceof BadRequestException || t instanceof ServiceException) {
+		if (t instanceof ClientException) {
 			HttpServletResponse resp = exchange.getResponse();
 			logRequest(exchange, LogType.WARNING, t.getMessage());
 			
-			int code;
-			
-			if (t instanceof BadRequestException) {
-				code = ((BadRequestException)t).getCode();
-			} else {
-				code = ((ServiceException)t).getCode();
-			}
+			int code = ((ClientException)t).getCode();
 			
 			try {
 				resp.setStatus(code);

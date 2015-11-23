@@ -6,7 +6,9 @@
 
 package com.agapsys.agreste.services;
 
-public class RateLimitingException extends ServiceException {
+import com.agapsys.web.toolkit.ClientException;
+
+public class RateLimitingException extends ClientException {
 	
 	// CLASS SCOPE =============================================================
 	public static final int CODE = 429;
