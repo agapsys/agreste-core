@@ -274,7 +274,6 @@ public class ParamObjectSerializer implements ObjectSerializer {
 		return getObject(getFieldMap(str), targetClass);
 	}
 	
-	
 	public String toString(Object object) {		
 		if (object == null)
 			throw new IllegalArgumentException("Null object");
