@@ -6,6 +6,7 @@
 
 package com.agapsys.agreste.servlets;
 
+import com.agapsys.agreste.dto.MapSerializer;
 import com.agapsys.agreste.entities.AbstractUser;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
@@ -21,6 +22,8 @@ import com.agapsys.web.toolkit.Module;
 import com.agapsys.web.toolkit.ObjectSerializer;
 import com.agapsys.web.toolkit.Service;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,13 +34,35 @@ public abstract class BaseServlet extends TransactionalServlet {
 
 		@Override
 		protected ObjectSerializer getLazyInstance(Object... params) {
-			return _getSerializer();
+			return _getObjectSerializer();
 		}
 	};
+	private final LazyInitializer<MapSerializer> mapSerializer = new LazyInitializer<MapSerializer>() {
+
+		@Override
+		protected MapSerializer getLazyInstance(Object... params) {
+			return _getMapSerializer();
+		}
+		
+	};
 	
-	protected ObjectSerializer _getSerializer() {
+	
+	protected MapSerializer _getMapSerializer() {
+		return new MapSerializer();
+	}
+	
+	protected final MapSerializer getMapSerializer() {
+		return mapSerializer.getInstance();
+	}
+	
+	protected ObjectSerializer _getObjectSerializer() {
 		return new GsonSerializer();
 	}
+	
+	protected final ObjectSerializer getObjectSerializer() {
+		return objectSerializer.getInstance();
+	}
+	
 	
 	@Override
 	public boolean onError(HttpExchange exchange, Throwable t) {
@@ -80,46 +105,56 @@ public abstract class BaseServlet extends TransactionalServlet {
 	}
 
 	
-	protected <T extends Module> T getModule(Class<T> moduleClass) {
+	public <T extends Module> T getModule(Class<T> moduleClass) {
 		return AbstractWebApplication.getRunningInstance().getModule(moduleClass);
 	}
 	
-	protected <T extends Service> T getService(Class<T> serviceClass) {
+	public <T extends Service> T getService(Class<T> serviceClass) {
 		return AbstractWebApplication.getRunningInstance().getService(serviceClass);
 	}
 	
 	
-	protected String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
+	public String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
 		return HttpUtils.getOptionalParameter(exchange.getRequest(), paramName, defaultValue);
 	}
 	
-	protected String getMandatoryParamter(HttpExchange exchange, String paramName) throws BadRequestException {
+	public String getMandatoryParamter(HttpExchange exchange, String paramName) throws BadRequestException {
 		return HttpUtils.getMandatoryParamter(exchange.getRequest(), paramName);
 	}
 	
+	public <T> T getParameterDto(HttpExchange exchange, Class<T> dtoClass) {
+		Map<String, String> fieldMap = new LinkedHashMap<>();
+		
+		for (Map.Entry<String, String[]> entry : exchange.getRequest().getParameterMap().entrySet()) {
+			fieldMap.put(entry.getKey(), entry.getValue()[0]);
+		}
+		
+		return mapSerializer.getInstance().getObject(fieldMap, dtoClass);
+	}
 	
-	protected <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
+	
+	public <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
 		return objectSerializer.getInstance().readObject(exchange.getRequest(), targetClass);
 	}
 	
-	protected void writeObject(HttpExchange exchange, Object object) {
+	public void writeObject(HttpExchange exchange, Object object) {
 		objectSerializer.getInstance().writeObject(exchange.getResponse(), object);
 	}
 	
 	
-	protected AbstractUser getSessionUser(HttpExchange exchange) {
+	public AbstractUser getSessionUser(HttpExchange exchange) {
 		return (AbstractUser) exchange.getSessionUser();
 	}
 	
-	protected void setSessionUser(HttpExchange exchange, AbstractUser user) {
+	public void setSessionUser(HttpExchange exchange, AbstractUser user) {
 		getUserManager().setSessionUser(exchange, user);
 	}
 	
-	protected void clearSessionUser(HttpExchange exchange) {
+	public void clearSessionUser(HttpExchange exchange) {
 		getUserManager().clearSessionUser(exchange);
 	}
 		
-	protected String getLogMessage(HttpExchange exchange, String message) {
+	public String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
 		AbstractUser sessionUser = getSessionUser(exchange);
@@ -140,7 +175,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 		return finalMessage;
 	}
 
-	protected void logRequest(HttpExchange exchange, LogType logType, String message) {
+	public void logRequest(HttpExchange exchange, LogType logType, String message) {
 		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
 		AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
 	}
