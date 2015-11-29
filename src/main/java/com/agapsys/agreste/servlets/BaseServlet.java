@@ -122,14 +122,18 @@ public abstract class BaseServlet extends TransactionalServlet {
 		return HttpUtils.getMandatoryParamter(exchange.getRequest(), paramName);
 	}
 	
-	public <T> T getParameterDto(HttpExchange exchange, Class<T> dtoClass) {
+	public <T> T getParameterDto(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
 		Map<String, String> fieldMap = new LinkedHashMap<>();
 		
 		for (Map.Entry<String, String[]> entry : exchange.getRequest().getParameterMap().entrySet()) {
 			fieldMap.put(entry.getKey(), entry.getValue()[0]);
 		}
 		
-		return mapSerializer.getInstance().getObject(fieldMap, dtoClass);
+		try {
+			return mapSerializer.getInstance().getObject(fieldMap, dtoClass);
+		} catch (MapSerializer.SerializerException ex) {
+			throw new BadRequestException("Cannot read parameters");
+		}
 	}
 	
 	

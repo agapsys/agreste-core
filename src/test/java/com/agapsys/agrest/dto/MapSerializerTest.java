@@ -7,6 +7,7 @@
 package com.agapsys.agrest.dto;
 
 import com.agapsys.agreste.dto.MapSerializer;
+import com.agapsys.agreste.dto.MapSerializer.SerializerException;
 import com.agapsys.agreste.servlets.BaseServlet;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
@@ -14,6 +15,7 @@ import com.agapsys.sevlet.test.ApplicationContext;
 import com.agapsys.sevlet.test.ServletContainer;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
+import com.agapsys.web.toolkit.BadRequestException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -181,7 +183,7 @@ public class MapSerializerTest {
 			return sb.toString();
 		}
 		
-		public <T> T getObject(String str, Class<T> targetClass) {
+		public <T> T getObject(String str, Class<T> targetClass) throws SerializerException {
 			Map<String, String> fieldMap = new LinkedHashMap<>();
 		
 			String[] tokens = str.split(Pattern.quote("&"));
@@ -210,7 +212,7 @@ public class MapSerializerTest {
 		}
 		
 		@WebAction(mapping = "/get")
-		public void onGet(HttpExchange exchange) throws IOException {
+		public void onGet(HttpExchange exchange) throws IOException, BadRequestException {
 			TestDto dto = getParameterDto(exchange, TestDto.class);
 			CustomMapSerializer mapSerializer = (CustomMapSerializer) getMapSerializer();
 			exchange.getResponse().getWriter().print(mapSerializer.toString(dto));
@@ -232,7 +234,7 @@ public class MapSerializerTest {
 
 	// INSTANCE SCOPE ==========================================================
 	@Test
-	public void customSerializerTest() {
+	public void customSerializerTest() throws SerializerException {
 		CustomMapSerializer mapSerializer = new CustomMapSerializer();
 		mapSerializer.registerSerializer(UUID.class, new UUIDFieldSerializer());
 		
@@ -248,7 +250,7 @@ public class MapSerializerTest {
 	}
 	
 	@Test
-	public void stringSerializationTest() {
+	public void stringSerializationTest() throws SerializerException {
 		CustomMapSerializer mapSerializer = new CustomMapSerializer();
 		TestDto dto = new TestDto();
 		dto.strField = "Hello World! áéíóú";

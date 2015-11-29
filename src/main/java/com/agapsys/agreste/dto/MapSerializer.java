@@ -21,10 +21,19 @@ import java.util.Map;
 public class MapSerializer {
 	
 	// CLASS SCOPE =============================================================
+	public static class SerializerException extends Exception {
+
+		public SerializerException() {}
+		
+		public SerializerException(String message, Object...args) {
+			super(String.format(message, args));
+		}
+	}
+	
 	public static interface FieldSerializer<T> {
 		public String toString(T srcObject);
 
-		public T getObject(String str);
+		public T getObject(String str) throws SerializerException;
 	}
 	
 	public abstract static class DefaultFieldSerializer<T> implements FieldSerializer<T> {
@@ -49,7 +58,7 @@ public class MapSerializer {
 		
 
 		@Override
-		public String getObject(String str) {
+		public String getObject(String str) throws SerializerException {
 			try {
 				return URLDecoder.decode(str, "utf-8");
 			} catch (UnsupportedEncodingException ex) {
@@ -61,8 +70,20 @@ public class MapSerializer {
 	public static class BooleanSerializer extends DefaultFieldSerializer<Boolean> {
 
 		@Override
-		public Boolean getObject(String str) {
-			return Boolean.parseBoolean(str);
+		public Boolean getObject(String str) throws SerializerException {
+			if (str == null || str.trim().isEmpty())
+				return null;
+			
+			switch (str) {
+				case "true":
+					return true;
+					
+				case "false":
+					return false;
+					
+				default:
+					throw new SerializerException("Invalid boolean value: %s", str);
+			}
 		}
 		
 	}
@@ -70,8 +91,15 @@ public class MapSerializer {
 	public static class ShortSerializer extends DefaultFieldSerializer<Short> {
 
 		@Override
-		public Short getObject(String str) {
-			return Short.parseShort(str);
+		public Short getObject(String str) throws SerializerException {
+			if (str == null || str.trim().isEmpty())
+				return null;
+			
+			try {
+				return Short.parseShort(str);
+			} catch (NumberFormatException ex) {
+				throw new SerializerException(ex.getMessage());
+			}
 		}
 		
 	}
@@ -79,8 +107,15 @@ public class MapSerializer {
 	public static class IntegerSerializer extends DefaultFieldSerializer<Integer> {
 
 		@Override
-		public Integer getObject(String str) {
-			return Integer.parseInt(str);
+		public Integer getObject(String str) throws SerializerException {
+			if (str == null || str.trim().isEmpty())
+				return null;
+			
+			try {
+				return Integer.parseInt(str);
+			} catch (NumberFormatException ex) {
+				throw new SerializerException(ex.getMessage());
+			}
 		}
 		
 	}
@@ -88,8 +123,15 @@ public class MapSerializer {
 	public static class LongSerializer extends DefaultFieldSerializer<Long> {
 
 		@Override
-		public Long getObject(String str) {
-			return Long.parseLong(str);
+		public Long getObject(String str) throws SerializerException {
+			if (str == null || str.trim().isEmpty())
+				return null;
+			
+			try {
+				return Long.parseLong(str);
+			} catch (NumberFormatException ex) {
+				throw new SerializerException(ex.getMessage());
+			}
 		}
 		
 	}
@@ -97,8 +139,15 @@ public class MapSerializer {
 	public static class FloatSerializer extends DefaultFieldSerializer<Float> {
 
 		@Override
-		public Float getObject(String str) {
-			return Float.parseFloat(str);
+		public Float getObject(String str) throws SerializerException {
+			if (str == null || str.trim().isEmpty())
+				return null;
+			
+			try {
+				return Float.parseFloat(str);
+			} catch (NumberFormatException ex) {
+				throw new SerializerException(ex.getMessage());
+			}
 		}
 		
 	}
@@ -106,8 +155,15 @@ public class MapSerializer {
 	public static class DoubleSerializer extends DefaultFieldSerializer<Double> {
 
 		@Override
-		public Double getObject(String str) {
-			return Double.parseDouble(str);
+		public Double getObject(String str) throws SerializerException {
+			if (str == null || str.trim().isEmpty())
+				return null;
+			
+			try {
+				return Double.parseDouble(str);
+			} catch (NumberFormatException ex) {
+				throw new SerializerException(ex.getMessage());
+			}
 		}
 		
 	}
@@ -115,8 +171,15 @@ public class MapSerializer {
 	public static class BigDecimalSerializer extends DefaultFieldSerializer<BigDecimal> {
 
 		@Override
-		public BigDecimal getObject(String str) {
-			return new BigDecimal(str);
+		public BigDecimal getObject(String str) throws SerializerException {
+			if (str == null || str.trim().isEmpty())
+				return null;
+			
+			try {
+				return new BigDecimal(str);
+			} catch (Exception ex) {
+				throw new SerializerException(ex.getMessage());
+			}
 		}
 		
 	}
@@ -136,11 +199,14 @@ public class MapSerializer {
 		}
 		
 		@Override
-		public Date getObject(String str) {
+		public Date getObject(String str) throws SerializerException {
+			if (str == null || str.trim().isEmpty())
+				return null;
+			
 			try {
 				return sdf.getInstance().parse(str);
 			} catch (ParseException ex) {
-				throw new RuntimeException(ex);
+				throw new SerializerException(ex.getMessage());
 			}
 		}
 		
@@ -202,7 +268,7 @@ public class MapSerializer {
 	}
 	
 	
-	public <T> T getObject(Map<String, String> fieldMap, Class<T> targetClass) {
+	public <T> T getObject(Map<String, String> fieldMap, Class<T> targetClass) throws SerializerException {
 		if (targetClass == null)
 			throw new IllegalArgumentException("Null target class");
 		
