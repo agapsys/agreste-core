@@ -9,8 +9,15 @@ package com.agapsys.agreste.dto;
 public class DtoValidationException extends RuntimeException {
 	private final String fieldName;
 
-	DtoValidationException(String fieldName) {
-		super("Required field: " + fieldName);
+	public DtoValidationException(String fieldName) {
+		this(fieldName, "Required field: %s", fieldName);
+	}
+	
+	public DtoValidationException(String fieldName, String message, Object...args) {
+		super(String.format(message, args));
+		if (fieldName == null || fieldName.trim().isEmpty())
+			throw new IllegalArgumentException("Null/Empty field name");
+		
 		this.fieldName = fieldName;
 	}
 
