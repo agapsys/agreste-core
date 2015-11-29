@@ -16,8 +16,8 @@ public class InvalidDataException extends ClientException {
 	// =========================================================================
 
 	// INSTANCE SCOPE ==========================================================
-	public InvalidDataException(String message) {
-		super(CODE, message);
+	public InvalidDataException(String message, Object...args) {
+		super(CODE, message, args);
 	}
 	// =========================================================================
 

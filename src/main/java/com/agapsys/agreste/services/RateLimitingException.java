@@ -15,8 +15,8 @@ public class RateLimitingException extends ClientException {
 	// =========================================================================
 
 	// INSTANCE SCOPE ==========================================================
-	public RateLimitingException(String message) {
-		super(CODE, message);
+	public RateLimitingException(String message, Object...args) {
+		super(CODE, message, args);
 	}
 	// =========================================================================
 	
