@@ -26,7 +26,7 @@ public class MapSerializer {
 		public SerializerException() {}
 		
 		public SerializerException(String message, Object...args) {
-			super(String.format(message, args));
+			super(args.length > 0 ? String.format(message, args) : message);
 		}
 	}
 	

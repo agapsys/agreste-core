@@ -39,7 +39,10 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 		FormatEscapeBuilder feb = new FormatEscapeBuilder().setFgColor(fgColor);
 		String logTypeStr = feb.escape(String.format("[%s]", logType.name()));		
 		
-		Console.printlnf("%s %s %s", DateUtils.getLocalTimestamp(), logTypeStr, String.format(message, args));
+		if (args.length > 0)
+			message = String.format(message, args);
+		
+		Console.printlnf("%s %s %s", DateUtils.getLocalTimestamp(), logTypeStr, message);
 	}
 	
 	@Override

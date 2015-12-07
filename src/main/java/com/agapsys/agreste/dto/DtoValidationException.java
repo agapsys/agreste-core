@@ -14,7 +14,8 @@ public class DtoValidationException extends RuntimeException {
 	}
 	
 	public DtoValidationException(String fieldName, String message, Object...args) {
-		super(String.format(message, args));
+		super(args.length > 0 ? String.format(message, args) : message);
+		
 		if (fieldName == null || fieldName.trim().isEmpty())
 			throw new IllegalArgumentException("Null/Empty field name");
 		
