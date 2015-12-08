@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agreste.entities;
+package com.agapsys.agreste.model;
 
 import com.agapsys.jpa.AbstractEntity;
 import com.agapsys.web.action.dispatcher.SessionUser;

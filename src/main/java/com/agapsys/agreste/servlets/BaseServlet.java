@@ -7,7 +7,7 @@
 package com.agapsys.agreste.servlets;
 
 import com.agapsys.agreste.dto.MapSerializer;
-import com.agapsys.agreste.entities.AbstractUser;
+import com.agapsys.agreste.model.AbstractUser;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
