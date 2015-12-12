@@ -8,7 +8,6 @@ package com.agapsys.agreste.servlets;
 
 import com.agapsys.agreste.dto.MapSerializer;
 import com.agapsys.agreste.model.LoggedUser;
-import com.agapsys.web.action.dispatcher.ApplicationUser;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
@@ -162,7 +161,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 	public String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
-		ApplicationUser sessionUser = getLoggedUser(exchange);
+		LoggedUser loggedUser = getLoggedUser(exchange);
 		
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)
@@ -173,7 +172,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 			requestUrl,
 			HttpUtils.getOriginIp(req),
 			HttpUtils.getOriginUserAgent(req),
-			sessionUser instanceof LoggedUser ? "" + ((LoggedUser) sessionUser).getId() : "none",
+			loggedUser != null ? "" + loggedUser.getId() : "none",
 			message != null && !message.trim().isEmpty() ? "\n\n" + message : ""
 		);
 		
