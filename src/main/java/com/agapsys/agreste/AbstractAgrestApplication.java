@@ -10,8 +10,7 @@ import com.agapsys.utils.console.Console;
 import com.agapsys.utils.console.ConsoleColor;
 import com.agapsys.utils.console.FormatEscapeBuilder;
 import com.agapsys.web.toolkit.AbstractWebApplication;
-import com.agapsys.web.toolkit.AbstractWebApplication.LogType;
-import static com.agapsys.web.toolkit.AbstractWebApplication.LogType.ERROR;
+import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.utils.DateUtils;
 import java.util.logging.Level;
 
