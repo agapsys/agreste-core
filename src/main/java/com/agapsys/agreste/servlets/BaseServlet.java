@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class BaseServlet extends TransactionalServlet {
+	
 	private final LazyInitializer<ObjectSerializer> objectSerializer = new LazyInitializer<ObjectSerializer>() {
 
 		@Override
@@ -183,5 +184,4 @@ public abstract class BaseServlet extends TransactionalServlet {
 		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
 		AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
 	}
-	// =========================================================================
 }
