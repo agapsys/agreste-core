@@ -7,9 +7,12 @@
 package com.agapsys.agreste.servlets;
 
 import com.agapsys.agreste.dto.MapSerializer;
-import com.agapsys.agreste.model.AbstractUser;
+import com.agapsys.agreste.model.LoggedUser;
+import com.agapsys.agreste.model.UnloggedUser;
+import com.agapsys.web.action.dispatcher.DefaultHttpExchange;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
+import com.agapsys.web.action.dispatcher.SessionUser;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
 import com.agapsys.web.toolkit.AbstractExceptionReporterModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
@@ -29,6 +32,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class BaseServlet extends TransactionalServlet {
+	// CLASS SCOPE =============================================================
+	public static final String SESSION_ATTR_UNLOGGED_USER = "com.agapsys.agreste.unloggedUser";
+	// =========================================================================
 
 	private final LazyInitializer<ObjectSerializer> objectSerializer = new LazyInitializer<ObjectSerializer>() {
 
@@ -144,24 +150,50 @@ public abstract class BaseServlet extends TransactionalServlet {
 	public void writeObject(HttpExchange exchange, Object object) {
 		objectSerializer.getInstance().writeObject(exchange.getResponse(), object);
 	}
-	
-	
-	public AbstractUser getSessionUser(HttpExchange exchange) {
-		return (AbstractUser) exchange.getSessionUser();
+
+	@Override
+	protected HttpExchange getHttpExchange(final HttpServletRequest req, HttpServletResponse resp) {
+		return new DefaultHttpExchange(this, req, resp) {
+
+			@Override
+			public SessionUser getSessionUser() {
+				SessionUser sessionUser = super.getSessionUser();
+				
+				if (sessionUser == null)
+					sessionUser = (SessionUser) req.getSession().getAttribute(SESSION_ATTR_UNLOGGED_USER);
+				
+				if (sessionUser == null) {
+					sessionUser = new UnloggedUser();
+					req.getSession().setAttribute(SESSION_ATTR_UNLOGGED_USER, sessionUser);
+				} else {
+					((UnloggedUser) sessionUser).registerRequest();
+				}
+				
+				return sessionUser;
+			}
+		};
 	}
 	
-	public void setSessionUser(HttpExchange exchange, AbstractUser user) {
+	
+	public SessionUser getSessionUser(HttpExchange exchange) {
+		return exchange.getSessionUser();
+	}
+	
+	public void setSessionUser(HttpExchange exchange, LoggedUser user) {
 		getUserManager().setSessionUser(exchange, user);
+		exchange.getRequest().getSession().removeAttribute(SESSION_ATTR_UNLOGGED_USER);
 	}
 	
 	public void clearSessionUser(HttpExchange exchange) {
 		getUserManager().clearSessionUser(exchange);
+		exchange.getRequest().getSession().removeAttribute(SESSION_ATTR_UNLOGGED_USER);
 	}
-		
+	
+	
 	public String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
-		AbstractUser sessionUser = getSessionUser(exchange);
+		SessionUser sessionUser = getSessionUser(exchange);
 		
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)
@@ -172,7 +204,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 			requestUrl,
 			HttpUtils.getOriginIp(req),
 			HttpUtils.getOriginUserAgent(req),
-			sessionUser == null ? "none" : "" + sessionUser.getId(),
+			sessionUser instanceof LoggedUser ? "" + ((LoggedUser) sessionUser).getId() : "none",
 			message != null && !message.trim().isEmpty() ? "\n\n" + message : ""
 		);
 		
