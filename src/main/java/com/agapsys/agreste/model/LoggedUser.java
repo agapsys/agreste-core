@@ -7,6 +7,6 @@
 package com.agapsys.agreste.model;
 
 import com.agapsys.jpa.AbstractEntity;
-import com.agapsys.web.action.dispatcher.SessionUser;
+import com.agapsys.web.action.dispatcher.ApplicationUser;
 
-public abstract class LoggedUser extends AbstractEntity implements SessionUser {}
+public abstract class LoggedUser extends AbstractEntity implements ApplicationUser {}

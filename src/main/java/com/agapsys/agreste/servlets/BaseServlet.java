@@ -8,11 +8,9 @@ package com.agapsys.agreste.servlets;
 
 import com.agapsys.agreste.dto.MapSerializer;
 import com.agapsys.agreste.model.LoggedUser;
-import com.agapsys.agreste.model.UnloggedUser;
-import com.agapsys.web.action.dispatcher.DefaultHttpExchange;
+import com.agapsys.web.action.dispatcher.ApplicationUser;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
-import com.agapsys.web.action.dispatcher.SessionUser;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
 import com.agapsys.web.toolkit.AbstractExceptionReporterModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
@@ -32,10 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class BaseServlet extends TransactionalServlet {
-	// CLASS SCOPE =============================================================
-	public static final String SESSION_ATTR_UNLOGGED_USER = "com.agapsys.agreste.unloggedUser";
-	// =========================================================================
-
 	private final LazyInitializer<ObjectSerializer> objectSerializer = new LazyInitializer<ObjectSerializer>() {
 
 		@Override
@@ -71,7 +65,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 	
 	
 	@Override
-	public boolean onError(HttpExchange exchange, Throwable t) {
+	protected boolean onError(HttpExchange exchange, Throwable t) {
 		super.onError(exchange, t); // <-- closes JpaTransaction associated with the request
 
 		if (t instanceof ClientException) {
@@ -102,7 +96,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 	}
 
 	@Override
-	public void onNotAllowed(HttpExchange exchange) {
+	protected void onNotAllowed(HttpExchange exchange) {
 		super.onNotAllowed(exchange);
 		
 		if (exchange.getResponse().getStatus() == HttpServletResponse.SC_FORBIDDEN) {
@@ -150,50 +144,25 @@ public abstract class BaseServlet extends TransactionalServlet {
 	public void writeObject(HttpExchange exchange, Object object) {
 		objectSerializer.getInstance().writeObject(exchange.getResponse(), object);
 	}
-
-	@Override
-	protected HttpExchange getHttpExchange(final HttpServletRequest req, HttpServletResponse resp) {
-		return new DefaultHttpExchange(this, req, resp) {
-
-			@Override
-			public SessionUser getSessionUser() {
-				SessionUser sessionUser = super.getSessionUser();
-				
-				if (sessionUser == null)
-					sessionUser = (SessionUser) req.getSession().getAttribute(SESSION_ATTR_UNLOGGED_USER);
-				
-				if (sessionUser == null) {
-					sessionUser = new UnloggedUser();
-					req.getSession().setAttribute(SESSION_ATTR_UNLOGGED_USER, sessionUser);
-				} else {
-					((UnloggedUser) sessionUser).registerRequest();
-				}
-				
-				return sessionUser;
-			}
-		};
+	
+	
+	public LoggedUser getLoggedUser(HttpExchange exchange) {
+		return (LoggedUser) getUserManager().getUser(exchange);
 	}
 	
-	
-	public SessionUser getSessionUser(HttpExchange exchange) {
-		return exchange.getSessionUser();
+	public void registerLoggedUser(HttpExchange exchange, LoggedUser user) {
+		getUserManager().login(exchange, user);
 	}
 	
-	public void setSessionUser(HttpExchange exchange, LoggedUser user) {
-		getUserManager().setSessionUser(exchange, user);
-		exchange.getRequest().getSession().removeAttribute(SESSION_ATTR_UNLOGGED_USER);
-	}
-	
-	public void clearSessionUser(HttpExchange exchange) {
-		getUserManager().clearSessionUser(exchange);
-		exchange.getRequest().getSession().removeAttribute(SESSION_ATTR_UNLOGGED_USER);
+	public void unregisterLoggedUser(HttpExchange exchange) {
+		getUserManager().logout(exchange);
 	}
 	
 	
 	public String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
-		SessionUser sessionUser = getSessionUser(exchange);
+		ApplicationUser sessionUser = getLoggedUser(exchange);
 		
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)
