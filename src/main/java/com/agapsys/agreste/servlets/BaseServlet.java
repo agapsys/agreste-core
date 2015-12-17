@@ -63,7 +63,6 @@ public abstract class BaseServlet extends TransactionalServlet {
 		return objectSerializer.getInstance();
 	}
 	
-	
 	@Override
 	protected boolean onError(HttpExchange exchange, Throwable t) {
 		super.onError(exchange, t); // <-- closes JpaTransaction associated with the request

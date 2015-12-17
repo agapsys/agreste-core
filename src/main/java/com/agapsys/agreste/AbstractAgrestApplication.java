@@ -15,6 +15,26 @@ import com.agapsys.web.toolkit.utils.DateUtils;
 import java.util.logging.Level;
 
 public abstract class AbstractAgrestApplication extends AbstractWebApplication {
+	// CLASS SCOPE =============================================================
+	public static final String KEY_ABUSE_INTERVAL    = "com.agapsys.agreste.abuseInterval";
+	public static final String KEY_ABUSE_COUNT_LIMIT = "com.agapsys.agreste.abuseCountLimit";
+	
+	public static final long DEFAULT_ABUSE_INTERVAL    = 2000; // 2 seconds
+	public static final int  DEFAULT_ABUSE_COUNT_LIMIT = 10;
+	// =========================================================================
+	
+	// INSTANCE SCOPE ==========================================================
+	private long abuseInterval;
+	private int abuseCountLimit;
+
+	protected long getDefaultAbuseInterval() {
+		return DEFAULT_ABUSE_INTERVAL;
+	}
+	
+	protected int getDefaultAbuseCountLimit() {
+		return abuseCountLimit;
+	}
+	
 	@Override
 	public void log(LogType logType, String message, Object... args) {
 		ConsoleColor fgColor;
@@ -50,6 +70,43 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 		
 		super.beforeApplicationStart();
 	}
+
+	@Override
+	protected void afterApplicationStart() {
+		super.afterApplicationStart();
+		
+		String errFormatStr = "Invalid value for %s: %s";
+		
+		String abuseCheckIntervalStr = getProperties().getProperty(KEY_ABUSE_INTERVAL, "" + getDefaultAbuseInterval());
+		String abuseLimitStr = getProperties().getProperty(KEY_ABUSE_COUNT_LIMIT, "" + getDefaultAbuseCountLimit());
+		
+		try {
+			abuseInterval = Long.parseLong(abuseCheckIntervalStr);
+		} catch (NumberFormatException ex) {
+			throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_INTERVAL, abuseCheckIntervalStr));
+		}
+		
+		try {
+			abuseCountLimit = Integer.parseInt(abuseLimitStr);
+		} catch (NumberFormatException ex) {
+			throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_COUNT_LIMIT, abuseLimitStr));
+		}
+		
+		
+		if (abuseInterval < 1)
+			throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_INTERVAL, abuseInterval));
+		
+		if (abuseCountLimit < 1)
+			throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_COUNT_LIMIT, abuseCountLimit));
+	}
+
+	public long getAbuseInterval() {
+		return abuseInterval;
+	}
+	
+	public int getAbuseCountLimit() {
+		return abuseCountLimit;
+	}
 	
 	/**
 	 * Return hibernate logging level.
@@ -58,4 +115,5 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 	protected Level getHibernateLogLevel() {
 		return Level.OFF;
 	}
+	// =========================================================================
 }
