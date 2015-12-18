@@ -12,28 +12,24 @@ import com.agapsys.utils.console.FormatEscapeBuilder;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.utils.DateUtils;
+import java.util.Properties;
 import java.util.logging.Level;
 
 public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 	// CLASS SCOPE =============================================================
-	public static final String KEY_ABUSE_INTERVAL    = "com.agapsys.agreste.abuseInterval";
-	public static final String KEY_ABUSE_COUNT_LIMIT = "com.agapsys.agreste.abuseCountLimit";
+	public static final String KEY_ABUSE_INTERVAL      = "com.agapsys.agreste.abuseInterval";
+	public static final String KEY_ABUSE_COUNT_LIMIT   = "com.agapsys.agreste.abuseCountLimit";
+	public static final String KEY_ABUSE_CHECK_ENABLED = "com.agapsys.agreste.abuseCheckEnabled";
 	
-	public static final long DEFAULT_ABUSE_INTERVAL    = 2000; // 2 seconds
-	public static final int  DEFAULT_ABUSE_COUNT_LIMIT = 10;
+	public static final boolean DEFAULT_ABUSE_CHECK_ENABLED = true;
+	public static final long    DEFAULT_ABUSE_INTERVAL      = 2000; // 2 seconds
+	public static final int     DEFAULT_ABUSE_COUNT_LIMIT   = 10;
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================
 	private long abuseInterval;
 	private int abuseCountLimit;
-
-	protected long getDefaultAbuseInterval() {
-		return DEFAULT_ABUSE_INTERVAL;
-	}
-	
-	protected int getDefaultAbuseCountLimit() {
-		return abuseCountLimit;
-	}
+	private boolean abuseCheckEnabled;
 	
 	@Override
 	public void log(LogType logType, String message, Object... args) {
@@ -77,8 +73,17 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 		
 		String errFormatStr = "Invalid value for %s: %s";
 		
-		String abuseCheckIntervalStr = getProperties().getProperty(KEY_ABUSE_INTERVAL, "" + getDefaultAbuseInterval());
-		String abuseLimitStr = getProperties().getProperty(KEY_ABUSE_COUNT_LIMIT, "" + getDefaultAbuseCountLimit());
+		Properties properties = getProperties();
+		
+		String abuseCheckEnabledStr  = properties.getProperty(KEY_ABUSE_CHECK_ENABLED, "" + DEFAULT_ABUSE_CHECK_ENABLED);
+		String abuseCheckIntervalStr = properties.getProperty(KEY_ABUSE_INTERVAL,      "" + DEFAULT_ABUSE_INTERVAL);
+		String abuseLimitStr         = properties.getProperty(KEY_ABUSE_COUNT_LIMIT,   "" + DEFAULT_ABUSE_COUNT_LIMIT);
+		
+		try {
+			abuseCheckEnabled = Boolean.parseBoolean(abuseCheckEnabledStr);
+		} catch (Exception ex) {
+			throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_CHECK_ENABLED, abuseCheckEnabledStr));
+		}
 		
 		try {
 			abuseInterval = Long.parseLong(abuseCheckIntervalStr);
@@ -92,7 +97,6 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 			throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_COUNT_LIMIT, abuseLimitStr));
 		}
 		
-		
 		if (abuseInterval < 1)
 			throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_INTERVAL, abuseInterval));
 		
@@ -100,12 +104,30 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 			throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_COUNT_LIMIT, abuseCountLimit));
 	}
 
+	@Override
+	protected Properties getDefaultProperties() {
+		Properties properties = super.getDefaultProperties();
+		if (properties == null)
+			properties = new Properties();
+		
+		properties.put(KEY_ABUSE_CHECK_ENABLED, "" + DEFAULT_ABUSE_CHECK_ENABLED);
+		properties.put(KEY_ABUSE_INTERVAL,      "" + DEFAULT_ABUSE_INTERVAL);
+		properties.put(KEY_ABUSE_COUNT_LIMIT,   "" + DEFAULT_ABUSE_COUNT_LIMIT);
+		
+		return properties;
+	}
+
+	
 	public long getAbuseInterval() {
 		return abuseInterval;
 	}
 	
 	public int getAbuseCountLimit() {
 		return abuseCountLimit;
+	}
+	
+	public boolean isAbuseCheckEnabled() {
+		return abuseCheckEnabled;
 	}
 	
 	/**
