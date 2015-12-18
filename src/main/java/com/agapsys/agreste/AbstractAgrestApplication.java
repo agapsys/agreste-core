@@ -110,9 +110,9 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 		if (properties == null)
 			properties = new Properties();
 		
-		properties.put(KEY_ABUSE_CHECK_ENABLED, "" + DEFAULT_ABUSE_CHECK_ENABLED);
-		properties.put(KEY_ABUSE_INTERVAL,      "" + DEFAULT_ABUSE_INTERVAL);
-		properties.put(KEY_ABUSE_COUNT_LIMIT,   "" + DEFAULT_ABUSE_COUNT_LIMIT);
+		properties.setProperty(KEY_ABUSE_CHECK_ENABLED, "" + DEFAULT_ABUSE_CHECK_ENABLED);
+		properties.setProperty(KEY_ABUSE_INTERVAL,      "" + DEFAULT_ABUSE_INTERVAL);
+		properties.setProperty(KEY_ABUSE_COUNT_LIMIT,   "" + DEFAULT_ABUSE_COUNT_LIMIT);
 		
 		return properties;
 	}
