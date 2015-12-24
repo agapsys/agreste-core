@@ -6,9 +6,9 @@
 
 package com.agapsys.agreste;
 
-import com.agapsys.utils.console.Console;
-import com.agapsys.utils.console.ConsoleColor;
-import com.agapsys.utils.console.FormatEscapeBuilder;
+import com.agapsys.utils.console.printer.ConsoleColor;
+import com.agapsys.utils.console.printer.ConsolePrinter;
+import com.agapsys.utils.console.printer.FormatEscapeBuilder;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.utils.DateUtils;
@@ -52,12 +52,12 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 				
 		}
 		FormatEscapeBuilder feb = new FormatEscapeBuilder().setFgColor(fgColor);
-		String logTypeStr = feb.escape(String.format("[%s]", logType.name()));		
+		String logTypeStr = feb.toString(String.format("[%s]", logType.name()));		
 		
 		if (args.length > 0)
 			message = String.format(message, args);
 		
-		Console.printlnf("%s %s %s", DateUtils.getLocalTimestamp(), logTypeStr, message);
+		ConsolePrinter.println("%s %s %s", DateUtils.getLocalTimestamp(), logTypeStr, message);
 	}
 	
 	@Override

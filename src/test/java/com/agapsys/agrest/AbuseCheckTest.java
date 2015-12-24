@@ -16,9 +16,9 @@ import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.sevlet.test.ApplicationContext;
 import com.agapsys.sevlet.test.ServletContainer;
 import com.agapsys.sevlet.test.StacktraceErrorHandler;
-import com.agapsys.utils.console.Console;
-import com.agapsys.utils.console.ConsoleColor;
-import com.agapsys.utils.console.FormatEscapeBuilder;
+import com.agapsys.utils.console.printer.ConsoleColor;
+import com.agapsys.utils.console.printer.ConsolePrinter;
+import com.agapsys.utils.console.printer.FormatEscapeBuilder;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -63,8 +63,8 @@ public class AbuseCheckTest {
 			message = String.format(message, args);
 		
 		FormatEscapeBuilder feb = new FormatEscapeBuilder().setFgColor(fgColor);
-		message = feb.escape(message);
-		Console.println(message);
+		message = feb.toString(message);
+		ConsolePrinter.println(message);
 	}
 	// -------------------------------------------------------------------------
 	
