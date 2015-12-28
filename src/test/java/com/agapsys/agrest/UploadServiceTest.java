@@ -12,12 +12,13 @@ import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.http.MultipartRequest.MultipartPost;
 import com.agapsys.sevlet.test.ServletContainer;
+import com.agapsys.sevlet.test.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.HttpMethod;
 import com.agapsys.web.action.dispatcher.WebAction;
-import com.agapsys.web.toolkit.SingletonManager;
 import com.agapsys.web.toolkit.BadRequestException;
+import com.agapsys.web.toolkit.SingletonManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class UploadServiceTest {
 
 	@Before
 	public void before() {
-		sc = ServletContainer.getInstance(UploadServlet.class);
+		sc = ServletContainerBuilder.getServletContainer(UploadServlet.class);
 		sc.startServer();
 	}
 

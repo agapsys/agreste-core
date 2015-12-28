@@ -11,8 +11,8 @@ import com.agapsys.agreste.dto.MapSerializer.SerializerException;
 import com.agapsys.agreste.servlets.BaseServlet;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
-import com.agapsys.sevlet.test.ApplicationContext;
 import com.agapsys.sevlet.test.ServletContainer;
+import com.agapsys.sevlet.test.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
 import com.agapsys.web.toolkit.BadRequestException;
@@ -261,10 +261,12 @@ public class MapSerializerTest {
 	
 	@Test
 	public void testServlet () {
-		ServletContainer sc = new ServletContainer();
-		ApplicationContext ac = new ApplicationContext();
-		ac.registerServlet(TestServlet.class);
-		sc.registerContext(ac);
+		ServletContainer sc = new ServletContainerBuilder()
+			.addRootContext()
+				.registerServlet(TestServlet.class)
+			.endContext()
+			.build();
+		
 		sc.startServer();
 		
 		HttpResponse.StringResponse resp = sc.doRequest(new HttpGet("/get?uuidField=%s&dateField=%s&strField=%s", "2|1", "2015-11-28", "Hello+World áéíóú"));

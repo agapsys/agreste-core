@@ -13,8 +13,8 @@ import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
 import com.agapsys.http.HttpResponse.StringResponse;
-import com.agapsys.sevlet.test.ApplicationContext;
 import com.agapsys.sevlet.test.ServletContainer;
+import com.agapsys.sevlet.test.ServletContainerBuilder;
 import com.agapsys.sevlet.test.StacktraceErrorHandler;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
@@ -142,13 +142,14 @@ public class AbuseCheckTest {
 	
 	@Before
 	public void before() {
-		sc = new ServletContainer();
-		ApplicationContext ctx = new ApplicationContext();
-		ctx.registerEventListener(new TestApplication());
-		ctx.registerServlet(TestServlet.class);
-		ctx.setErrorHandler(new StacktraceErrorHandler());
-		ctx.registerFilter(AbuseCheckFilter.class, "/*");
-		sc.registerContext(ctx);
+		sc = new ServletContainerBuilder()
+			.addRootContext()
+				.registerEventListener(new TestApplication())
+				.registerServlet(TestServlet.class)
+				.setErrorHandler(new StacktraceErrorHandler())
+				.registerFilter(AbuseCheckFilter.class, "/*")
+			.endContext()
+			.build();
 		
 		sc.startServer();
 		app = (TestApplication) TestApplication.getRunningInstance();

@@ -10,8 +10,8 @@ import com.agapsys.agreste.modules.CorsModule;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;
-import com.agapsys.sevlet.test.ApplicationContext;
 import com.agapsys.sevlet.test.ServletContainer;
+import com.agapsys.sevlet.test.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
@@ -69,12 +69,14 @@ public class CorsModuleTest {
 	
 	@Before
 	public void before() {
-		ApplicationContext context = new ApplicationContext();
-		context.registerEventListener(new TestApplication());
-		context.registerServlet(TestServlet.class);
 		
-		sc = new ServletContainer();
-		sc.registerContext(context);
+		sc = new ServletContainerBuilder()
+			.addRootContext()
+				.registerServlet(TestServlet.class)
+				.registerEventListener(new TestApplication())
+			.endContext()
+			.build();
+		
 		sc.startServer();
 	}
 	
