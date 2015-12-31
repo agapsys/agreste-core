@@ -7,6 +7,7 @@
 package com.agapsys.agreste.dto;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -48,6 +49,8 @@ public abstract class AbstractDtoObject {
 		Field[] fields = getClass().getDeclaredFields();
 		
 		for (Field field : fields) {
+			if (Modifier.isStatic(field.getModifiers()))
+				continue;
 			
 			field.setAccessible(true);
 			
