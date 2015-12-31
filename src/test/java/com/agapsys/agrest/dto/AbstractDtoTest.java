@@ -83,7 +83,7 @@ public class AbstractDtoTest {
 		}
 		
 		Assert.assertNotNull(validationError);
-		Assert.assertEquals("Required field: intField", validationError.getMessage());
+		Assert.assertEquals("intField: Required field", validationError.getMessage());
 		// ----------------------------
 		validationError = null;
 		dto.intField = 2;
@@ -95,7 +95,7 @@ public class AbstractDtoTest {
 		}
 		
 		Assert.assertNotNull(validationError);
-		Assert.assertEquals("Required field: strField", validationError.getMessage());
+		Assert.assertEquals("strField: Required field", validationError.getMessage());
 		// ----------------------------
 		validationError = null;
 		dto.strField = "";
@@ -107,7 +107,7 @@ public class AbstractDtoTest {
 		}
 		
 		Assert.assertNotNull(validationError);
-		Assert.assertEquals("Required field: strField", validationError.getMessage());
+		Assert.assertEquals("strField: Required field", validationError.getMessage());
 		// ----------------------------
 		validationError = null;
 		dto.strField = "test";
@@ -133,7 +133,7 @@ public class AbstractDtoTest {
 		}
 		
 		Assert.assertNotNull(validationError);
-		Assert.assertEquals("Required field: strField", validationError.getMessage());
+		Assert.assertEquals("strField: Required field", validationError.getMessage());
 		// ----------------------------
 		validationError = null;
 		dto.strField = "";
@@ -145,7 +145,7 @@ public class AbstractDtoTest {
 		}
 		
 		Assert.assertNotNull(validationError);
-		Assert.assertEquals("Required field: strField", validationError.getMessage());
+		Assert.assertEquals("strField: Required field", validationError.getMessage());
 		// ----------------------------
 		validationError = null;
 		dto.strField = "test";
@@ -171,7 +171,7 @@ public class AbstractDtoTest {
 		}
 		
 		Assert.assertNotNull(validationError);
-		Assert.assertEquals("Required field: strField", validationError.getMessage());
+		Assert.assertEquals("strField: Required field", validationError.getMessage());
 		// ----------------------------
 		validationError = null;
 		dto.strField = "";
@@ -219,7 +219,7 @@ public class AbstractDtoTest {
 		}
 		
 		Assert.assertNotNull(validationError);
-		Assert.assertEquals("Required field: innerDto.requiredDto.intField", validationError.getMessage());
+		Assert.assertEquals("innerDto.requiredDto.intField: Required field", validationError.getMessage());
 	}
 	// =========================================================================
 }
