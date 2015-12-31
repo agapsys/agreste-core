@@ -63,9 +63,8 @@ public abstract class AbstractDtoObject {
 							dtoField.validate();
 						} catch (DtoValidationException ex) {
 							String fullPathFieldName = String.format("%s.%s", field.getName(), ex.getFieldName());
-							String originalMessage = ex.getMessage().substring(ex.getMessage().indexOf(":") + 1).trim();
 							
-							throw new DtoValidationException(fullPathFieldName, originalMessage);
+							throw new DtoValidationException(fullPathFieldName, ex.getUnformattedMessage());
 						}
 					}
 				}

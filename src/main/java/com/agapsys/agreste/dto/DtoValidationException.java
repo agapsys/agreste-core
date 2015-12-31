@@ -7,23 +7,32 @@
 package com.agapsys.agreste.dto;
 
 public class DtoValidationException extends RuntimeException {
-	static String getErrMessage(String fieldName, String message, Object...msgArgs) {
-		return String.format("%s: %s", fieldName, msgArgs.length == 0 ? message : String.format(message, msgArgs));
-	}
-	
 	private final String fieldName;
+	private final String message;
 	
 	public DtoValidationException(String fieldName, String message, Object...msgArgs) {
-		super(getErrMessage(fieldName, message, msgArgs));
-		
 		if (fieldName == null || fieldName.trim().isEmpty())
 			throw new IllegalArgumentException("Null/Empty field name");
 		
 		this.fieldName = fieldName;
+		
+		if (message == null || message.trim().isEmpty())
+			throw new IllegalArgumentException("Null/Empty message");
+		
+		this.message = msgArgs.length == 0 ? message : String.format(message, msgArgs);
 	}
 	
 	public DtoValidationException(String fieldName) {
-		this(fieldName, "Required field", fieldName);
+		this(fieldName, "Required field");
+	}
+
+	String getUnformattedMessage() {
+		return message;
+	}
+	
+	@Override
+	public String getMessage() {
+		return String.format("%s: %s", message, fieldName);
 	}
 	
 	public String getFieldName() {
