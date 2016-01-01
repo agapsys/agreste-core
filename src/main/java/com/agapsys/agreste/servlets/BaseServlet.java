@@ -116,10 +116,16 @@ public abstract class BaseServlet extends TransactionalServlet {
 	public String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
 		return HttpUtils.getOptionalParameter(exchange.getRequest(), paramName, defaultValue);
 	}
+
 	
 	public String getMandatoryParameter(HttpExchange exchange, String paramName) throws BadRequestException {
-		return HttpUtils.getMandatoryParamter(exchange.getRequest(), paramName);
+		return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName);
 	}
+	
+	public String getMandatoryParameter(HttpExchange exchange, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
+		return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName, errorMessage, errMsgArgs);
+	}
+
 	
 	public <T> T getParameterDto(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
 		Map<String, String> fieldMap = new LinkedHashMap<>();
