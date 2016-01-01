@@ -117,7 +117,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 		return HttpUtils.getOptionalParameter(exchange.getRequest(), paramName, defaultValue);
 	}
 	
-	public String getMandatoryParamter(HttpExchange exchange, String paramName) throws BadRequestException {
+	public String getMandatoryParameter(HttpExchange exchange, String paramName) throws BadRequestException {
 		return HttpUtils.getMandatoryParamter(exchange.getRequest(), paramName);
 	}
 	
