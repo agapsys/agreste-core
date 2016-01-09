@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2015-2016 Agapsys Tecnologia - All Rights Reserved
+ * Copyright (C) 2016 Agapsys Tecnologia - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  */
