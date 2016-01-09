@@ -53,8 +53,6 @@ public class TestUtils {
 		public final String uri;
 		public final String[] uriParamNames;
 		
-		private final TestUtils testUtils = getInstance();
-		
 		private boolean isEntityMethod(HttpMethod method) {
 			switch(method) {
 				case POST:
