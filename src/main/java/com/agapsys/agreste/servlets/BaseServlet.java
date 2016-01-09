@@ -30,6 +30,11 @@ import javax.servlet.http.HttpServletResponse;
 
 public abstract class BaseServlet extends TransactionalServlet {
 	
+	// CLASS SCOPE =============================================================
+	public static final ObjectSerializer DEFAULT_SERIALIZER = new GsonSerializer();
+	// =========================================================================
+	
+	// INSTANCE SCOPE ==========================================================
 	private final LazyInitializer<ObjectSerializer> objectSerializer = new LazyInitializer<ObjectSerializer>() {
 
 		@Override
@@ -56,7 +61,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 	}
 	
 	protected ObjectSerializer _getObjectSerializer() {
-		return new GsonSerializer();
+		return DEFAULT_SERIALIZER;
 	}
 	
 	protected final ObjectSerializer getObjectSerializer() {
@@ -189,4 +194,5 @@ public abstract class BaseServlet extends TransactionalServlet {
 		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
 		AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
 	}
+	// =========================================================================
 }
