@@ -23,7 +23,8 @@ public class MockedTransaction implements Transaction {
 	public MockedTransaction(EntityManager em) {
 		this.em = em;
 		this.et = em.getTransaction();
-		this.et.begin();
+		if (!this.et.isActive())
+			this.et.begin();
 	}
 
 	@Override
