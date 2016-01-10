@@ -255,7 +255,17 @@ public class TestUtils {
 	 * @param msgArgs optional message arguments
 	 */
 	public void println(String msg, Object...msgArgs) {
-		ConsolePrinter.println(ConsoleColor.MAGENTA, msg, msgArgs);
+		println(ConsoleColor.MAGENTA, msg, msgArgs);
+	}
+	
+	/** 
+	 * Prints a colored message to console.
+	 * @param fgColor foreground color
+	 * @param msg message to be print
+	 * @param msgArgs optional message arguments
+	 */
+	public void println(ConsoleColor fgColor, String msg, Object...msgArgs) {
+		ConsolePrinter.println(fgColor, msg, msgArgs);
 	}
 
 	/**
