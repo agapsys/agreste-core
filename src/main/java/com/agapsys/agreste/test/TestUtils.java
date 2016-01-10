@@ -289,7 +289,7 @@ public class TestUtils {
 	 * @param moduleClass module class
 	 * @return module instance associated with given class
 	 */
-	public <T extends Module> T getModule(Class<T> moduleClass) {
+	public <T extends Module> T getApplicationModule(Class<T> moduleClass) {
 		return getRunningApplication().getModule(moduleClass);
 	}
 	
@@ -299,7 +299,7 @@ public class TestUtils {
 	 * @param serviceClass service class
 	 * @return service instance associated with given class
 	 */
-	public <T extends Service> T getService(Class<T> serviceClass) {
+	public <T extends Service> T getApplicationService(Class<T> serviceClass) {
 		return getRunningApplication().getService(serviceClass);
 	}
 	
@@ -380,8 +380,8 @@ public class TestUtils {
 	 * Returns an {@linkplain EntityManager} provided by {@linkplain PersistenceModule} registered with running application.
 	 * @return {@linkplain EntityManager} instance. Do not forget to close it after use in order to avoid resource leakage.
 	 */
-	public EntityManager getEntityManager() {
-		return getModule(PersistenceModule.class).getEntityManager();
+	public EntityManager getApplicationEntityManager() {
+		return getApplicationModule(PersistenceModule.class).getEntityManager();
 	}
 	// =========================================================================
 	
