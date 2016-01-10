@@ -53,6 +53,7 @@ public class MockedWebApplication extends AbstractAgrestApplication {
 			Files.delete(appFolder.toPath());
 			appFolder = null;
 		} catch (IOException ex) {
+			appFolder = null;
 			throw new RuntimeException(ex);
 		}
 	}
