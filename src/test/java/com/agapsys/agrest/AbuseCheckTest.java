@@ -6,9 +6,9 @@
 
 package com.agapsys.agrest;
 
-import com.agapsys.agreste.AbstractAgrestApplication;
 import com.agapsys.agreste.services.RateLimitingException;
 import com.agapsys.agreste.servlets.AbuseCheckFilter;
+import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
@@ -19,11 +19,7 @@ import com.agapsys.sevlet.test.StacktraceErrorHandler;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
 import com.agapsys.utils.console.printer.FormatEscapeBuilder;
-import com.agapsys.web.toolkit.utils.FileUtils;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.annotation.WebServlet;
@@ -70,7 +66,7 @@ public class AbuseCheckTest {
 	
 	// Classes -----------------------------------------------------------------
 	@WebListener
-	public static class TestApplication extends AbstractAgrestApplication {
+	public static class TestApplication extends MockedWebApplication {
 		// CLASS SCOPE =========================================================
 		public static final long ABUSE_INTERVAL = 500;
 		public static final int  ABUSE_COUNT_LIMIT = 3;
@@ -101,17 +97,6 @@ public class AbuseCheckTest {
 		@Override
 		public boolean isAbuseCheckEnabled() {
 			return abuseCheckEnabled;
-		}
-
-		
-		@Override
-		protected String getDirectoryAbsolutePath() {
-			try {
-				File randomFolder = FileUtils.getRandomNonExistentFile(FileUtils.DEFAULT_TEMPORARY_FOLDER, 8, 1000);
-				return randomFolder.getAbsolutePath();
-			} catch (FileNotFoundException ex) {
-				throw new RuntimeException(ex);
-			}
 		}
 		
 		@Override
@@ -157,10 +142,6 @@ public class AbuseCheckTest {
 	
 	@After
 	public void after() throws IOException {
-		File directory = app.getDirectory();
-		for (File file : directory.listFiles())
-			Files.delete(file.toPath());
-		Files.delete(directory.toPath());
 		sc.stopServer();
 	}
 	
