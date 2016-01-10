@@ -9,11 +9,15 @@ package com.agapsys.agreste.test;
 import com.agapsys.agreste.AbstractAgrestApplication;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import javax.servlet.annotation.WebListener;
 
 @WebListener
 public class MockedWebApplication extends AbstractAgrestApplication {
-
+	private File appFolder = null;
+	
 	@Override
 	public String getName() {
 		return "test-app";
@@ -26,6 +30,30 @@ public class MockedWebApplication extends AbstractAgrestApplication {
 	
 	@Override
 	protected String getDirectoryAbsolutePath() {
-		return new File(FileUtils.DEFAULT_TEMPORARY_FOLDER, "." + getName()).getAbsolutePath();
+		if (appFolder == null) {
+			try {
+				appFolder = FileUtils.getRandomNonExistentFile(FileUtils.DEFAULT_TEMPORARY_FOLDER, 8, 1000);
+			} catch (FileNotFoundException ex) {
+				throw new RuntimeException(ex);
+			}
+		}
+		
+		return appFolder.getAbsolutePath();
+	}
+
+	@Override
+	protected void afterApplicationStop() {
+		super.afterApplicationStop();
+		
+		try {
+			for (File file : appFolder.listFiles()) {
+				Files.delete(file.toPath());
+			}
+
+			Files.delete(appFolder.toPath());
+			appFolder = null;
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 }
