@@ -244,11 +244,6 @@ public class TestUtils {
 		}
 	}
 	
-	/** Convenience method readJsonResponse(objClass, jsonSerializer, resp, "utf-8"). */
-	public <T> T readJsonResponse(Class<T> objClass, JsonSerializer jsonSerializer, StringResponse resp) {
-		return TestUtils.this.readJsonResponse(objClass, jsonSerializer, resp, "utf-8");
-	}
-	
 	/** 
 	 * Prints a colored message to console.
 	 * @param msg message to be print
