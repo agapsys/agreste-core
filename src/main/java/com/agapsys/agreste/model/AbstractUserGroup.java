@@ -22,7 +22,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="usr")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class UserGroup {
+public class AbstractUserGroup {
 	// -------------------------------------------------------------------------
 	@Id
 	@GeneratedValue
@@ -72,12 +72,12 @@ public class UserGroup {
 	}
 	// -------------------------------------------------------------------------
 	@ManyToMany(mappedBy = "userGroups")
-	private final List<User> users = new LinkedList<>();
+	private final List<AbstractUser> users = new LinkedList<>();
 
-	public List<User> getUsers() {
+	public List<AbstractUser> getUsers() {
 		return users;
 	}
-	public void addUser(User user) {
+	public void addUser(AbstractUser user) {
 		if (user == null)
 			throw new IllegalArgumentException("User cannot be null");
 
@@ -86,7 +86,7 @@ public class UserGroup {
 			users.add(user);
 		}
 	}
-	public void removeUser(User user) {
+	public void removeUser(AbstractUser user) {
 		if (user == null)
 			throw new IllegalArgumentException("User cannot be null");
 

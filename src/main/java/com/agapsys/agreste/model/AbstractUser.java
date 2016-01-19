@@ -24,7 +24,7 @@ import javax.persistence.Transient;
 @Entity
 @Table(name="usr")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class User extends AbstractEntity implements com.agapsys.web.action.dispatcher.User {
+public abstract class AbstractUser extends AbstractEntity implements com.agapsys.web.action.dispatcher.User {
 	// -------------------------------------------------------------------------
 	@Id
 	@GeneratedValue
@@ -39,9 +39,9 @@ public abstract class User extends AbstractEntity implements com.agapsys.web.act
 	}
 	// -------------------------------------------------------------------------
 	@ManyToMany
-	private final List<UserGroup> groups = new LinkedList<>();
+	private final List<AbstractUserGroup> groups = new LinkedList<>();
 
-	public List<UserGroup> getGroups() {
+	public List<AbstractUserGroup> getGroups() {
 		return groups;
 	}
 	// -------------------------------------------------------------------------
@@ -60,7 +60,7 @@ public abstract class User extends AbstractEntity implements com.agapsys.web.act
 		if (effectiveRoles == null) {
 			effectiveRoles = new LinkedHashSet<>();
 			effectiveRoles.addAll(getRoles());
-			for (UserGroup userGroup : getGroups()) {
+			for (AbstractUserGroup userGroup : getGroups()) {
 				effectiveRoles.addAll(userGroup.getRoles());
 			}
 		}

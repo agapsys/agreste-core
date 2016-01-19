@@ -7,7 +7,7 @@
 package com.agapsys.agreste.servlets;
 
 import com.agapsys.agreste.dto.MapSerializer;
-import com.agapsys.agreste.model.User;
+import com.agapsys.agreste.model.AbstractUser;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
@@ -166,11 +166,11 @@ public abstract class BaseServlet extends TransactionalServlet {
 	}
 	
 	
-	public User getLoggedUser(HttpExchange exchange) {
-		return (User) getUserManager().getUser(exchange);
+	public AbstractUser getLoggedUser(HttpExchange exchange) {
+		return (AbstractUser) getUserManager().getUser(exchange);
 	}
 	
-	public void registerLoggedUser(HttpExchange exchange, User user) {
+	public void registerLoggedUser(HttpExchange exchange, AbstractUser user) {
 		getUserManager().login(exchange, user);
 	}
 	
@@ -182,7 +182,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 	public String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
-		User loggedUser = getLoggedUser(exchange);
+		AbstractUser loggedUser = getLoggedUser(exchange);
 		
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)
