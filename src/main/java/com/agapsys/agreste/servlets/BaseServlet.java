@@ -7,7 +7,7 @@
 package com.agapsys.agreste.servlets;
 
 import com.agapsys.agreste.dto.MapSerializer;
-import com.agapsys.agreste.model.LoggedUser;
+import com.agapsys.agreste.model.User;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.action.dispatcher.TransactionalServlet;
@@ -32,6 +32,11 @@ public abstract class BaseServlet extends TransactionalServlet {
 	
 	// CLASS SCOPE =============================================================
 	public static final ObjectSerializer DEFAULT_SERIALIZER = new GsonSerializer();
+	
+	private static final ThreadAttributeMap THREAD_ATTRIBUTE_MAP = new ThreadAttributeMap();
+	public static ThreadAttributeMap getThreadAttributeMap() {
+		return THREAD_ATTRIBUTE_MAP;
+	}
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================
@@ -50,7 +55,6 @@ public abstract class BaseServlet extends TransactionalServlet {
 		}
 		
 	};
-	
 	
 	protected MapSerializer _getMapSerializer() {
 		return new MapSerializer();
@@ -108,6 +112,12 @@ public abstract class BaseServlet extends TransactionalServlet {
 		}
 	}
 
+	@Override
+	protected void afterAction(HttpExchange exchange) {
+		super.afterAction(exchange);
+		getThreadAttributeMap().destroyAttributes();
+	}
+
 	
 	public <T extends Module> T getModule(Class<T> moduleClass) {
 		return AbstractWebApplication.getRunningInstance().getModule(moduleClass);
@@ -156,11 +166,11 @@ public abstract class BaseServlet extends TransactionalServlet {
 	}
 	
 	
-	public LoggedUser getLoggedUser(HttpExchange exchange) {
-		return (LoggedUser) getUserManager().getUser(exchange);
+	public User getLoggedUser(HttpExchange exchange) {
+		return (User) getUserManager().getUser(exchange);
 	}
 	
-	public void registerLoggedUser(HttpExchange exchange, LoggedUser user) {
+	public void registerLoggedUser(HttpExchange exchange, User user) {
 		getUserManager().login(exchange, user);
 	}
 	
@@ -172,7 +182,7 @@ public abstract class BaseServlet extends TransactionalServlet {
 	public String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
-		LoggedUser loggedUser = getLoggedUser(exchange);
+		User loggedUser = getLoggedUser(exchange);
 		
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)
