@@ -5,6 +5,7 @@
  */
 package com.agapsys.agreste.model;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +23,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name="usr")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class AbstractUserGroup {
+public class AbstractUserGroup implements Serializable {
 	// -------------------------------------------------------------------------
 	@Id
 	@GeneratedValue
