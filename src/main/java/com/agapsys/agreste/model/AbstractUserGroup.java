@@ -6,6 +6,7 @@
 package com.agapsys.agreste.model;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,11 +50,11 @@ public class AbstractUserGroup implements Serializable {
 		if (!getRoles().add(role))
 			throw new IllegalArgumentException(String.format("Duplicate role: %s", role));
 	}
-	public boolean hasRole(String role) {
-		if (role == null || role.trim().isEmpty())
-			throw new IllegalArgumentException("Nul/Empty role");
+	public boolean hasRoles(String...roles) {
+		if (roles.length == 0)
+			throw new IllegalArgumentException("Empty roles");
 
-		return getRoles().contains(role);
+		return getRoles().containsAll(Arrays.asList(roles));
 	}
 	// -------------------------------------------------------------------------
 	@Column(unique = true)

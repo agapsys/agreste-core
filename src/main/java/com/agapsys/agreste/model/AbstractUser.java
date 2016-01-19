@@ -7,6 +7,7 @@
 package com.agapsys.agreste.model;
 
 import com.agapsys.jpa.AbstractEntity;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,11 +75,11 @@ public abstract class AbstractUser extends AbstractEntity implements com.agapsys
 		if (!getRoles().add(role))
 			throw new IllegalArgumentException(String.format("Duplicate role: %s", role));
 	}
-	public boolean hasRole(String role) {
-		if (role == null || role.trim().isEmpty())
-			throw new IllegalArgumentException("Nul/Empty role");
+	public boolean hasRoles(String...roles) {
+		if (roles.length == 0)
+			throw new IllegalArgumentException("Empty roles");
 
-		return getRoles().contains(role);
+		return getEffectiveRoles().containsAll(Arrays.asList(roles));
 	}
 	// -------------------------------------------------------------------------
 }
