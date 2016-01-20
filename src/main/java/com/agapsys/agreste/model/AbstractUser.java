@@ -19,11 +19,10 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 @Entity
-@Table(name="usr")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class AbstractUser extends AbstractEntity implements com.agapsys.web.action.dispatcher.User {
 	// -------------------------------------------------------------------------
@@ -40,9 +39,9 @@ public abstract class AbstractUser extends AbstractEntity implements com.agapsys
 	}
 	// -------------------------------------------------------------------------
 	@ManyToMany
-	private final List<AbstractUserGroup> groups = new LinkedList<>();
+	private final List<UserGroup> groups = new LinkedList<>();
 
-	public List<AbstractUserGroup> getGroups() {
+	public List<UserGroup> getGroups() {
 		return groups;
 	}
 	// -------------------------------------------------------------------------
@@ -61,7 +60,7 @@ public abstract class AbstractUser extends AbstractEntity implements com.agapsys
 		if (effectiveRoles == null) {
 			effectiveRoles = new LinkedHashSet<>();
 			effectiveRoles.addAll(getRoles());
-			for (AbstractUserGroup userGroup : getGroups()) {
+			for (UserGroup userGroup : getGroups()) {
 				effectiveRoles.addAll(userGroup.getRoles());
 			}
 		}
@@ -80,6 +79,16 @@ public abstract class AbstractUser extends AbstractEntity implements com.agapsys
 			throw new IllegalArgumentException("Empty roles");
 
 		return getEffectiveRoles().containsAll(Arrays.asList(roles));
+	}
+	// -------------------------------------------------------------------------
+	@Version
+	private Long version;
+	
+	public Long getVersion() {
+		return version;
+	}
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 	// -------------------------------------------------------------------------
 }

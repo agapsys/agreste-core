@@ -19,12 +19,11 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity
-@Table(name="usr")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class AbstractUserGroup implements Serializable {
+public class UserGroup implements Serializable {
 	// -------------------------------------------------------------------------
 	@Id
 	@GeneratedValue
@@ -73,7 +72,7 @@ public class AbstractUserGroup implements Serializable {
 		this.name = name;
 	}
 	// -------------------------------------------------------------------------
-	@ManyToMany(mappedBy = "userGroups")
+	@ManyToMany(mappedBy = "groups")
 	private final List<AbstractUser> users = new LinkedList<>();
 
 	public List<AbstractUser> getUsers() {
@@ -94,6 +93,16 @@ public class AbstractUserGroup implements Serializable {
 
 		if (user.getGroups().remove(this))
 			users.remove(user);
+	}
+	// -------------------------------------------------------------------------
+	@Version
+	private Long version;
+	
+	public Long getVersion() {
+		return version;
+	}
+	public void setVersion(Long version) {
+		this.version = version;
 	}
 	// -------------------------------------------------------------------------
 }
