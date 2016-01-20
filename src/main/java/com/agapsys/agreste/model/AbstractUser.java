@@ -39,9 +39,9 @@ public abstract class AbstractUser extends AbstractEntity implements com.agapsys
 	}
 	// -------------------------------------------------------------------------
 	@ManyToMany
-	private final List<UserGroup> groups = new LinkedList<>();
+	private final List<AbstractUserGroup> groups = new LinkedList<>();
 
-	public List<UserGroup> getGroups() {
+	public List<AbstractUserGroup> getGroups() {
 		return groups;
 	}
 	// -------------------------------------------------------------------------
@@ -60,7 +60,7 @@ public abstract class AbstractUser extends AbstractEntity implements com.agapsys
 		if (effectiveRoles == null) {
 			effectiveRoles = new LinkedHashSet<>();
 			effectiveRoles.addAll(getRoles());
-			for (UserGroup userGroup : getGroups()) {
+			for (AbstractUserGroup userGroup : getGroups()) {
 				effectiveRoles.addAll(userGroup.getRoles());
 			}
 		}

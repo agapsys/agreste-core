@@ -23,7 +23,7 @@ import javax.persistence.Version;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class UserGroup implements Serializable {
+public abstract class AbstractUserGroup implements Serializable {
 	// -------------------------------------------------------------------------
 	@Id
 	@GeneratedValue
