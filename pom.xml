@@ -62,7 +62,7 @@ Proprietary and confidential
 		</dependency>
 		<dependency>
 			<groupId>com.agapsys.libs</groupId>
-			<artifactId>web-toolkit</artifactId>
+			<artifactId>web-app-toolkit</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
