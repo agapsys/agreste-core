@@ -6,9 +6,9 @@
 
 package com.agapsys.agrest;
 
-import com.agapsys.agreste.services.RateLimitingException;
+import com.agapsys.agreste.exceptions.RateLimitingException;
 import com.agapsys.agreste.servlets.AbuseCheckFilter;
-import com.agapsys.agreste.test.MockedWebApplication;
+import com.agapsys.web.toolkit.test.MockedWebApplication;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;

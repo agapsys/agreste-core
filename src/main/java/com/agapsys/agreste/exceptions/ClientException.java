@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste.exceptions;
 
-public class ClientException extends Exception {
+public class ClientException extends RuntimeException {
 	private final int code;
 	
 	public ClientException(int code) {

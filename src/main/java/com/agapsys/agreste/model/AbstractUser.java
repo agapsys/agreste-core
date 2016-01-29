@@ -7,6 +7,7 @@
 package com.agapsys.agreste.model;
 
 import com.agapsys.jpa.AbstractEntity;
+import com.agapsys.security.web.User;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -24,7 +25,7 @@ import javax.persistence.Version;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class AbstractUser extends AbstractEntity implements com.agapsys.web.action.dispatcher.User {
+public abstract class AbstractUser extends AbstractEntity implements User {
 	// -------------------------------------------------------------------------
 	@Id
 	@GeneratedValue

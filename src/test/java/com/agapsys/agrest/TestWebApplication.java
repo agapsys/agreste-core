@@ -3,15 +3,16 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  */
-
 package com.agapsys.agrest;
 
 import com.agapsys.agreste.AbstractAgrestApplication;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
-public class TestWebApplication extends AbstractAgrestApplication {
-	
+public class TestWebApplication extends AbstractAgrestApplication implements ServletContextListener {
+
 	@Override
 	public String getName() {
 		return "test";
@@ -21,9 +22,19 @@ public class TestWebApplication extends AbstractAgrestApplication {
 	public String getVersion() {
 		return "0.1.0";
 	}
-	
+
 	@Override
 	public String getDirectoryAbsolutePath() {
 		return new File(FileUtils.DEFAULT_TEMPORARY_FOLDER, "." + getName()).getAbsolutePath();
+	}
+
+	@Override
+	public void contextInitialized(ServletContextEvent sce) {
+		start();
+	}
+
+	@Override
+	public void contextDestroyed(ServletContextEvent sce) {
+		stop();
 	}
 }

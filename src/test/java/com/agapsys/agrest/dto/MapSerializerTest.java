@@ -15,7 +15,7 @@ import com.agapsys.sevlet.test.ServletContainer;
 import com.agapsys.sevlet.test.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
-import com.agapsys.web.toolkit.BadRequestException;
+import com.agapsys.agreste.exceptions.BadRequestException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -207,14 +207,14 @@ public class MapSerializerTest {
 	public static class TestServlet extends BaseServlet {
 		
 		@Override
-		protected MapSerializer _getMapSerializer() {
+		protected MapSerializer getMapSerializer() {
 			return new CustomMapSerializer();
 		}
 		
 		@WebAction(mapping = "/get")
 		public void onGet(HttpExchange exchange) throws IOException, BadRequestException {
 			TestDto dto = getParameterDto(exchange, TestDto.class);
-			CustomMapSerializer mapSerializer = (CustomMapSerializer) getMapSerializer();
+			CustomMapSerializer mapSerializer = (CustomMapSerializer) _getMapSerializer();
 			exchange.getResponse().getWriter().print(mapSerializer.toString(dto));
 		}
 	}

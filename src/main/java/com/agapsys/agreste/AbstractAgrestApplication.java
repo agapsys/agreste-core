@@ -117,7 +117,6 @@ public abstract class AbstractAgrestApplication extends AbstractWebApplication {
 		return properties;
 	}
 
-	
 	public long getAbuseInterval() {
 		return abuseInterval;
 	}

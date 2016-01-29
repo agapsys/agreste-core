@@ -6,6 +6,7 @@
 package com.agapsys.agreste.test;
 
 import com.agapsys.agreste.servlets.BaseServlet;
+import com.agapsys.agreste.utils.JsonSerializer;
 import com.agapsys.http.HttpDelete;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHead;
@@ -18,10 +19,9 @@ import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
 import com.agapsys.web.action.dispatcher.HttpMethod;
 import com.agapsys.web.toolkit.AbstractWebApplication;
-import com.agapsys.web.toolkit.JsonSerializer;
 import com.agapsys.web.toolkit.Module;
-import com.agapsys.web.toolkit.PersistenceModule;
 import com.agapsys.web.toolkit.Service;
+import com.agapsys.web.toolkit.modules.PersistenceModule;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -389,5 +389,4 @@ public class TestUtils {
 		return getApplicationModule(PersistenceModule.class).getEntityManager();
 	}
 	// =========================================================================
-	
 }

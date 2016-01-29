@@ -19,7 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class MapSerializer {
-	
 	// CLASS SCOPE =============================================================
 	public static class SerializerException extends Exception {
 
@@ -189,7 +188,7 @@ public class MapSerializer {
 		LazyInitializer<SimpleDateFormat> sdf = new LazyInitializer<SimpleDateFormat>() {
 
 			@Override
-			protected SimpleDateFormat getLazyInstance(Object... params) {
+			protected SimpleDateFormat getLazyInstance() {
 				return new SimpleDateFormat(getFormatPattern());
 			}
 		};
@@ -224,7 +223,6 @@ public class MapSerializer {
 	// INSTANCE SCOPE ==========================================================
 	private final Map<Class, FieldSerializer> fieldSerializerMap = new LinkedHashMap<>();
 	
-	
 	public MapSerializer() {
 		fieldSerializerMap.put(String.class,     new StringSerializer());
 		
@@ -256,7 +254,6 @@ public class MapSerializer {
 		fieldSerializerMap.put(Date.class,       new TimestampSerializer());
 	}
 	
-	
 	public void registerSerializer(Class<?> type, FieldSerializer serializer) {
 		if (type == null)
 			throw new IllegalArgumentException("Null type");
@@ -266,7 +263,6 @@ public class MapSerializer {
 		
 		fieldSerializerMap.put(type, serializer);
 	}
-	
 	
 	public <T> T getObject(Map<String, String> fieldMap, Class<T> targetClass) throws SerializerException {
 		if (targetClass == null)

@@ -7,7 +7,6 @@
 package com.agapsys.agreste.exceptions;
 
 public class RateLimitingException extends ClientException {
-	
 	// CLASS SCOPE =============================================================
 	public static final int CODE = 429;
 	// =========================================================================
@@ -17,5 +16,4 @@ public class RateLimitingException extends ClientException {
 		super(CODE, message, args);
 	}
 	// =========================================================================
-	
 }

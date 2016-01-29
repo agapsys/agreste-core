@@ -7,7 +7,7 @@
 package com.agapsys.agreste.servlets;
 
 import com.agapsys.agreste.AbstractAgrestApplication;
-import com.agapsys.agreste.services.RateLimitingException;
+import com.agapsys.agreste.exceptions.RateLimitingException;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import java.io.IOException;
 import java.util.Date;
@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class AbuseCheckFilter implements Filter{
-
 	// CLASS SCOPE =============================================================
 	private static final String SESSION_ATTR_LAST_CHECK  = "com.agaosys.agreste.lastCheck";
 	private static final String SESSION_ATTR_ABUSE_COUNT = "com.agaosys.agreste.abuseCount";

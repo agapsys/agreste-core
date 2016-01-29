@@ -11,4 +11,5 @@ public class InvalidDataException extends BadRequestException {
 	public InvalidDataException(String message, Object... args) {
 		super(message, args);
 	}
+	
 }

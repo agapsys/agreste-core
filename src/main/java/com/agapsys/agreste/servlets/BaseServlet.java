@@ -6,21 +6,23 @@
 
 package com.agapsys.agreste.servlets;
 
+import com.agapsys.agreste.WebSecurity;
 import com.agapsys.agreste.dto.MapSerializer;
+import com.agapsys.agreste.exceptions.BadRequestException;
+import com.agapsys.agreste.exceptions.ClientException;
 import com.agapsys.agreste.model.AbstractUser;
+import com.agapsys.agreste.utils.GsonSerializer;
+import com.agapsys.agreste.utils.ObjectSerializer;
+import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
-import com.agapsys.web.action.dispatcher.TransactionalServlet;
-import com.agapsys.web.toolkit.AbstractExceptionReporterModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
-import com.agapsys.web.toolkit.BadRequestException;
-import com.agapsys.web.toolkit.ClientException;
-import com.agapsys.web.toolkit.GsonSerializer;
-import com.agapsys.web.toolkit.HttpUtils;
 import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.Module;
-import com.agapsys.web.toolkit.ObjectSerializer;
 import com.agapsys.web.toolkit.Service;
+import com.agapsys.web.toolkit.modules.AbstractExceptionReporterModule;
+import com.agapsys.web.toolkit.services.AttributeService;
+import com.agapsys.web.toolkit.utils.HttpUtils;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,48 +30,55 @@ import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public abstract class BaseServlet extends TransactionalServlet {
+public abstract class BaseServlet extends ActionServlet {
 	
 	// CLASS SCOPE =============================================================
 	public static final ObjectSerializer DEFAULT_SERIALIZER = new GsonSerializer();
-	
-	private static final ThreadAttributeMap THREAD_ATTRIBUTE_MAP = new ThreadAttributeMap();
-	public static ThreadAttributeMap getThreadAttributeMap() {
-		return THREAD_ATTRIBUTE_MAP;
-	}
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================
 	private final LazyInitializer<ObjectSerializer> objectSerializer = new LazyInitializer<ObjectSerializer>() {
 
 		@Override
-		protected ObjectSerializer getLazyInstance(Object... params) {
-			return _getObjectSerializer();
+		protected ObjectSerializer getLazyInstance() {
+			return getObjectSerializer();
 		}
 	};
 	private final LazyInitializer<MapSerializer> mapSerializer = new LazyInitializer<MapSerializer>() {
 
 		@Override
-		protected MapSerializer getLazyInstance(Object... params) {
-			return _getMapSerializer();
+		protected MapSerializer getLazyInstance() {
+			return getMapSerializer();
 		}
 		
 	};
 	
-	protected MapSerializer _getMapSerializer() {
+	private AttributeService attributeService;
+
+	@Override
+	protected void onInit() {
+		attributeService = getService(AttributeService.class);
+	}
+	
+	
+	protected MapSerializer getMapSerializer() {
 		return new MapSerializer();
 	}
 	
-	protected final MapSerializer getMapSerializer() {
-		return mapSerializer.getInstance();
-	}
-	
-	protected ObjectSerializer _getObjectSerializer() {
+	protected ObjectSerializer getObjectSerializer() {
 		return DEFAULT_SERIALIZER;
 	}
 	
-	protected final ObjectSerializer getObjectSerializer() {
+	private ObjectSerializer _getObjectSerializer() {
 		return objectSerializer.getInstance();
+	}
+	
+	private MapSerializer _getMapSerializer() {
+		return mapSerializer.getInstance();
+	}
+	
+	protected Object getGlobalAttribute(String name) {
+		return attributeService.getAttribute(name);
 	}
 	
 	@Override
@@ -102,22 +111,6 @@ public abstract class BaseServlet extends TransactionalServlet {
 			return true; // Error will propagate
 		}
 	}
-
-	@Override
-	protected void onNotAllowed(HttpExchange exchange) {
-		super.onNotAllowed(exchange);
-		
-		if (exchange.getResponse().getStatus() == HttpServletResponse.SC_FORBIDDEN) {
-			logRequest(exchange, LogType.WARNING, "Access denied");
-		}
-	}
-
-	@Override
-	protected void afterAction(HttpExchange exchange) {
-		super.afterAction(exchange);
-		getThreadAttributeMap().destroyAttributes();
-	}
-
 	
 	public <T extends Module> T getModule(Class<T> moduleClass) {
 		return AbstractWebApplication.getRunningInstance().getModule(moduleClass);
@@ -127,11 +120,9 @@ public abstract class BaseServlet extends TransactionalServlet {
 		return AbstractWebApplication.getRunningInstance().getService(serviceClass);
 	}
 	
-	
 	public String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
 		return HttpUtils.getOptionalParameter(exchange.getRequest(), paramName, defaultValue);
 	}
-
 	
 	public String getMandatoryParameter(HttpExchange exchange, String paramName) throws BadRequestException {
 		return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName);
@@ -141,7 +132,6 @@ public abstract class BaseServlet extends TransactionalServlet {
 		return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName, errorMessage, errMsgArgs);
 	}
 
-	
 	public <T> T getParameterDto(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
 		Map<String, String> fieldMap = new LinkedHashMap<>();
 		
@@ -150,39 +140,24 @@ public abstract class BaseServlet extends TransactionalServlet {
 		}
 		
 		try {
-			return mapSerializer.getInstance().getObject(fieldMap, dtoClass);
+			return _getMapSerializer().getObject(fieldMap, dtoClass);
 		} catch (MapSerializer.SerializerException ex) {
 			throw new BadRequestException("Cannot read parameters");
 		}
 	}
 	
-	
 	public <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
-		return objectSerializer.getInstance().readObject(exchange.getRequest(), targetClass);
+		return _getObjectSerializer().readObject(exchange.getRequest(), targetClass);
 	}
 	
 	public void writeObject(HttpExchange exchange, Object object) {
-		objectSerializer.getInstance().writeObject(exchange.getResponse(), object);
+		_getObjectSerializer().writeObject(exchange.getResponse(), object);
 	}
 	
-	
-	public AbstractUser getLoggedUser(HttpExchange exchange) {
-		return (AbstractUser) getUserManager().getUser(exchange);
-	}
-	
-	public void registerLoggedUser(HttpExchange exchange, AbstractUser user) {
-		getUserManager().login(exchange, user);
-	}
-	
-	public void unregisterLoggedUser(HttpExchange exchange) {
-		getUserManager().logout(exchange);
-	}
-	
-	
-	public String getLogMessage(HttpExchange exchange, String message) {
+	protected String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
-		AbstractUser loggedUser = getLoggedUser(exchange);
+		AbstractUser loggedUser = WebSecurity.isRunning() ? WebSecurity.getCurrentUser() : null;
 		
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)

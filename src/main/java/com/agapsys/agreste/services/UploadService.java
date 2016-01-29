@@ -6,8 +6,7 @@
 
 package com.agapsys.agreste.services;
 
-import com.agapsys.web.toolkit.AbstractService;
-import com.agapsys.web.toolkit.BadRequestException;
+import com.agapsys.agreste.exceptions.BadRequestException;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -27,7 +26,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * Upload service.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class UploadService extends AbstractService {
+public class UploadService extends BaseService {
 	// CLASS SCOPE =============================================================
 	protected static final long DEFAULT_TOTAL_MAX_SIZE = -1; // No limit
 	protected static final long DEFAULT_MAX_FILE_SIZE  = -1; // No limit
