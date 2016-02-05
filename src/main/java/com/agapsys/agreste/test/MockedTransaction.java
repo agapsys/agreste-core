@@ -6,14 +6,13 @@
 
 package com.agapsys.agreste.test;
 
-import com.agapsys.web.action.dispatcher.HttpExchange;
-import com.agapsys.web.action.dispatcher.Transaction;
+import com.agapsys.agreste.servlets.JpaTransaction;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
-public class MockedTransaction implements Transaction {
+public class MockedTransaction implements JpaTransaction {
 	private final List<Runnable> commitQueue = new LinkedList<>();
 	private final List<Runnable> rollbackQueue = new LinkedList<>();
 
@@ -42,11 +41,6 @@ public class MockedTransaction implements Transaction {
 	public void invokeAfterRollback(Runnable runnable) {
 		if (runnable == null) throw new IllegalArgumentException("Null runnable");
 		rollbackQueue.add(runnable);
-	}
-
-	@Override
-	public HttpExchange getHttpExchange() {
-		throw new UnsupportedOperationException("Not supported yet.");
 	}
 
 	private void close(boolean commit) {

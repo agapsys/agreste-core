@@ -37,14 +37,14 @@ import javax.persistence.metamodel.Metamodel;
  * Wrapper for an {@linkplain EntityManager} instance.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class WrappedEntityManager implements EntityManager {
+public class EntityManagerWrapper implements EntityManager {
 	private final EntityManager wrappedEntityManager;
 
 	/**
 	 * Constructor.
 	 * @param wrappedEntityManager wrapped instance.
 	 */
-	public WrappedEntityManager(EntityManager wrappedEntityManager) {
+	public EntityManagerWrapper(EntityManager wrappedEntityManager) {
 		if (wrappedEntityManager == null)
 			throw new IllegalArgumentException("Null entityManager");
 		

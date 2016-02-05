@@ -4,11 +4,8 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest.dto;
+package com.agapsys.agreste.dto;
 
-import com.agapsys.agreste.dto.AbstractDtoObject;
-import com.agapsys.agreste.dto.DtoRequired;
-import com.agapsys.agreste.dto.DtoValidationException;
 import org.junit.Assert;
 import org.junit.Test;
 

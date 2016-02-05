@@ -23,12 +23,10 @@ import com.agapsys.web.toolkit.Service;
 import com.agapsys.web.toolkit.modules.AbstractExceptionReporterModule;
 import com.agapsys.web.toolkit.services.AttributeService;
 import com.agapsys.web.toolkit.utils.HttpUtils;
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 public abstract class BaseServlet extends ActionServlet {
 	
@@ -60,6 +58,9 @@ public abstract class BaseServlet extends ActionServlet {
 		attributeService = getService(AttributeService.class);
 	}
 	
+	protected JpaTransaction getJpaTransaction() {
+		return (JpaTransaction) attributeService.getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
+	}
 	
 	protected MapSerializer getMapSerializer() {
 		return new MapSerializer();
@@ -82,33 +83,14 @@ public abstract class BaseServlet extends ActionServlet {
 	}
 	
 	@Override
-	protected boolean onError(HttpExchange exchange, Throwable t) {
-		super.onError(exchange, t); // <-- closes JpaTransaction associated with the request
+	protected void onError(HttpExchange exchange, Throwable t) {
+		super.onError(exchange, t);
 
 		if (t instanceof ClientException) {
-			HttpServletResponse resp = exchange.getResponse();
 			logRequest(exchange, LogType.WARNING, t.getMessage());
-			
-			int code = ((ClientException)t).getCode();
-			
-			try {
-				resp.setStatus(code);
-				resp.getWriter().print(t.getMessage());
-				
-				return false; // <-- Error will not propagate.
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
-			}
-			
-		} else if(t instanceof OptimisticLockException) {
-			HttpServletResponse resp = exchange.getResponse();
-			resp.setStatus(HttpServletResponse.SC_CONFLICT);
-			return false; // <-- Error will not propagate
-			
-		} else {
+		} else if (!(t instanceof OptimisticLockException)){
 			String stackTrace = AbstractExceptionReporterModule.getStackTrace(t);
 			logRequest(exchange, LogType.ERROR, stackTrace);
-			return true; // Error will propagate
 		}
 	}
 	
@@ -118,6 +100,14 @@ public abstract class BaseServlet extends ActionServlet {
 	
 	public <T extends Service> T getService(Class<T> serviceClass) {
 		return AbstractWebApplication.getRunningInstance().getService(serviceClass);
+	}
+	
+	public AbstractUser getCurrentUser() {
+		return WebSecurity.getCurrentUser();
+	}
+	
+	public void setCurrentUser(AbstractUser user) {
+		WebSecurity.setCurrentUser(user);
 	}
 	
 	public String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
@@ -132,7 +122,7 @@ public abstract class BaseServlet extends ActionServlet {
 		return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName, errorMessage, errMsgArgs);
 	}
 
-	public <T> T getParameterDto(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
+	public <T> T readParameterObject(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
 		Map<String, String> fieldMap = new LinkedHashMap<>();
 		
 		for (Map.Entry<String, String[]> entry : exchange.getRequest().getParameterMap().entrySet()) {

@@ -5,6 +5,8 @@
  */
 package com.agapsys.agreste.services;
 
+import com.agapsys.agreste.servlets.JpaTransaction;
+import com.agapsys.agreste.servlets.JpaTransactionFilter;
 import com.agapsys.web.toolkit.AbstractService;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.services.AttributeService;
@@ -23,8 +25,11 @@ public class BaseService  extends AbstractService {
 		attributeService = getService(AttributeService.class);
 	}
 
+	protected JpaTransaction getJpaTransaction() {
+		return (JpaTransaction) attributeService.getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
+	}
+	
 	protected Object getGlobalAttribute(String name) {
 		return attributeService.getAttribute(name);
 	}
-	
 }

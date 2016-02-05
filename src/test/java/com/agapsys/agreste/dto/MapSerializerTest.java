@@ -4,10 +4,11 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest.dto;
+package com.agapsys.agreste.dto;
 
-import com.agapsys.agreste.dto.MapSerializer;
+import com.agapsys.agreste.TestApplication;
 import com.agapsys.agreste.dto.MapSerializer.SerializerException;
+import com.agapsys.agreste.exceptions.BadRequestException;
 import com.agapsys.agreste.servlets.BaseServlet;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
@@ -15,7 +16,6 @@ import com.agapsys.sevlet.test.ServletContainer;
 import com.agapsys.sevlet.test.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
-import com.agapsys.agreste.exceptions.BadRequestException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -213,8 +213,8 @@ public class MapSerializerTest {
 		
 		@WebAction(mapping = "/get")
 		public void onGet(HttpExchange exchange) throws IOException, BadRequestException {
-			TestDto dto = getParameterDto(exchange, TestDto.class);
-			CustomMapSerializer mapSerializer = (CustomMapSerializer) _getMapSerializer();
+			TestDto dto = readParameterObject(exchange, TestDto.class);
+			CustomMapSerializer mapSerializer = (CustomMapSerializer) getMapSerializer();
 			exchange.getResponse().getWriter().print(mapSerializer.toString(dto));
 		}
 	}
@@ -263,6 +263,7 @@ public class MapSerializerTest {
 	public void testServlet () {
 		ServletContainer sc = new ServletContainerBuilder()
 			.addRootContext()
+				.registerEventListener(new TestApplication())
 				.registerServlet(TestServlet.class)
 			.endContext()
 			.build();

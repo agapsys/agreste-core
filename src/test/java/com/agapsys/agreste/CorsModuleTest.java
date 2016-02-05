@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agrest;
+package com.agapsys.agreste;
 
 import com.agapsys.agreste.modules.CorsModule;
 import com.agapsys.http.HttpGet;
@@ -29,7 +29,7 @@ import org.junit.Test;
 public class CorsModuleTest {
 	// CLASS SCOPE =============================================================
 	@WebListener
-	public static class TestApplication extends TestWebApplication {
+	public static class TestApplication extends com.agapsys.agreste.TestApplication {
 		public static final String VAL_ALLOWED_HEADERS = "testHeaders";
 		public static final String VAL_ALLOWED_ORIGINS = "testOrigin1, testOrigin2";
 		public static final String VAL_ALLOWED_METHODS = "testMethods";

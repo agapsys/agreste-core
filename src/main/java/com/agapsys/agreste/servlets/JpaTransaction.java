@@ -22,7 +22,7 @@ import javax.persistence.EntityManager;
  * Represents a transaction managed by a {@linkplain TransactionalServlet}
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public interface Transaction {
+public interface JpaTransaction {
 	/**
 	 * Returns entity manager associated with this transaction.
 	 * Multiple calls to this method will return the same instance.

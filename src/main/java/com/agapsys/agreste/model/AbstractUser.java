@@ -47,17 +47,17 @@ public abstract class AbstractUser extends AbstractEntity implements User {
 	}
 	// -------------------------------------------------------------------------
 	@ElementCollection
-	private final Set<String> roles = new LinkedHashSet<>();
+	private final Set<String> userRoles = new LinkedHashSet<>();
 
+	public Set<String> getUserRoles() {
+		return userRoles;
+	}
+	
 	@Transient
 	private Set<String> effectiveRoles = null;
 
 	@Override
 	public Set<String> getRoles() {
-		return roles;
-	}
-
-	public Set<String> getEffectiveRoles() {
 		if (effectiveRoles == null) {
 			effectiveRoles = new LinkedHashSet<>();
 			effectiveRoles.addAll(getRoles());
@@ -68,6 +68,7 @@ public abstract class AbstractUser extends AbstractEntity implements User {
 
 		return effectiveRoles;
 	}
+	
 	public void addRole(String role) {
 		if (role == null || role.trim().isEmpty())
 			throw new IllegalArgumentException("Nul/Empty role");
@@ -79,7 +80,7 @@ public abstract class AbstractUser extends AbstractEntity implements User {
 		if (roles.length == 0)
 			throw new IllegalArgumentException("Empty roles");
 
-		return getEffectiveRoles().containsAll(Arrays.asList(roles));
+		return getRoles().containsAll(Arrays.asList(roles));
 	}
 	// -------------------------------------------------------------------------
 	@Version
