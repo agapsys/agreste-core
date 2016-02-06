@@ -7,7 +7,6 @@
 package com.agapsys.agreste;
 
 import com.agapsys.agreste.exceptions.RateLimitingException;
-import com.agapsys.agreste.servlets.AbuseCheckFilter;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;

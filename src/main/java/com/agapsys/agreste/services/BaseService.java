@@ -5,8 +5,8 @@
  */
 package com.agapsys.agreste.services;
 
-import com.agapsys.agreste.servlets.JpaTransaction;
-import com.agapsys.agreste.servlets.JpaTransactionFilter;
+import com.agapsys.agreste.JpaTransaction;
+import com.agapsys.agreste.JpaTransactionFilter;
 import com.agapsys.web.toolkit.AbstractService;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.services.AttributeService;

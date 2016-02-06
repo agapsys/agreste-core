@@ -73,7 +73,7 @@ public abstract class AbstractUser extends AbstractEntity implements User {
 		if (role == null || role.trim().isEmpty())
 			throw new IllegalArgumentException("Nul/Empty role");
 
-		if (!getRoles().add(role))
+		if (!getUserRoles().add(role))
 			throw new IllegalArgumentException(String.format("Duplicate role: %s", role));
 	}
 	public boolean hasRoles(String...roles) {

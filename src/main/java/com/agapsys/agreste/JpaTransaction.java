@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.servlets;
+package com.agapsys.agreste;
 
 import javax.persistence.EntityManager;
 

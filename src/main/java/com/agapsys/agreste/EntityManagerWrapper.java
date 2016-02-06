@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.servlets;
+package com.agapsys.agreste;
 
 import java.util.List;
 import java.util.Map;

@@ -4,7 +4,7 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agreste.servlets;
+package com.agapsys.agreste;
 
 import com.agapsys.agreste.AbstractWebApplication;
 import com.agapsys.agreste.exceptions.RateLimitingException;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-public class AbuseCheckFilter implements Filter{
+public class AbuseCheckFilter implements Filter {
 	// CLASS SCOPE =============================================================
 	private static final String SESSION_ATTR_LAST_CHECK  = "com.agaosys.agreste.lastCheck";
 	private static final String SESSION_ATTR_ABUSE_COUNT = "com.agaosys.agreste.abuseCount";

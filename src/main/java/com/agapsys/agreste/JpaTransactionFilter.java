@@ -3,7 +3,7 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  */
-package com.agapsys.agreste.servlets;
+package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;

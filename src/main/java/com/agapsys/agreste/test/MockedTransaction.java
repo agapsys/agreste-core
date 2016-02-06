@@ -6,7 +6,7 @@
 
 package com.agapsys.agreste.test;
 
-import com.agapsys.agreste.servlets.JpaTransaction;
+import com.agapsys.agreste.JpaTransaction;
 import java.util.LinkedList;
 import java.util.List;
 import javax.persistence.EntityManager;

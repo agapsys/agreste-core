@@ -6,6 +6,8 @@
 
 package com.agapsys.agreste.servlets;
 
+import com.agapsys.agreste.JpaTransaction;
+import com.agapsys.agreste.JpaTransactionFilter;
 import com.agapsys.agreste.WebSecurity;
 import com.agapsys.agreste.dto.MapSerializer;
 import com.agapsys.agreste.exceptions.BadRequestException;
