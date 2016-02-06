@@ -6,9 +6,8 @@
 
 package com.agapsys.agreste.servlets;
 
-import com.agapsys.agreste.AbstractAgrestApplication;
+import com.agapsys.agreste.AbstractWebApplication;
 import com.agapsys.agreste.exceptions.RateLimitingException;
-import com.agapsys.web.toolkit.AbstractWebApplication;
 import java.io.IOException;
 import java.util.Date;
 import javax.servlet.Filter;
@@ -33,7 +32,7 @@ public class AbuseCheckFilter implements Filter{
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		AbstractAgrestApplication app = (AbstractAgrestApplication) AbstractWebApplication.getRunningInstance();
+		AbstractWebApplication app = (AbstractWebApplication) AbstractWebApplication.getRunningInstance();
 		
 		if (!app.isAbuseCheckEnabled()) {
 			chain.doFilter(request, response);

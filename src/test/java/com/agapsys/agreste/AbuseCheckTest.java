@@ -8,7 +8,6 @@ package com.agapsys.agreste;
 
 import com.agapsys.agreste.exceptions.RateLimitingException;
 import com.agapsys.agreste.servlets.AbuseCheckFilter;
-import com.agapsys.web.toolkit.test.MockedWebApplication;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
@@ -66,7 +65,7 @@ public class AbuseCheckTest {
 	
 	// Classes -----------------------------------------------------------------
 	@WebListener
-	public static class TestApplication extends MockedWebApplication {
+	public static class TestApplication extends com.agapsys.agreste.TestApplication {
 		// CLASS SCOPE =========================================================
 		public static final long ABUSE_INTERVAL = 500;
 		public static final int  ABUSE_COUNT_LIMIT = 3;

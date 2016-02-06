@@ -9,13 +9,12 @@ package com.agapsys.agreste;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
 import com.agapsys.utils.console.printer.FormatEscapeBuilder;
-import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.utils.DateUtils;
 import java.util.Properties;
 import java.util.logging.Level;
 
-public abstract class AbstractAgrestApplication extends AbstractWebApplication {
+public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.AbstractWebApplication {
 	// CLASS SCOPE =============================================================
 	public static final String KEY_ABUSE_INTERVAL      = "com.agapsys.agreste.abuseInterval";
 	public static final String KEY_ABUSE_COUNT_LIMIT   = "com.agapsys.agreste.abuseCountLimit";
