@@ -1,19 +1,29 @@
-/* 
- * Copyright (C) 2015 Agapsys Tecnologia - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
+/*
+ * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.agapsys.agreste.dto;
 
-import com.agapsys.agreste.TestApplication;
+import com.agapsys.agreste.MockedWebApplication;
 import com.agapsys.agreste.dto.MapSerializer.SerializerException;
 import com.agapsys.agreste.exceptions.BadRequestException;
 import com.agapsys.agreste.servlets.BaseServlet;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
-import com.agapsys.sevlet.test.ServletContainer;
-import com.agapsys.sevlet.test.ServletContainerBuilder;
+import com.agapsys.sevlet.container.ServletContainer;
+import com.agapsys.sevlet.container.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
 import java.io.IOException;
@@ -263,7 +273,7 @@ public class MapSerializerTest {
 	public void testServlet () {
 		ServletContainer sc = new ServletContainerBuilder()
 			.addRootContext()
-				.registerEventListener(new TestApplication())
+				.registerEventListener(new MockedWebApplication())
 				.registerServlet(TestServlet.class)
 			.endContext()
 			.build();

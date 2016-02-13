@@ -1,7 +1,17 @@
-/* 
- * Copyright (C) 2015 Agapsys Tecnologia - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
+/*
+ * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.agapsys.agreste;
@@ -10,8 +20,8 @@ import com.agapsys.agreste.modules.CorsModule;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;
-import com.agapsys.sevlet.test.ServletContainer;
-import com.agapsys.sevlet.test.ServletContainerBuilder;
+import com.agapsys.sevlet.container.ServletContainer;
+import com.agapsys.sevlet.container.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
@@ -29,7 +39,7 @@ import org.junit.Test;
 public class CorsModuleTest {
 	// CLASS SCOPE =============================================================
 	@WebListener
-	public static class TestApplication extends com.agapsys.agreste.TestApplication {
+	public static class TestApplication extends MockedWebApplication {
 		public static final String VAL_ALLOWED_HEADERS = "testHeaders";
 		public static final String VAL_ALLOWED_ORIGINS = "testOrigin1, testOrigin2";
 		public static final String VAL_ALLOWED_METHODS = "testMethods";
