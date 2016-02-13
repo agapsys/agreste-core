@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste;
+package com.agapsys.agreste.test;
 
+import com.agapsys.agreste.MockedWebApplication;
+import com.agapsys.agreste.ServletContainerBuilder;
 import com.agapsys.agreste.modules.CorsModule;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.sevlet.container.ServletContainer;
-import com.agapsys.sevlet.container.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
@@ -52,7 +53,7 @@ public class CorsModuleTest {
 			props.setProperty(CorsModule.KEY_ALLOWED_METHODS, VAL_ALLOWED_METHODS);
 			return props;
 		}
-
+		
 		@Override
 		protected void beforeApplicationStart() {
 			super.beforeApplicationStart();
@@ -80,12 +81,11 @@ public class CorsModuleTest {
 	@Before
 	public void before() {
 		
-		sc = new ServletContainerBuilder()
+		sc = new ServletContainerBuilder(new TestApplication())
 			.addRootContext()
 				.registerServlet(TestServlet.class)
-				.registerEventListener(new TestApplication())
 			.endContext()
-			.build();
+		.build();
 		
 		sc.startServer();
 	}

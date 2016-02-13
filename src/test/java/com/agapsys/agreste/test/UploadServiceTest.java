@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste;
+package com.agapsys.agreste.test;
 
 import com.agapsys.agreste.exceptions.BadRequestException;
 import com.agapsys.agreste.services.UploadService;

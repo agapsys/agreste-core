@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste;
+package com.agapsys.agreste.test;
 
+import com.agapsys.agreste.AbuseCheckFilter;
+import com.agapsys.agreste.MockedWebApplication;
+import com.agapsys.agreste.ServletContainerBuilder;
 import com.agapsys.agreste.exceptions.RateLimitingException;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.sevlet.container.ServletContainer;
-import com.agapsys.sevlet.container.ServletContainerBuilder;
 import com.agapsys.sevlet.container.StacktraceErrorHandler;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
@@ -132,12 +134,10 @@ public class AbuseCheckTest {
 	private ServletContainer sc;
 	private TestApplication app;
 
-	
 	@Before
 	public void before() {
-		sc = new ServletContainerBuilder()
+		sc = new ServletContainerBuilder(new TestApplication())
 			.addRootContext()
-				.registerEventListener(new TestApplication())
 				.registerServlet(TestServlet.class)
 				.setErrorHandler(new StacktraceErrorHandler())
 				.registerFilter(AbuseCheckFilter.class, "/*")
@@ -151,6 +151,7 @@ public class AbuseCheckTest {
 	@After
 	public void after() throws IOException {
 		sc.stopServer();
+		app = null;
 	}
 	
 	@Test

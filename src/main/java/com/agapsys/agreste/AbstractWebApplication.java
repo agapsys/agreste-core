@@ -20,6 +20,7 @@ import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
 import com.agapsys.utils.console.printer.FormatEscapeBuilder;
 import com.agapsys.web.toolkit.LogType;
+import com.agapsys.web.toolkit.modules.PersistenceModule;
 import com.agapsys.web.toolkit.utils.DateUtils;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -74,6 +75,7 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 		java.util.logging.Logger.getLogger("org.hibernate").setLevel(getHibernateLogLevel());
 		
 		super.beforeApplicationStart();
+		registerModule(PersistenceModule.class);
 	}
 
 	@Override

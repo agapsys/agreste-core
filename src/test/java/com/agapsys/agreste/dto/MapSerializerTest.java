@@ -17,13 +17,13 @@
 package com.agapsys.agreste.dto;
 
 import com.agapsys.agreste.MockedWebApplication;
+import com.agapsys.agreste.ServletContainerBuilder;
 import com.agapsys.agreste.dto.MapSerializer.SerializerException;
 import com.agapsys.agreste.exceptions.BadRequestException;
 import com.agapsys.agreste.servlets.BaseServlet;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
 import com.agapsys.sevlet.container.ServletContainer;
-import com.agapsys.sevlet.container.ServletContainerBuilder;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.WebAction;
 import java.io.IOException;
@@ -271,12 +271,11 @@ public class MapSerializerTest {
 	
 	@Test
 	public void testServlet () {
-		ServletContainer sc = new ServletContainerBuilder()
+		ServletContainer sc = new ServletContainerBuilder(new MockedWebApplication())
 			.addRootContext()
-				.registerEventListener(new MockedWebApplication())
 				.registerServlet(TestServlet.class)
 			.endContext()
-			.build();
+		.build();
 		
 		sc.startServer();
 		
