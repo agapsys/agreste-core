@@ -159,7 +159,7 @@ public abstract class BaseServlet extends ActionServlet {
 	protected String getLogMessage(HttpExchange exchange, String message) {
 		HttpServletRequest req = exchange.getRequest();
 		
-		AbstractUser loggedUser = WebSecurity.isRunning() ? WebSecurity.getCurrentUser() : null;
+		AbstractUser loggedUser = WebSecurity.getCurrentUser();
 		
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)
