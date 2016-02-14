@@ -25,7 +25,6 @@ import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.sevlet.container.ServletContainer;
-import com.agapsys.sevlet.container.StacktraceErrorHandler;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
 import com.agapsys.utils.console.printer.FormatEscapeBuilder;
@@ -139,7 +138,6 @@ public class AbuseCheckTest {
 		sc = new ServletContainerBuilder(new TestApplication())
 			.addRootContext()
 				.registerServlet(TestServlet.class)
-				.setErrorHandler(new StacktraceErrorHandler())
 				.registerFilter(AbuseCheckFilter.class, "/*")
 			.endContext()
 			.build();

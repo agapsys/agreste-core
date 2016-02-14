@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ * Copyright 2016 Leandro Oliveira (leandro@agapsys.com).
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,12 @@
  */
 package com.agapsys.agreste.test.app;
 
-import com.agapsys.agreste.services.BaseService;
-import com.agapsys.security.Secured;
-
 /**
+ *
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class MyService extends BaseService {
+public class Defs {
+	private Defs() {}
 	
-	@Secured(Defs.ACCESS_ROLE)
-	public String protectedMethod() {
-		return "OK";
-	}
+	public static final String ACCESS_ROLE = "access";
 }

@@ -76,8 +76,10 @@ public class MyServlet extends BaseServlet {
 		resp.getWriter().print("OK");
 	}
 	
-	@WebAction(httpMethods = HttpMethod.GET, mapping = "implictSecuredGet")
-	public void implictSecuredGet(HttpExchange exchange) {
-		myService.protectedMethod();
+	@WebAction(httpMethods = HttpMethod.GET, mapping = "implicitSecuredGet")
+	public void implicitSecuredGet(HttpExchange exchange) throws IOException {
+		HttpServletResponse resp = exchange.getResponse();
+		resp.setStatus(200);
+		resp.getWriter().print(myService.protectedMethod());
 	}
 }

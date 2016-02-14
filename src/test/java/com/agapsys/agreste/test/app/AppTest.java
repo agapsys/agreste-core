@@ -21,6 +21,8 @@ import com.agapsys.agreste.TestUtils.RestEndpoint;
 import com.agapsys.agreste.exceptions.ForbiddenException;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpResponse.StringResponse;
+import com.agapsys.security.web.SessionCsrfSecurityManager;
+import com.agapsys.security.web.WebSecurityManager;
 import com.agapsys.sevlet.container.ServletContainer;
 import com.agapsys.web.action.dispatcher.HttpMethod;
 import org.junit.After;
@@ -32,11 +34,14 @@ import org.junit.Test;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class AppTest {
-	// STATIC CLASS ============================================================
+	// STATIC SCOPE ============================================================
+	private static final WebSecurityManager DEFAULT_SECURITY_MANAGER = new SessionCsrfSecurityManager();
+	
 	public static HttpClient doLogin(ServletContainer sc, String username, String password) {
 		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/login", "username", "password");
 		HttpClient client = new HttpClient();
-		sc.doRequest(client, endpoint.getRequest(username, password));
+		StringResponse resp = sc.doRequest(client, endpoint.getRequest(username, password));
+		client.addDefaultHeaders(resp.getFirstHeader(SessionCsrfSecurityManager.CSRF_HEADER));
 		return client;
 	}
 	// =========================================================================
@@ -48,7 +53,7 @@ public class AppTest {
 	
 	@Before
 	public void before() {
-		sc = new ServletContainerBuilder(new MyApplication())
+		sc = new ServletContainerBuilder(new MyApplication(), DEFAULT_SECURITY_MANAGER)
 			.addRootContext()
 				.registerServlet(MyServlet.class)
 			.endContext()
@@ -101,9 +106,41 @@ public class AppTest {
 		
 		StringResponse resp;
 
-		// Unlogged access..		
+		// Unlogged access...	
 		resp = sc.doRequest(endpoint.getRequest());
 		testUtils.assertStatus(401, resp);
+		
+		// Logged access...
+		HttpClient client = doLogin(sc, "user1", "password1");
+		resp = sc.doRequest(client, endpoint.getRequest());
+		testUtils.assertStatus(200, resp);
+		Assert.assertEquals("OK", resp.getContentString());
+		
+	}
+	
+	@Test
+	public void testImplicitSecuredGet() {
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/implicitSecuredGet");
+		testUtils.println(endpoint.toString());
+		
+		StringResponse resp;
+
+		// Unlogged access...	
+		resp = sc.doRequest(endpoint.getRequest());
+		testUtils.assertStatus(401, resp);
+		
+		HttpClient client;
+		
+		// Unpriviledged access...
+		client = doLogin(sc, "user1", "password1"); // <-- "user1" does not have the required roles
+		resp = sc.doRequest(client, endpoint.getRequest());
+		testUtils.assertStatus(403, resp);
+		
+		// Valid access...
+		client = doLogin(sc, "user2", "password2"); // <-- "user2" have the required roles
+		resp = sc.doRequest(client, endpoint.getRequest());
+		testUtils.assertStatus(200, resp);
+		Assert.assertEquals("OK", resp.getContentString());
 	}
 	// =========================================================================
 }

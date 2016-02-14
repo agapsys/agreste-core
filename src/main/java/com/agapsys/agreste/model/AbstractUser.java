@@ -70,7 +70,7 @@ public abstract class AbstractUser extends AbstractEntity implements User {
 	public Set<String> getRoles() {
 		if (effectiveRoles == null) {
 			effectiveRoles = new LinkedHashSet<>();
-			effectiveRoles.addAll(getRoles());
+			effectiveRoles.addAll(getUserRoles());
 			for (AbstractUserGroup userGroup : getGroups()) {
 				effectiveRoles.addAll(userGroup.getRoles());
 			}

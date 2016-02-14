@@ -36,7 +36,11 @@ public class MyApplication extends MockedWebApplication {
 		em.getTransaction().begin();
 		
 		new MyUser("user1", "password1").save(em);
-		new MyUser("user2", "password2").save(em);
+		
+		MyUser user = new MyUser("user2", "password2");
+		
+		user.addRole(Defs.ACCESS_ROLE);
+		user.save(em);
 		
 		em.getTransaction().commit();
 		
