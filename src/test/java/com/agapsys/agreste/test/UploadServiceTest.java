@@ -16,6 +16,7 @@
 
 package com.agapsys.agreste.test;
 
+import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.exceptions.BadRequestException;
 import com.agapsys.agreste.services.UploadService;
 import com.agapsys.http.HttpClient;
@@ -41,14 +42,26 @@ import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class UploadServiceTest {
+	// CLASS SCOPE =============================================================
 	private static final SingletonManager SINGLETON_MANAGER = new SingletonManager();
 	
-	// CLASS SCOPE =============================================================
+	@BeforeClass
+	public static void beforeClass() {
+		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+	}
+	
+	@AfterClass
+	public static void afterClass() {
+		System.out.println();
+	}
+	
 	@WebServlet("/upload/*")
 	public static class UploadServlet extends ActionServlet {
 		

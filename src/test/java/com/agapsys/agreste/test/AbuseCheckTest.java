@@ -19,6 +19,7 @@ package com.agapsys.agreste.test;
 import com.agapsys.agreste.AbuseCheckFilter;
 import com.agapsys.agreste.MockedWebApplication;
 import com.agapsys.agreste.ServletContainerBuilder;
+import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.exceptions.RateLimitingException;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
@@ -36,8 +37,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class AbuseCheckTest {
@@ -72,6 +75,16 @@ public class AbuseCheckTest {
 		ConsolePrinter.println(message);
 	}
 	// -------------------------------------------------------------------------
+	
+	@BeforeClass
+	public static void beforeClass() {
+		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+	}
+	
+	@AfterClass
+	public static void afterClass() {
+		System.out.println();
+	}
 	
 	// Classes -----------------------------------------------------------------
 	@WebListener

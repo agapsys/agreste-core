@@ -38,11 +38,23 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class MapSerializerTest {
 	// CLASS SCOPE =============================================================
+	@BeforeClass
+	public static void beforeClass() {
+		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+	}
+	
+	@AfterClass
+	public static void afterClass() {
+		System.out.println();
+	}
+	
 	// Classes -----------------------------------------------------------------
 	public static class TestDto {
 		public String     strField;

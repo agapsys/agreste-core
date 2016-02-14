@@ -16,7 +16,9 @@
 
 package com.agapsys.agreste.dto;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class AbstractDtoTest {
@@ -48,7 +50,6 @@ public class AbstractDtoTest {
 		public String strField;
 	}
 	
-	
 	public static class InnerDto extends AbstractDtoObject {
 		public String strField;
 		
@@ -59,6 +60,16 @@ public class AbstractDtoTest {
 		private int intField;
 		
 		public InnerDto innerDto;
+	}
+	
+	@BeforeClass
+	public static void beforeClass() {
+		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+	}
+	
+	@AfterClass
+	public static void afterClass() {
+		System.out.println();
 	}
 	// =========================================================================
 
