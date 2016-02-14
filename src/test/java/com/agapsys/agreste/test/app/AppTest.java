@@ -67,8 +67,10 @@ public class AppTest {
 	@Before
 	public void before() {
 		sc = new ServletContainerBuilder()
-			.addRootContext(new MyApplication(), DEFAULT_SECURITY_MANAGER)
-				.registerServlet(MyServlet.class)
+			.addRootContext(new MyApplication(), DEFAULT_SECURITY_MANAGER, 
+				"com.agapsys.agreste.test.app.MyServlet", 
+				"com.agapsys.agreste.test.app.MyService"
+			).registerServlet(MyServlet.class)
 			.endContext()
 		.build();
 		sc.startServer();
