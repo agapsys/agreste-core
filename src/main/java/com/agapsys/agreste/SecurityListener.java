@@ -31,13 +31,15 @@ public class SecurityListener implements ServletContextListener {
 	
 	// INSTANCE SCOPE ==========================================================
 	private final WebSecurityManager securityManager;
+	private final String[] securedClasses;
 	
 	public SecurityListener() {
 		this(null);
 	}
 	
-	public SecurityListener(WebSecurityManager securityManager) {
+	public SecurityListener(WebSecurityManager securityManager, String...securedClasses) {
 		this.securityManager = securityManager;
+		this.securedClasses = securedClasses;
 	}
 	
 	@Override
@@ -59,7 +61,11 @@ public class SecurityListener implements ServletContextListener {
 			webSecurityManager = securityManager;
 		}
 		
-		WebSecurity.init(this.getClass().getClassLoader(), webSecurityManager);
+		if (securedClasses.length == 0) {
+			WebSecurity.init(this.getClass().getClassLoader(), webSecurityManager);
+		} else {
+			WebSecurity.init(this.getClass().getClassLoader(), webSecurityManager, securedClasses);
+		}
 	}
 
 	@Override
