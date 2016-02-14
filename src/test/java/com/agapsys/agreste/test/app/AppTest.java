@@ -66,8 +66,8 @@ public class AppTest {
 	
 	@Before
 	public void before() {
-		sc = new ServletContainerBuilder(new MyApplication(), DEFAULT_SECURITY_MANAGER)
-			.addRootContext()
+		sc = new ServletContainerBuilder()
+			.addRootContext(new MyApplication(), DEFAULT_SECURITY_MANAGER)
 				.registerServlet(MyServlet.class)
 			.endContext()
 		.build();

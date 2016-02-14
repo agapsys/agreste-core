@@ -283,8 +283,8 @@ public class MapSerializerTest {
 	
 	@Test
 	public void testServlet () {
-		ServletContainer sc = new ServletContainerBuilder(new MockedWebApplication())
-			.addRootContext()
+		ServletContainer sc = new ServletContainerBuilder()
+			.addRootContext(new MockedWebApplication())
 				.registerServlet(TestServlet.class)
 			.endContext()
 		.build();

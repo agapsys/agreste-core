@@ -148,8 +148,8 @@ public class AbuseCheckTest {
 
 	@Before
 	public void before() {
-		sc = new ServletContainerBuilder(new TestApplication())
-			.addRootContext()
+		sc = new ServletContainerBuilder()
+			.addRootContext(new TestApplication())
 				.registerServlet(TestServlet.class)
 				.registerFilter(AbuseCheckFilter.class, "/*")
 			.endContext()
