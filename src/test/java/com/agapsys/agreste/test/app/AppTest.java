@@ -53,7 +53,6 @@ public class AppTest {
 				.registerServlet(MyServlet.class)
 			.endContext()
 		.build();
-		
 		sc.startServer();
 	}
 	
@@ -104,7 +103,7 @@ public class AppTest {
 
 		// Unlogged access..		
 		resp = sc.doRequest(endpoint.getRequest());
-		testUtils.assertStatus(ForbiddenException.CODE, resp);
+		testUtils.assertStatus(401, resp);
 	}
 	// =========================================================================
 }
