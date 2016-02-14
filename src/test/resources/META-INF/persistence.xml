@@ -23,6 +23,7 @@ limitations under the License.
 		
 		${jpa-classes}
 		<class>com.agapsys.agreste.test.app.MyUser</class>
+		<class>com.agapsys.agreste.test.app.MyGroup</class>
 		
 		<properties>
 			<!-- JPA properties -->

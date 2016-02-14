@@ -141,6 +141,12 @@ public class AppTest {
 		resp = sc.doRequest(client, endpoint.getRequest());
 		testUtils.assertStatus(200, resp);
 		Assert.assertEquals("OK", resp.getContentString());
+		
+		// Valid access with group roles...
+		client = doLogin(sc, "user3", "password3"); // <-- "user2" have the required roles
+		resp = sc.doRequest(client, endpoint.getRequest());
+		testUtils.assertStatus(200, resp);
+		Assert.assertEquals("OK", resp.getContentString());
 	}
 	// =========================================================================
 }

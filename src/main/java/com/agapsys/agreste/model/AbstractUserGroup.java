@@ -16,6 +16,7 @@
 
 package com.agapsys.agreste.model;
 
+import com.agapsys.jpa.AbstractEntity;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -34,12 +35,13 @@ import javax.persistence.Version;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class AbstractUserGroup implements Serializable {
+public abstract class AbstractUserGroup  extends AbstractEntity implements Serializable {
 	// -------------------------------------------------------------------------
 	@Id
 	@GeneratedValue
 	private Long id;
 
+	@Override
 	public Long getId() {
 		return id;
 	}
