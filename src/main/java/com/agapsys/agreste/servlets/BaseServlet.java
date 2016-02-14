@@ -130,11 +130,19 @@ public abstract class BaseServlet extends ActionServlet {
 	}
 	
 	public String getMandatoryParameter(HttpExchange exchange, String paramName) throws BadRequestException {
-		return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName);
+		try {
+			return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName);
+		} catch (HttpUtils.BadRequestException ex) {
+			throw new BadRequestException(ex.getMessage());
+		}
 	}
 	
 	public String getMandatoryParameter(HttpExchange exchange, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
-		return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName, errorMessage, errMsgArgs);
+		try {
+			return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName, errorMessage, errMsgArgs);
+		} catch (HttpUtils.BadRequestException ex) {
+			throw new BadRequestException(ex.getMessage());
+		}
 	}
 
 	public <T> T readParameterObject(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
