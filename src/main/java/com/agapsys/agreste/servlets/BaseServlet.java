@@ -25,6 +25,7 @@ import com.agapsys.agreste.exceptions.ClientException;
 import com.agapsys.agreste.model.AbstractUser;
 import com.agapsys.agreste.utils.GsonSerializer;
 import com.agapsys.agreste.utils.ObjectSerializer;
+import com.agapsys.security.NotAllowedException;
 import com.agapsys.web.action.dispatcher.ActionServlet;
 import com.agapsys.web.action.dispatcher.HttpExchange;
 import com.agapsys.web.action.dispatcher.LazyInitializer;
@@ -98,7 +99,9 @@ public abstract class BaseServlet extends ActionServlet {
 	protected void onError(HttpExchange exchange, Throwable t) {
 		super.onError(exchange, t);
 
-		if (t instanceof ClientException) {
+		if (t instanceof NotAllowedException) {
+			logRequest(exchange, LogType.WARNING, "Blocked request (not allowed)");
+		} else if (t instanceof ClientException) {
 			logRequest(exchange, LogType.WARNING, t.getMessage());
 		} else if (!(t instanceof OptimisticLockException)){
 			String stackTrace = AbstractExceptionReporterModule.getStackTrace(t);
