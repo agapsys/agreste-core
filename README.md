@@ -7,7 +7,7 @@ Welcome to the AGRESTE project.
 ## Major features:
 
 * Security
-* JPA transactions
+* Transactional requests (automatic JPA transaction management)
 * JPA query builders
 * REST endpoints mapping to servlet methods
 * Singleton management for application components:
