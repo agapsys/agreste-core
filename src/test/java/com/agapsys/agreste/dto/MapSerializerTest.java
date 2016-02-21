@@ -18,14 +18,15 @@ package com.agapsys.agreste.dto;
 
 import com.agapsys.agreste.MockedWebApplication;
 import com.agapsys.agreste.ServletContainerBuilder;
+import com.agapsys.agreste.controllers.BaseController;
 import com.agapsys.agreste.dto.MapSerializer.SerializerException;
 import com.agapsys.agreste.exceptions.BadRequestException;
-import com.agapsys.agreste.servlets.BaseServlet;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
+import com.agapsys.rcf.HttpExchange;
+import com.agapsys.rcf.WebAction;
+import com.agapsys.rcf.WebController;
 import com.agapsys.sevlet.container.ServletContainer;
-import com.agapsys.web.action.dispatcher.HttpExchange;
-import com.agapsys.web.action.dispatcher.WebAction;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -36,7 +37,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -225,8 +225,8 @@ public class MapSerializerTest {
 		}
 	}
 	
-	@WebServlet("/*")
-	public static class TestServlet extends BaseServlet {
+	@WebController("test")
+	public static class TestController extends BaseController {
 		
 		@Override
 		protected MapSerializer getMapSerializer() {
@@ -283,15 +283,13 @@ public class MapSerializerTest {
 	
 	@Test
 	public void testServlet () {
-		ServletContainer sc = new ServletContainerBuilder()
-			.addRootContext(new MockedWebApplication())
-				.registerServlet(TestServlet.class)
-			.endContext()
-		.build();
+		ServletContainer sc = new ServletContainerBuilder(MockedWebApplication.class)
+			.registerController(TestController.class)
+			.build();
 		
 		sc.startServer();
 		
-		HttpResponse.StringResponse resp = sc.doRequest(new HttpGet("/get?uuidField=%s&dateField=%s&strField=%s", "2|1", "2015-11-28", "Hello+World áéíóú"));
+		HttpResponse.StringResponse resp = sc.doRequest(new HttpGet("/test/get?uuidField=%s&dateField=%s&strField=%s", "2|1", "2015-11-28", "Hello+World áéíóú"));
 		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
 		Assert.assertEquals("strField=Hello+World+%C3%A1%C3%A9%C3%AD%C3%B3%C3%BA&booleanField=false&shortField=0&integerField=0&longField=0&floatField=0.0&doubleField=0.0&dateField=Sat Nov 28 00:00:00 BRT 2015&uuidField=2|1", resp.getContentString());
 		

@@ -23,15 +23,15 @@ import com.agapsys.agreste.modules.CorsModule;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;
+import com.agapsys.rcf.Controller;
+import com.agapsys.rcf.HttpExchange;
+import com.agapsys.rcf.WebAction;
+import com.agapsys.rcf.WebController;
 import com.agapsys.sevlet.container.ServletContainer;
-import com.agapsys.web.action.dispatcher.ActionServlet;
-import com.agapsys.web.action.dispatcher.HttpExchange;
-import com.agapsys.web.action.dispatcher.WebAction;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import java.util.List;
 import java.util.Properties;
 import javax.servlet.annotation.WebListener;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -74,8 +74,8 @@ public class CorsModuleTest {
 		}
 	}
 	
-	@WebServlet("/*")
-	public static class TestServlet extends ActionServlet {
+	@WebController("test")
+	public static class TestController extends Controller {
 
 		@Override
 		public void beforeAction(HttpExchange exchange) {
@@ -94,11 +94,9 @@ public class CorsModuleTest {
 	@Before
 	public void before() {
 		
-		sc = new ServletContainerBuilder()
-			.addRootContext(new TestApplication())
-				.registerServlet(TestServlet.class)
-			.endContext()
-		.build();
+		sc = new ServletContainerBuilder(TestApplication.class)
+			.registerController(TestController.class)
+			.build();
 		
 		sc.startServer();
 	}
@@ -110,7 +108,7 @@ public class CorsModuleTest {
 	
 	@Test
 	public void testCorsHeaders() {
-		StringResponse resp = sc.doRequest(new HttpGet("/get"));
+		StringResponse resp = sc.doRequest(new HttpGet("/test/get"));
 		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
 		
 		List<HttpHeader> allowedOrigins = resp.getHeaders("Access-Control-Allow-Origin");

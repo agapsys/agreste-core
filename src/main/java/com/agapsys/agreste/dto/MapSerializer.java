@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste.dto;
 
-import com.agapsys.web.action.dispatcher.LazyInitializer;
+import com.agapsys.rcf.LazyInitializer;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;

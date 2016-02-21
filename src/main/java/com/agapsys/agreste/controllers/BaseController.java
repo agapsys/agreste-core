@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.servlets;
+package com.agapsys.agreste.controllers;
 
 import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.JpaTransactionFilter;
@@ -25,10 +25,10 @@ import com.agapsys.agreste.exceptions.ClientException;
 import com.agapsys.agreste.model.AbstractUser;
 import com.agapsys.agreste.utils.GsonSerializer;
 import com.agapsys.agreste.utils.ObjectSerializer;
+import com.agapsys.rcf.Controller;
+import com.agapsys.rcf.HttpExchange;
+import com.agapsys.rcf.LazyInitializer;
 import com.agapsys.security.NotAllowedException;
-import com.agapsys.web.action.dispatcher.ActionServlet;
-import com.agapsys.web.action.dispatcher.HttpExchange;
-import com.agapsys.web.action.dispatcher.LazyInitializer;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.Module;
@@ -41,7 +41,7 @@ import java.util.Map;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class BaseServlet extends ActionServlet {
+public abstract class BaseController extends Controller {
 	
 	// CLASS SCOPE =============================================================
 	public static final ObjectSerializer DEFAULT_SERIALIZER = new GsonSerializer();

@@ -22,10 +22,10 @@ import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.exceptions.ForbiddenException;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpResponse.StringResponse;
+import com.agapsys.rcf.HttpMethod;
 import com.agapsys.security.web.SessionCsrfSecurityManager;
 import com.agapsys.security.web.WebSecurityManager;
 import com.agapsys.sevlet.container.ServletContainer;
-import com.agapsys.web.action.dispatcher.HttpMethod;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -66,13 +66,13 @@ public class AppTest {
 	
 	@Before
 	public void before() {
-		sc = new ServletContainerBuilder()
-			.addRootContext(new MyApplication(), DEFAULT_SECURITY_MANAGER, 
-				"com.agapsys.agreste.test.app.MyServlet", 
-				"com.agapsys.agreste.test.app.MyService"
-			).registerServlet(MyServlet.class)
-			.endContext()
-		.build();
+		sc = new ServletContainerBuilder(
+				MyApplication.class, 
+				DEFAULT_SECURITY_MANAGER, 
+				"com.agapsys.agreste.test.app.MyController", 
+				"com.agapsys.agreste.test.app.MyController"
+			).registerController(MyController.class)
+			.build();
 		sc.startServer();
 	}
 	

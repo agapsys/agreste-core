@@ -23,12 +23,12 @@ import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.http.MultipartRequest.MultipartPost;
+import com.agapsys.rcf.Controller;
+import com.agapsys.rcf.HttpExchange;
+import com.agapsys.rcf.HttpMethod;
+import com.agapsys.rcf.WebAction;
 import com.agapsys.sevlet.container.ServletContainer;
 import com.agapsys.sevlet.container.ServletContainerBuilder;
-import com.agapsys.web.action.dispatcher.ActionServlet;
-import com.agapsys.web.action.dispatcher.HttpExchange;
-import com.agapsys.web.action.dispatcher.HttpMethod;
-import com.agapsys.web.action.dispatcher.WebAction;
 import com.agapsys.web.toolkit.utils.SingletonManager;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,7 +63,7 @@ public class UploadServiceTest {
 	}
 	
 	@WebServlet("/upload/*")
-	public static class UploadServlet extends ActionServlet {
+	public static class UploadServlet extends Controller {
 		
 		private final UploadService uploadService = (UploadService) SINGLETON_MANAGER.getSingleton(UploadService.class);
 

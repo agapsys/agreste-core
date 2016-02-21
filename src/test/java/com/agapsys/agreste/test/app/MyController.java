@@ -17,13 +17,13 @@ package com.agapsys.agreste.test.app;
 
 import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.WebSecurity;
+import com.agapsys.agreste.controllers.BaseController;
 import com.agapsys.agreste.exceptions.ForbiddenException;
-import com.agapsys.agreste.servlets.BaseServlet;
 import com.agapsys.jpa.FindBuilder;
+import com.agapsys.rcf.HttpExchange;
+import com.agapsys.rcf.HttpMethod;
+import com.agapsys.rcf.WebAction;
 import com.agapsys.security.Secured;
-import com.agapsys.web.action.dispatcher.HttpExchange;
-import com.agapsys.web.action.dispatcher.HttpMethod;
-import com.agapsys.web.action.dispatcher.WebAction;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 @WebServlet("/*")
-public class MyServlet extends BaseServlet {
+public class MyController extends BaseController {
 	
 	private MyService myService;
 
