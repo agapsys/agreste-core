@@ -30,6 +30,45 @@ import java.util.Set;
  */
 public abstract class ObjectTransformer<S, D> {
 	// STATIC SCOPE ============================================================
+	private static <D> Collection<D> getEmptyCollection(Collection srcCollection) {
+		Collection<D> destCollection;
+
+		if (srcCollection instanceof Set) {
+			destCollection = new LinkedHashSet<>();
+		} else if (srcCollection instanceof List) {
+			destCollection = new LinkedList<>();
+		} else {
+			throw new UnsupportedOperationException("Unsupported collection: " + srcCollection.getClass().getName());
+		}
+		
+		return destCollection;
+	}
+	
+	/**
+	 * Transforms a collection into another
+	 * @param <D> Destination collection element type
+	 * @param destinationElementClass Destination collection element type. It's assumed that this class will have a constructor which receives an object of the same class of the elements in source collection.
+	 * @param srcCollection source collection
+	 * @return transformed collection
+	 */
+	public static <D> Collection<D> getCollection(Class<D> destinationElementClass, Collection srcCollection) {
+		Collection<D> destCollection = getEmptyCollection(srcCollection);
+		
+		try {
+			for (Object element : srcCollection) {
+				destCollection.add(destinationElementClass.getConstructor(element.getClass()).newInstance(element));
+			}
+			
+			return destCollection;
+			
+		} catch (Throwable t) {
+			if (t instanceof RuntimeException)
+				throw (RuntimeException) t;
+			
+			throw new RuntimeException(t);
+		}
+	}
+	
 	/** Convenience method for getCollection(srcCollection, transformer, null). */
 	public static <D> Collection<D> getCollection(Collection srcCollection, ObjectTransformer transformer) {
 		return getCollection(srcCollection, transformer, null);
@@ -44,15 +83,7 @@ public abstract class ObjectTransformer<S, D> {
 	 * @return transformed collection
 	 */
 	public static <D> Collection<D> getCollection(Collection srcCollection, ObjectTransformer transformer, CollectionFilter filter) {
-		Collection<D> destCollection;
-
-		if (srcCollection instanceof Set) {
-			destCollection = new LinkedHashSet<>();
-		} else if (srcCollection instanceof List) {
-			destCollection = new LinkedList<>();
-		} else {
-			throw new UnsupportedOperationException("Unsupported collection: " + srcCollection.getClass().getName());
-		}
+		Collection<D> destCollection = getEmptyCollection(srcCollection);
 
 		for (Object object : srcCollection) {
 			if (filter != null && !filter.process(object))

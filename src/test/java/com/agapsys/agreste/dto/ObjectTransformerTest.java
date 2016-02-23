@@ -22,6 +22,20 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class ObjectTransformerTest {
+	
+	private static class MyDestClass {
+		
+		private final String str;
+		
+		public MyDestClass(Integer i) {
+			str = "mdc_" + i * 4;
+		}
+
+		@Override
+		public String toString() {
+			return str;
+		}
+	}
 
 	private final List<Integer> srcList;
 	private final ObjectTransformer<Integer, String> intStrTransformer = new ObjectTransformer<Integer, String>() {
@@ -38,7 +52,7 @@ public class ObjectTransformerTest {
 				return srcObj != 0 && srcObj % 2 == 0;
 			}
 		};
-
+	
 	public ObjectTransformerTest() {
 		srcList = new LinkedList();
 
@@ -77,6 +91,13 @@ public class ObjectTransformerTest {
 		Assert.assertEquals(EXPECTED_RESULT, result);
 
 		result = intStrTransformer.getCollection(srcList, evenFilter).toString();
+		Assert.assertEquals(EXPECTED_RESULT, result);
+	}
+	
+	@Test
+	public void transformUsingConstructor() {
+		final String EXPECTED_RESULT = "[mdc_0, mdc_4, mdc_8, mdc_12, mdc_16]";
+		String result = ObjectTransformer.getCollection(MyDestClass.class, srcList).toString();
 		Assert.assertEquals(EXPECTED_RESULT, result);
 	}
 }
