@@ -51,7 +51,7 @@ public class AppTest {
 	private static final WebSecurityManager DEFAULT_SECURITY_MANAGER = new SessionCsrfSecurityManager();
 	
 	public static HttpClient doLogin(ServletContainer sc, String username, String password) {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/login", "username", "password");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login", "username", "password");
 		HttpClient client = new HttpClient();
 		StringResponse resp = sc.doRequest(client, endpoint.getRequest(username, password));
 		client.addDefaultHeaders(resp.getFirstHeader(SessionCsrfSecurityManager.CSRF_HEADER));
@@ -70,7 +70,7 @@ public class AppTest {
 				MyApplication.class, 
 				DEFAULT_SECURITY_MANAGER, 
 				"com.agapsys.agreste.test.app.MyController", 
-				"com.agapsys.agreste.test.app.MyController"
+				"com.agapsys.agreste.test.app.MyService"
 			).registerController(MyController.class)
 			.build();
 		sc.startServer();
@@ -83,7 +83,7 @@ public class AppTest {
 	
 	@Test
 	public void testLogin() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/login", "username", "password");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login", "username", "password");
 		testUtils.println(endpoint.toString());
 		
 		HttpClient client = new HttpClient();
@@ -104,7 +104,7 @@ public class AppTest {
 	
 	@Test
 	public void testPublicGet() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/publicGet");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/publicGet");
 		testUtils.println(endpoint.toString());
 		
 		StringResponse resp;
@@ -116,7 +116,7 @@ public class AppTest {
 	
 	@Test
 	public void testSecuredGet() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/securedGet");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/securedGet");
 		testUtils.println(endpoint.toString());
 		
 		StringResponse resp;
@@ -135,7 +135,7 @@ public class AppTest {
 	
 	@Test
 	public void testImplicitSecuredGet() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/implicitSecuredGet");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/implicitSecuredGet");
 		testUtils.println(endpoint.toString());
 		
 		StringResponse resp;

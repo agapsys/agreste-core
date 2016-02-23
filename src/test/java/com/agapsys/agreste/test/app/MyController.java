@@ -23,15 +23,15 @@ import com.agapsys.jpa.FindBuilder;
 import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.WebAction;
+import com.agapsys.rcf.WebController;
 import com.agapsys.security.Secured;
 import java.io.IOException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-@WebServlet("/*")
+@WebController("controller")
 public class MyController extends BaseController {
 	
 	private MyService myService;

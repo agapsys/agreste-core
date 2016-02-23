@@ -24,36 +24,37 @@ limitations under the License.
 		<after>
 			<name>com.agapsys.libs.web-security-framework</name>
 			<name>com.agapsys.libs.web-app-toolkit</name>
+			<name>com.agapsys.libs.rest-controller-framework</name>
 		</after>
 	</ordering>
 	
 	<filter>
-		<filter-name>com.agapsys.agreste.abuseCheckFilter</filter-name>
+		<filter-name>com.agapsys.agreste.AbuseCheckFilter</filter-name>
 		<filter-class>com.agapsys.agreste.AbuseCheckFilter</filter-class>
 	</filter>
 	
 	<filter>
-		<filter-name>com.agapsys.agreste.clientExceptionFilter</filter-name>
+		<filter-name>com.agapsys.agreste.ClientExceptionFilter</filter-name>
 		<filter-class>com.agapsys.agreste.ClientExceptionFilter</filter-class>
 	</filter>
 	
 	<filter>
-		<filter-name>com.agapsys.agreste.jpaTransactionFilter</filter-name>
+		<filter-name>com.agapsys.agreste.JpaTransactionFilter</filter-name>
 		<filter-class>com.agapsys.agreste.JpaTransactionFilter</filter-class>
 	</filter>
 	
 	<filter-mapping>
-		<filter-name>com.agapsys.agreste.abuseCheckFilter</filter-name>
+		<filter-name>com.agapsys.agreste.AbuseCheckFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
-		<filter-name>com.agapsys.agreste.clientExceptionFilter</filter-name>
+		<filter-name>com.agapsys.agreste.ClientExceptionFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	
 	<filter-mapping>
-		<filter-name>com.agapsys.agreste.jpaTransactionFilter</filter-name>
+		<filter-name>com.agapsys.agreste.JpaTransactionFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	

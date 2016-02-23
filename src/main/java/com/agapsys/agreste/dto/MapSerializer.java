@@ -234,7 +234,7 @@ public class MapSerializer {
 	private final Map<Class, FieldSerializer> fieldSerializerMap = new LinkedHashMap<>();
 	
 	public MapSerializer() {
-		fieldSerializerMap.put(String.class,     new StringSerializer());
+		fieldSerializerMap.put(String.class, new StringSerializer());
 		
 		BooleanSerializer booleanSerializer = new BooleanSerializer();
 		fieldSerializerMap.put(Boolean.class, booleanSerializer);
