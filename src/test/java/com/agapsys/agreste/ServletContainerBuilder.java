@@ -22,6 +22,10 @@ import com.agapsys.security.web.SessionCsrfSecurityManager;
 import com.agapsys.security.web.WebSecurityFilter;
 import com.agapsys.security.web.WebSecurityManager;
 import com.agapsys.sevlet.container.ServletContainer;
+import java.util.EventListener;
+import javax.servlet.Filter;
+import javax.servlet.http.HttpServlet;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 
 /**
  * Servlet container builder for AGRESTE applications
@@ -85,6 +89,36 @@ public class ServletContainerBuilder extends com.agapsys.web.toolkit.ServletCont
 		registerController(controllerClass, name);
 	
 		return this;
+	}
+	
+	@Override
+	public ServletContainerBuilder setLocalPort(int localPort) {
+		return (ServletContainerBuilder) super.setLocalPort(localPort);
+	}
+
+	@Override
+	public ServletContainerBuilder setErrorHandler(ErrorHandler errorHandler) {
+		return (ServletContainerBuilder) super.setErrorHandler(errorHandler);
+	}
+
+	@Override
+	public ServletContainerBuilder registerErrorPage(int code, String url) {
+		return (ServletContainerBuilder) super.registerErrorPage(code, url);
+	}
+
+	@Override
+	public ServletContainerBuilder registerServlet(Class<? extends HttpServlet> servletClass, String urlPattern) {
+		return (ServletContainerBuilder) super.registerServlet(servletClass, urlPattern);
+	}
+
+	@Override
+	public ServletContainerBuilder registerFilter(Class<? extends Filter> filterClass, String urlPattern, boolean append) {
+		return (ServletContainerBuilder) super.registerFilter(filterClass, urlPattern, append);
+	}
+
+	@Override
+	public ServletContainerBuilder registerEventListener(Class<? extends EventListener> eventListener, boolean append) {
+		return (ServletContainerBuilder) super.registerEventListener(eventListener, append);
 	}
 	// =========================================================================
 
