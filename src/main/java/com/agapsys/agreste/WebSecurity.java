@@ -23,6 +23,8 @@ import com.agapsys.agreste.model.AbstractUser;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class WebSecurity extends com.agapsys.security.web.WebSecurity {
+	protected WebSecurity() {}
+	
 	// STATIC SCOPE ============================================================
 	public static AbstractUser getCurrentUser() {
 		return (AbstractUser) com.agapsys.security.web.WebSecurity.getCurrentUser();
