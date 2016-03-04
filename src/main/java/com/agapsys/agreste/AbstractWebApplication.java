@@ -23,6 +23,7 @@ import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
 import com.agapsys.web.toolkit.utils.DateUtils;
 import java.util.Properties;
+import java.util.TimeZone;
 import java.util.logging.Level;
 
 public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.AbstractWebApplication {
@@ -72,6 +73,7 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 	
 	@Override
 	protected void beforeApplicationStart() {
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));		
 		java.util.logging.Logger.getLogger("org.hibernate").setLevel(getHibernateLogLevel());
 		
 		super.beforeApplicationStart();
