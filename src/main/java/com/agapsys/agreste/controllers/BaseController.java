@@ -38,6 +38,7 @@ import com.agapsys.web.toolkit.services.AttributeService;
 import com.agapsys.web.toolkit.utils.HttpUtils;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -109,27 +110,38 @@ public abstract class BaseController extends Controller {
 		}
 	}
 	
-	public <T extends Module> T getModule(Class<T> moduleClass) {
+	protected <T extends Module> T getModule(Class<T> moduleClass) {
 		return AbstractWebApplication.getRunningInstance().getModule(moduleClass);
 	}
 	
-	public <T extends Service> T getService(Class<T> serviceClass) {
+	protected <T extends Service> T getService(Class<T> serviceClass) {
 		return AbstractWebApplication.getRunningInstance().getService(serviceClass);
 	}
 	
-	public AbstractUser getCurrentUser() {
-		return WebSecurity.getCurrentUser();
+	protected AbstractUser getCurrentUser() {
+		AbstractUser loggedUser = WebSecurity.getCurrentUser();
+		JpaTransaction jpaTransaction = getJpaTransaction();
+		
+		if (loggedUser != null && jpaTransaction != null) {
+			EntityManager em = jpaTransaction.getEntityManager();
+			
+			if (!em.contains(loggedUser)) {
+				loggedUser = em.find(AbstractUser.class, loggedUser.getId());
+			}
+		}
+		
+		return loggedUser;
 	}
 	
-	public void setCurrentUser(AbstractUser user) {
+	protected void setCurrentUser(AbstractUser user) {
 		WebSecurity.setCurrentUser(user);
 	}
 	
-	public String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
+	protected String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
 		return HttpUtils.getOptionalParameter(exchange.getRequest(), paramName, defaultValue);
 	}
 	
-	public String getMandatoryParameter(HttpExchange exchange, String paramName) throws BadRequestException {
+	protected String getMandatoryParameter(HttpExchange exchange, String paramName) throws BadRequestException {
 		try {
 			return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName);
 		} catch (HttpUtils.BadRequestException ex) {
@@ -137,7 +149,7 @@ public abstract class BaseController extends Controller {
 		}
 	}
 	
-	public String getMandatoryParameter(HttpExchange exchange, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
+	protected String getMandatoryParameter(HttpExchange exchange, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
 		try {
 			return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName, errorMessage, errMsgArgs);
 		} catch (HttpUtils.BadRequestException ex) {
@@ -145,7 +157,7 @@ public abstract class BaseController extends Controller {
 		}
 	}
 
-	public <T> T readParameterObject(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
+	protected <T> T readParameterObject(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
 		Map<String, String> fieldMap = new LinkedHashMap<>();
 		
 		for (Map.Entry<String, String[]> entry : exchange.getRequest().getParameterMap().entrySet()) {
@@ -159,11 +171,11 @@ public abstract class BaseController extends Controller {
 		}
 	}
 	
-	public <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
+	protected <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
 		return _getObjectSerializer().readObject(exchange.getRequest(), targetClass);
 	}
 	
-	public void writeObject(HttpExchange exchange, Object object) {
+	protected void writeObject(HttpExchange exchange, Object object) {
 		_getObjectSerializer().writeObject(exchange.getResponse(), object);
 	}
 	
@@ -188,7 +200,7 @@ public abstract class BaseController extends Controller {
 		return finalMessage;
 	}
 
-	public void logRequest(HttpExchange exchange, LogType logType, String message) {
+	protected void logRequest(HttpExchange exchange, LogType logType, String message) {
 		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
 		AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
 	}
