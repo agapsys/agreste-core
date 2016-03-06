@@ -137,6 +137,10 @@ public abstract class BaseController extends Controller {
 		WebSecurity.setCurrentUser(user);
 	}
 	
+	protected void unregisterCurrentUser() {
+		WebSecurity.unregisterCurrentUser();
+	}
+	
 	protected String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
 		return HttpUtils.getOptionalParameter(exchange.getRequest(), paramName, defaultValue);
 	}
