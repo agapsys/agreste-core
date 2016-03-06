@@ -73,11 +73,15 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 	
 	@Override
 	protected void beforeApplicationStart() {
-		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));		
+		TimeZone.setDefault(getDefaultTimeZone());		
 		java.util.logging.Logger.getLogger("org.hibernate").setLevel(getHibernateLogLevel());
 		
 		super.beforeApplicationStart();
 		registerModule(PersistenceModule.class);
+	}
+	
+	protected TimeZone getDefaultTimeZone() {
+		return TimeZone.getTimeZone("UTC");
 	}
 
 	@Override

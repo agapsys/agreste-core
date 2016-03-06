@@ -291,7 +291,7 @@ public class MapSerializerTest {
 		
 		HttpResponse.StringResponse resp = sc.doRequest(new HttpGet("/test/get?uuidField=%s&dateField=%s&strField=%s", "2|1", "2015-11-28", "Hello+World áéíóú"));
 		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
-		Assert.assertEquals("strField=Hello+World+%C3%A1%C3%A9%C3%AD%C3%B3%C3%BA&booleanField=false&shortField=0&integerField=0&longField=0&floatField=0.0&doubleField=0.0&dateField=Sat Nov 28 00:00:00 BRT 2015&uuidField=2|1", resp.getContentString());
+		Assert.assertEquals("strField=Hello+World+%C3%A1%C3%A9%C3%AD%C3%B3%C3%BA&booleanField=false&shortField=0&integerField=0&longField=0&floatField=0.0&doubleField=0.0&dateField=Sat Nov 28 00:00:00 UTC 2015&uuidField=2|1", resp.getContentString());
 		
 		sc.stopServer();
 	}
