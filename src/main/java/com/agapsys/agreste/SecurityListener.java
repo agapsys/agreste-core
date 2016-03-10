@@ -61,11 +61,16 @@ public class SecurityListener implements ServletContextListener {
 			webSecurityManager = securityManager;
 		}
 		
+		
+		System.out.print(String.format("Initializing Web Security Framework (security manager: %s)...", webSecurityManager.getClass().getName()));
+		
 		if (securedClasses.length == 0) {
 			WebSecurity.init(this.getClass().getClassLoader(), webSecurityManager);
 		} else {
 			WebSecurity.init(this.getClass().getClassLoader(), webSecurityManager, securedClasses);
 		}
+		
+		System.out.print(" Done!\n");
 	}
 
 	@Override
