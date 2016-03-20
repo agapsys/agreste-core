@@ -51,9 +51,9 @@ public class AppTest {
 	private static final WebSecurityManager DEFAULT_SECURITY_MANAGER = new SessionCsrfSecurityManager();
 	
 	public static HttpClient doLogin(ServletContainer sc, String username, String password) {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login", "username", "password");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login");
 		HttpClient client = new HttpClient();
-		StringResponse resp = sc.doRequest(client, endpoint.getRequest(username, password));
+		StringResponse resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", username, password));
 		client.addDefaultHeaders(resp.getFirstHeader(SessionCsrfSecurityManager.CSRF_HEADER));
 		return client;
 	}
@@ -83,22 +83,22 @@ public class AppTest {
 	
 	@Test
 	public void testLogin() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login", "username", "password");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login");
 		testUtils.println(endpoint.toString());
 		
 		HttpClient client = new HttpClient();
 		StringResponse resp;
 
 		// Invalid username...
-		resp = sc.doRequest(client, endpoint.getRequest("invalid_user", "invalid_password"));
+		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "invalid_user", "invalid_password"));
 		testUtils.assertErrorStatus(ForbiddenException.CODE, "Invalid credentials", resp);
 		
 		// Invalid password...
-		resp = sc.doRequest(client, endpoint.getRequest("user1", "invalid-password"));
+		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "user1", "invalid-password"));
 		testUtils.assertStatus(ForbiddenException.CODE, resp);
 		
 		// Valid credentials...
-		resp = sc.doRequest(client, endpoint.getRequest("user1", "password1"));
+		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "user1", "password1"));
 		testUtils.assertStatus(200, resp);
 	}
 	
