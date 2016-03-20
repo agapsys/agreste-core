@@ -121,6 +121,4 @@ public class ServletContainerBuilder extends com.agapsys.web.toolkit.ServletCont
 		return (ServletContainerBuilder) super.registerEventListener(eventListener, append);
 	}
 	// =========================================================================
-
-	
 }
