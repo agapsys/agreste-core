@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.test;
+package com.agapsys.agreste.app;
 
 import com.agapsys.agreste.AbuseCheckFilter;
-import com.agapsys.agreste.MockedWebApplication;
-import com.agapsys.agreste.ServletContainerBuilder;
+import com.agapsys.agreste.test.MockedWebApplication;
+import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.exceptions.RateLimitingException;
 import com.agapsys.http.HttpClient;

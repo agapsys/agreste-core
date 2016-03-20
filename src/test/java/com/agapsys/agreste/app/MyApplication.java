@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agapsys.agreste.test.app;
+package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.MockedWebApplication;
+import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
 import javax.persistence.EntityManager;
 

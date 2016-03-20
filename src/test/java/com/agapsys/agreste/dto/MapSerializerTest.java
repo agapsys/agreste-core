@@ -16,8 +16,8 @@
 
 package com.agapsys.agreste.dto;
 
-import com.agapsys.agreste.MockedWebApplication;
-import com.agapsys.agreste.ServletContainerBuilder;
+import com.agapsys.agreste.test.MockedWebApplication;
+import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.controllers.BaseController;
 import com.agapsys.agreste.dto.MapSerializer.SerializerException;
 import com.agapsys.agreste.exceptions.BadRequestException;

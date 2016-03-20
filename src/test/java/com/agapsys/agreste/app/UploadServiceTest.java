@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.test;
+package com.agapsys.agreste.app;
 
 import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.exceptions.BadRequestException;

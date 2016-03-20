@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agapsys.agreste.test.app;
-
-import com.agapsys.agreste.model.AbstractUserGroup;
-import javax.persistence.Entity;
+package com.agapsys.agreste.app;
 
 /**
+ *
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-@Entity
-public class MyGroup extends AbstractUserGroup {}
+public class Defs {
+	private Defs() {}
+	
+	public static final String ACCESS_ROLE = "access";
+}

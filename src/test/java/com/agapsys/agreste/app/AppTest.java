@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agapsys.agreste.test.app;
+package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.ServletContainerBuilder;
-import com.agapsys.agreste.TestUtils;
-import com.agapsys.agreste.TestUtils.RestEndpoint;
+import com.agapsys.agreste.test.ServletContainerBuilder;
+import com.agapsys.agreste.test.TestUtils;
+import com.agapsys.agreste.test.TestUtils.RestEndpoint;
 import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.exceptions.ForbiddenException;
 import com.agapsys.http.HttpClient;
@@ -69,8 +69,8 @@ public class AppTest {
 		sc = new ServletContainerBuilder(
 				MyApplication.class, 
 				DEFAULT_SECURITY_MANAGER, 
-				"com.agapsys.agreste.test.app.MyController", 
-				"com.agapsys.agreste.test.app.MyService"
+				"com.agapsys.agreste.app.MyController", 
+				"com.agapsys.agreste.app.MyService"
 			).registerController(MyController.class)
 			.build();
 		sc.startServer();
