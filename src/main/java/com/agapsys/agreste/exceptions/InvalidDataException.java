@@ -18,6 +18,10 @@ package com.agapsys.agreste.exceptions;
 
 public class InvalidDataException extends BadRequestException {
 
+	public InvalidDataException() {
+		super();
+	}
+	
 	public InvalidDataException(String message, Object... args) {
 		super(message, args);
 	}
