@@ -17,18 +17,32 @@
 package com.agapsys.agreste.exceptions;
 
 public class ClientException extends RuntimeException {
-	private final int code;
+	private final int httpsStatus;
+	private final Integer appStatus;
 	
-	public ClientException(int code) {
-		this.code = code;
+	public ClientException(int httpStatus) {
+		this(httpStatus, null);
 	}
 	
-	public ClientException(int code, String message, Object...args) {
+	public ClientException(int httpStatus, Integer appStatus) {
+		this(httpStatus, appStatus, "");
+	}
+	
+	public ClientException(int httpStatus, String message, Object...messageArgs) {
+		this(httpStatus, null, message, messageArgs);
+	}
+	
+	public ClientException(int httpStatus, Integer appStatus, String message, Object...args) {
 		super(args.length > 0 ? String.format(message, args) : message);
-		this.code = code;
+		this.httpsStatus = httpStatus;
+		this.appStatus = appStatus;
 	}
 	
-	public int getCode() {
-		return code;
+	public int getHttpsStatus() {
+		return httpsStatus;
+	}
+
+	public Integer getAppStatus() {
+		return appStatus;
 	}
 }
