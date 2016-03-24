@@ -23,11 +23,19 @@ public class ForbiddenException extends ClientException {
 	
 	// INSTANCE SCOPE ==========================================================
 	public ForbiddenException() {
-		super(CODE);
+		this(null);
+	}
+
+	public ForbiddenException(Integer appStatus) {
+		this(appStatus, "");
 	}
 	
-	public ForbiddenException(String message, Object...args) {
-		super(CODE, message, args);
+	public ForbiddenException(String msg, Object...msgArgs) {
+		this(null, msg, msgArgs);
+	}
+	
+	public ForbiddenException(Integer appStatus, String msg, Object...msgArgs) {
+		super(CODE, appStatus, msg, msgArgs);
 	}
 	// =========================================================================
 }

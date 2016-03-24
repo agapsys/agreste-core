@@ -23,11 +23,19 @@ public class NotFoundException extends ClientException {
 
 	// INSTANCE SCOPE ==========================================================
 	public NotFoundException() {
-		super(CODE);
+		this(null);
+	}
+
+	public NotFoundException(Integer appStatus) {
+		this(appStatus, "");
+	}
+
+	public NotFoundException(String msg, Object...msgArgs) {
+		this(null, msg, msgArgs);
 	}
 	
-	public NotFoundException(String message, Object...args) {
-		super(CODE, message, args);
+	public NotFoundException(Integer appStatus, String msg, Object... msgArgs) {
+		super(CODE, appStatus, msg, msgArgs);
 	}
 	// =========================================================================
 }

@@ -28,12 +28,12 @@ public class ClientException extends RuntimeException {
 		this(httpStatus, appStatus, "");
 	}
 	
-	public ClientException(int httpStatus, String message, Object...messageArgs) {
-		this(httpStatus, null, message, messageArgs);
+	public ClientException(int httpStatus, String msg, Object...msgArgs) {
+		this(httpStatus, null, msg, msgArgs);
 	}
 	
-	public ClientException(int httpStatus, Integer appStatus, String message, Object...args) {
-		super(args.length > 0 ? String.format(message, args) : message);
+	public ClientException(int httpStatus, Integer appStatus, String msg, Object...msgArgs) {
+		super(msgArgs.length > 0 ? String.format(msg, msgArgs) : msg);
 		this.httpsStatus = httpStatus;
 		this.appStatus = appStatus;
 	}

@@ -24,11 +24,19 @@ public class BadRequestException extends ClientException {
 	
 	// INSTANCE SCOPE ==========================================================
 	public BadRequestException() {
-		super(CODE);
+		this(null);
+	}
+
+	public BadRequestException(Integer appStatus) {
+		this(appStatus, "");
+	}
+
+	public BadRequestException(String msg, Object...msgArgs) {
+		this(null, msg, msgArgs);
 	}
 	
-	public BadRequestException(String message, Object...args) {
-		super(CODE, message, args);
+	public BadRequestException(Integer appStatus, String msg, Object... msgArgs) {
+		super(CODE, appStatus, msg, msgArgs);
 	}
 	// =========================================================================
 }
