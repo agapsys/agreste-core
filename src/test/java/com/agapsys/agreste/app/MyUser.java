@@ -24,7 +24,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 @Entity
-public class MyUser extends AbstractUser {
+public class MyUser extends AbstractUser<MyUser> {
 
 	private String username;
 	private String passwordHash;

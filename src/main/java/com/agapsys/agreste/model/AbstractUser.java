@@ -35,7 +35,7 @@ import javax.persistence.Version;
 
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class AbstractUser extends AbstractEntity implements User {
+public abstract class AbstractUser<T extends AbstractUser> extends AbstractEntity<T> implements User {
 	// -------------------------------------------------------------------------
 	@Id
 	@GeneratedValue

@@ -22,4 +22,4 @@ import javax.persistence.Entity;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 @Entity
-public class MyGroup extends AbstractUserGroup {}
+public class MyGroup extends AbstractUserGroup<MyGroup> {}
