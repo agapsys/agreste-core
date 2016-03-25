@@ -179,7 +179,7 @@ public abstract class BaseController extends Controller {
 		return _getObjectSerializer().readObject(exchange.getRequest(), targetClass);
 	}
 	
-	protected void writeObject(HttpExchange exchange, Object object) {
+	protected void sendObject(HttpExchange exchange, Object object) {
 		_getObjectSerializer().writeObject(exchange.getResponse(), object);
 	}
 	
