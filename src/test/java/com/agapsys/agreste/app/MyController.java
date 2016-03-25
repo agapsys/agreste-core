@@ -51,7 +51,7 @@ public class MyController extends BaseController {
 		String password = getMandatoryParameter(exchange, PARAM_PASSWORD);
 		
 		JpaTransaction jpa = getJpaTransaction();
-		MyUser user = (MyUser) new FindBuilder<>(MyUser.class).by("username", username).findFirst(jpa.getEntityManager());
+		MyUser user = new FindBuilder<>(MyUser.class).by("username", username).findFirst(jpa.getEntityManager());
 		
 		if (user == null || !user.isPasswordValid(password))
 			throw new ForbiddenException("Invalid credentials");
