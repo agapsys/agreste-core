@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste.utils;
 
-import com.agapsys.agreste.exceptions.BadRequestException;
+import com.agapsys.rcf.exceptions.BadRequestException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 

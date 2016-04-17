@@ -20,14 +20,14 @@ import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.JpaTransactionFilter;
 import com.agapsys.agreste.WebSecurity;
 import com.agapsys.agreste.dto.MapSerializer;
-import com.agapsys.agreste.exceptions.BadRequestException;
-import com.agapsys.agreste.exceptions.ClientException;
 import com.agapsys.agreste.model.AbstractUser;
 import com.agapsys.agreste.utils.GsonSerializer;
 import com.agapsys.agreste.utils.ObjectSerializer;
 import com.agapsys.rcf.Controller;
 import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.LazyInitializer;
+import com.agapsys.rcf.exceptions.BadRequestException;
+import com.agapsys.rcf.exceptions.ClientException;
 import com.agapsys.security.NotAllowedException;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.LogType;
@@ -95,19 +95,26 @@ public abstract class BaseController extends Controller {
 	protected Object getGlobalAttribute(String name) {
 		return attributeService.getAttribute(name);
 	}
+
+	@Override
+	protected void onClientError(HttpServletRequest req, ClientException error) {
+		super.onClientError(req, error);
+		logRequest(req, LogType.WARNING, error.getMessage());
+	}
 	
 	@Override
-	protected void onError(HttpExchange exchange, Throwable t) {
-		super.onError(exchange, t);
+	protected boolean onUncaughtError(HttpExchange exchange, Throwable t) {
 
-		if (t instanceof NotAllowedException) {
-			logRequest(exchange, LogType.WARNING, "Blocked request (not allowed)");
-		} else if (t instanceof ClientException) {
-			logRequest(exchange, LogType.WARNING, t.getMessage());
-		} else if (!(t instanceof OptimisticLockException)){
+		if (t instanceof NotAllowedException) { // <-- will be handled by WebSecurityFilter!
+			logRequest(exchange.getRequest(), LogType.WARNING, "Blocked request (not allowed)");
+		} else if (!(t instanceof OptimisticLockException)) { // <-- will be handled by JpaFilter!
 			String stackTrace = AbstractExceptionReporterModule.getStackTrace(t);
-			logRequest(exchange, LogType.ERROR, stackTrace);
+			logRequest(exchange.getRequest(), LogType.ERROR, stackTrace);
 		}
+		
+		return false;
+		
+		
 	}
 	
 	protected <T extends Module> T getModule(Class<T> moduleClass) {
@@ -183,9 +190,7 @@ public abstract class BaseController extends Controller {
 		_getObjectSerializer().writeObject(exchange.getResponse(), object);
 	}
 	
-	protected String getLogMessage(HttpExchange exchange, String message) {
-		HttpServletRequest req = exchange.getRequest();
-		
+	protected String getLogMessage(HttpServletRequest req, String message) {
 		AbstractUser loggedUser = WebSecurity.getCurrentUser();
 		
 		StringBuffer requestUrl = req.getRequestURL();
@@ -204,8 +209,8 @@ public abstract class BaseController extends Controller {
 		return finalMessage;
 	}
 
-	protected void logRequest(HttpExchange exchange, LogType logType, String message) {
-		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
+	protected void logRequest(HttpServletRequest req, LogType logType, String message) {
+		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(req, null));
 		AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
 	}
 	// =========================================================================

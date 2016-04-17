@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste;
 
-import com.agapsys.agreste.exceptions.ClientException;
+import com.agapsys.rcf.exceptions.ClientException;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

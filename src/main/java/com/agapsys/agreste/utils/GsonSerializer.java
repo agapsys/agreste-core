@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste.utils;
 
-import com.agapsys.agreste.exceptions.BadRequestException;
+import com.agapsys.rcf.exceptions.BadRequestException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;

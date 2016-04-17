@@ -20,7 +20,7 @@ import com.agapsys.agreste.AbuseCheckFilter;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.dto.AbstractDtoTest;
-import com.agapsys.agreste.exceptions.RateLimitingException;
+import com.agapsys.rcf.exceptions.RateLimitingException;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;

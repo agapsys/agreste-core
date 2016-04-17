@@ -17,7 +17,7 @@
 package com.agapsys.agreste.app;
 
 import com.agapsys.agreste.dto.AbstractDtoTest;
-import com.agapsys.agreste.exceptions.BadRequestException;
+import com.agapsys.rcf.exceptions.BadRequestException;
 import com.agapsys.agreste.services.UploadService;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;

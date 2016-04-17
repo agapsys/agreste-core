@@ -19,7 +19,7 @@ import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.agreste.test.TestUtils.RestEndpoint;
 import com.agapsys.agreste.dto.AbstractDtoTest;
-import com.agapsys.agreste.exceptions.ForbiddenException;
+import com.agapsys.rcf.exceptions.ForbiddenException;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.rcf.HttpMethod;

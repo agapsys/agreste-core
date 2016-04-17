@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste.services;
 
-import com.agapsys.agreste.exceptions.BadRequestException;
+import com.agapsys.rcf.exceptions.BadRequestException;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 import java.io.UnsupportedEncodingException;

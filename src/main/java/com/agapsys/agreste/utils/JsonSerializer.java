@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste.utils;
 
-import com.agapsys.agreste.exceptions.BadRequestException;
+import com.agapsys.rcf.exceptions.BadRequestException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.List;

@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste;
 
-import com.agapsys.agreste.exceptions.RateLimitingException;
+import com.agapsys.rcf.exceptions.RateLimitingException;
 import java.io.IOException;
 import java.util.Date;
 import javax.servlet.Filter;

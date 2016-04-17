@@ -20,7 +20,7 @@ import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.controllers.BaseController;
 import com.agapsys.agreste.dto.MapSerializer.SerializerException;
-import com.agapsys.agreste.exceptions.BadRequestException;
+import com.agapsys.rcf.exceptions.BadRequestException;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
 import com.agapsys.rcf.HttpExchange;
