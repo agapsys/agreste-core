@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.agapsys.agreste.app;
 
 import com.agapsys.agreste.dto.AbstractDtoTest;
-import com.agapsys.rcf.exceptions.BadRequestException;
 import com.agapsys.agreste.services.UploadService;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.http.MultipartRequest.MultipartPost;
+import com.agapsys.rcf.Action;
 import com.agapsys.rcf.Controller;
 import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.HttpMethod;
@@ -40,6 +39,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -49,38 +49,48 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class UploadServiceTest {
+
 	// CLASS SCOPE =============================================================
+
 	private static final SingletonManager SINGLETON_MANAGER = new SingletonManager();
-	
+
 	@BeforeClass
 	public static void beforeClass() {
 		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
 	}
-	
+
 	@AfterClass
 	public static void afterClass() {
 		System.out.println();
 	}
-	
+
 	@WebServlet("/upload/*")
 	public static class UploadServlet extends Controller {
-		
-		private final UploadService uploadService = (UploadService) SINGLETON_MANAGER.getSingleton(UploadService.class);
 
-		@WebAction
-		public void finish(HttpExchange exchange) {
-			uploadService.clearSessionFile(exchange.getRequest());
-		}
-		
-		@WebAction(httpMethods = HttpMethod.POST)
-		public void upload(HttpExchange exchange) throws IOException, BadRequestException {
-			uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse(), null);
-			List<File> sessionFiles = uploadService.getSessionFiles(exchange.getRequest());
-			if (!sessionFiles.isEmpty()) {
-				for (File file : sessionFiles) {
-					exchange.getResponse().getWriter().println(file.getAbsolutePath());
+		private final UploadService uploadService = (UploadService) SINGLETON_MANAGER.getSingleton(UploadService.class);
+		private final Action uploadAction = new Action() {
+
+			@Override
+			public void processRequest(HttpExchange exchange) throws Throwable {
+				uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse(), null);
+				List<File> sessionFiles = uploadService.getSessionFiles(exchange.getRequest());
+				if (!sessionFiles.isEmpty()) {
+					for (File file : sessionFiles) {
+						exchange.getResponse().getWriter().println(file.getAbsolutePath());
+					}
 				}
 			}
+		};
+
+		@Override
+		protected void onInit() {
+			super.onInit();
+			registerAction(HttpMethod.POST, "/upload", uploadAction);
+		}
+
+		@WebAction
+		public void finish(HttpServletRequest req) {
+			uploadService.clearSessionFile(req);
 		}
 	}
 	// =========================================================================
@@ -106,16 +116,16 @@ public class UploadServiceTest {
 		} catch (NoSuchAlgorithmException ex) {
 			throw new RuntimeException(ex);
 		}
-		
+
 		try (InputStream is = new FileInputStream(file)) {
 			byte[] buffer = new byte[8192];
-			
+
 			int read = 0;
-			
-			while( (read = is.read(buffer)) > 0) {
+
+			while ((read = is.read(buffer)) > 0) {
 				digest.update(buffer, 0, read);
 			}
-			
+
 			byte[] md5sum = digest.digest();
 			BigInteger bigInt = new BigInteger(1, md5sum);
 			String output = bigInt.toString(16);
@@ -125,34 +135,34 @@ public class UploadServiceTest {
 
 	@Test
 	public void test() throws IOException {
-		File[] uploadFiles = new File[] {
+		File[] uploadFiles = new File[]{
 			new File("test-res/logo_box.png"),
 			new File("test-res/logo_box_inv.png")
 		};
 
 		HttpClient client = new HttpClient();
-		
+
 		MultipartPost post = new MultipartPost("/upload/upload");
 		for (File uploadFile : uploadFiles) {
 			post.addFile(uploadFile);
 		}
-		
+
 		StringResponse resp = sc.doRequest(client, post);
 		String[] receivedFilePaths = resp.getContentString().split(Pattern.quote("\n"));
 		File[] receivedFiles = new File[receivedFilePaths.length];
 		for (int i = 0; i < receivedFiles.length; i++) {
 			receivedFiles[i] = new File(receivedFilePaths[i].trim());
 		}
-		
+
 		Assert.assertEquals(uploadFiles.length, receivedFiles.length);
 		for (int i = 0; i < receivedFiles.length; i++) {
 			Assert.assertTrue(receivedFiles[i].exists());
 			Assert.assertEquals(getFileMd5(uploadFiles[i]), getFileMd5(receivedFiles[i]));
 		}
-		
+
 		resp = sc.doRequest(client, new HttpGet("/upload/finish"));
 		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
-		
+
 		for (File receivedFile : receivedFiles) {
 			Assert.assertFalse(receivedFile.exists());
 		}

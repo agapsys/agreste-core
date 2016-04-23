@@ -16,16 +16,15 @@
 
 package com.agapsys.agreste.dto;
 
-import com.agapsys.agreste.test.MockedWebApplication;
-import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.controllers.BaseController;
 import com.agapsys.agreste.dto.MapSerializer.SerializerException;
-import com.agapsys.rcf.exceptions.BadRequestException;
+import com.agapsys.agreste.test.MockedWebApplication;
+import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
-import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
+import com.agapsys.rcf.exceptions.BadRequestException;
 import com.agapsys.sevlet.container.ServletContainer;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -37,11 +36,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 
 public class MapSerializerTest {
 	// CLASS SCOPE =============================================================
@@ -229,15 +230,13 @@ public class MapSerializerTest {
 	public static class TestController extends BaseController {
 		
 		@Override
-		protected MapSerializer getMapSerializer() {
+		protected MapSerializer getCustomMapSerializer() {
 			return new CustomMapSerializer();
 		}
 		
 		@WebAction(mapping = "/get")
-		public void onGet(HttpExchange exchange) throws IOException, BadRequestException {
-			TestDto dto = readParameterObject(exchange, TestDto.class);
-			CustomMapSerializer mapSerializer = (CustomMapSerializer) getMapSerializer();
-			exchange.getResponse().getWriter().print(mapSerializer.toString(dto));
+		public TestDto onGet(HttpServletRequest req) throws IOException, BadRequestException {
+			return readParameterObject(req, TestDto.class);
 		}
 	}
 	// -------------------------------------------------------------------------
@@ -291,8 +290,7 @@ public class MapSerializerTest {
 		
 		HttpResponse.StringResponse resp = sc.doRequest(new HttpGet("/test/get?uuidField=%s&dateField=%s&strField=%s", "2|1", "2015-11-28", "Hello+World áéíóú"));
 		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
-		Assert.assertEquals("strField=Hello+World+%C3%A1%C3%A9%C3%AD%C3%B3%C3%BA&booleanField=false&shortField=0&integerField=0&longField=0&floatField=0.0&doubleField=0.0&dateField=Sat Nov 28 00:00:00 UTC 2015&uuidField=2|1", resp.getContentString());
-		
+		Assert.assertEquals("{\"strField\":\"Hello World áéíóú\",\"booleanField\":false,\"shortField\":0,\"integerField\":0,\"longField\":0,\"floatField\":0.0,\"doubleField\":0.0,\"dateField\":\"2015-11-28T00:00:00.000Z\",\"uuidField\":\"00000000-0000-0001-0000-000000000002\"}", resp.getContentString());
 		sc.stopServer();
 	}
 	// =========================================================================

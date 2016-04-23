@@ -21,8 +21,6 @@ import com.agapsys.agreste.JpaTransactionFilter;
 import com.agapsys.agreste.WebSecurity;
 import com.agapsys.agreste.dto.MapSerializer;
 import com.agapsys.agreste.model.AbstractUser;
-import com.agapsys.agreste.utils.GsonSerializer;
-import com.agapsys.agreste.utils.ObjectSerializer;
 import com.agapsys.rcf.Controller;
 import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.LazyInitializer;
@@ -36,31 +34,21 @@ import com.agapsys.web.toolkit.Service;
 import com.agapsys.web.toolkit.modules.AbstractExceptionReporterModule;
 import com.agapsys.web.toolkit.services.AttributeService;
 import com.agapsys.web.toolkit.utils.HttpUtils;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class BaseController extends Controller {
 	
-	// CLASS SCOPE =============================================================
-	public static final ObjectSerializer DEFAULT_SERIALIZER = new GsonSerializer();
-	// =========================================================================
-	
-	// INSTANCE SCOPE ==========================================================
-	private final LazyInitializer<ObjectSerializer> objectSerializer = new LazyInitializer<ObjectSerializer>() {
-
-		@Override
-		protected ObjectSerializer getLazyInstance() {
-			return getObjectSerializer();
-		}
-	};
 	private final LazyInitializer<MapSerializer> mapSerializer = new LazyInitializer<MapSerializer>() {
 
 		@Override
 		protected MapSerializer getLazyInstance() {
-			return getMapSerializer();
+			return getCustomMapSerializer();
 		}
 		
 	};
@@ -69,33 +57,25 @@ public abstract class BaseController extends Controller {
 
 	@Override
 	protected void onInit() {
+		super.onInit();
 		attributeService = getService(AttributeService.class);
 	}
 	
-	protected JpaTransaction getJpaTransaction() {
-		return (JpaTransaction) attributeService.getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
-	}
 	
-	protected MapSerializer getMapSerializer() {
+	protected MapSerializer getCustomMapSerializer() {
 		return new MapSerializer();
 	}
 	
-	protected ObjectSerializer getObjectSerializer() {
-		return DEFAULT_SERIALIZER;
-	}
 	
-	private ObjectSerializer _getObjectSerializer() {
-		return objectSerializer.getInstance();
-	}
-	
-	private MapSerializer _getMapSerializer() {
-		return mapSerializer.getInstance();
+	protected JpaTransaction getJpaTransaction() {
+		return (JpaTransaction) attributeService.getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
 	}
 	
 	protected Object getGlobalAttribute(String name) {
 		return attributeService.getAttribute(name);
 	}
 
+	
 	@Override
 	protected void onClientError(HttpServletRequest req, ClientException error) {
 		super.onClientError(req, error);
@@ -103,7 +83,7 @@ public abstract class BaseController extends Controller {
 	}
 	
 	@Override
-	protected boolean onUncaughtError(HttpExchange exchange, Throwable t) {
+	protected boolean onControllerError(HttpExchange exchange, Throwable t) throws ServletException, IOException {
 
 		if (t instanceof NotAllowedException) { // <-- will be handled by WebSecurityFilter!
 			logRequest(exchange.getRequest(), LogType.WARNING, "Blocked request (not allowed)");
@@ -113,8 +93,6 @@ public abstract class BaseController extends Controller {
 		}
 		
 		return false;
-		
-		
 	}
 	
 	protected <T extends Module> T getModule(Class<T> moduleClass) {
@@ -124,6 +102,7 @@ public abstract class BaseController extends Controller {
 	protected <T extends Service> T getService(Class<T> serviceClass) {
 		return AbstractWebApplication.getRunningInstance().getService(serviceClass);
 	}
+	
 	
 	protected AbstractUser getCurrentUser() {
 		AbstractUser loggedUser = WebSecurity.getCurrentUser();
@@ -148,47 +127,41 @@ public abstract class BaseController extends Controller {
 		WebSecurity.unregisterCurrentUser();
 	}
 	
-	protected String getOptionalParameter(HttpExchange exchange, String paramName, String defaultValue) {
-		return HttpUtils.getOptionalParameter(exchange.getRequest(), paramName, defaultValue);
+	
+	protected String getOptionalParameter(HttpServletRequest req, String paramName, String defaultValue) {
+		return HttpUtils.getOptionalParameter(req, paramName, defaultValue);
 	}
 	
-	protected String getMandatoryParameter(HttpExchange exchange, String paramName) throws BadRequestException {
+	protected String getMandatoryParameter(HttpServletRequest req, String paramName) throws BadRequestException {
 		try {
-			return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName);
+			return HttpUtils.getMandatoryParameter(req, paramName);
 		} catch (HttpUtils.BadRequestException ex) {
 			throw new BadRequestException(ex.getMessage());
 		}
 	}
 	
-	protected String getMandatoryParameter(HttpExchange exchange, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
+	protected String getMandatoryParameter(HttpServletRequest req, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
 		try {
-			return HttpUtils.getMandatoryParameter(exchange.getRequest(), paramName, errorMessage, errMsgArgs);
+			return HttpUtils.getMandatoryParameter(req, paramName, errorMessage, errMsgArgs);
 		} catch (HttpUtils.BadRequestException ex) {
 			throw new BadRequestException(ex.getMessage());
 		}
 	}
 
-	protected <T> T readParameterObject(HttpExchange exchange, Class<T> dtoClass) throws BadRequestException {
+	protected <T> T readParameterObject(HttpServletRequest req, Class<T> dtoClass) throws BadRequestException {
 		Map<String, String> fieldMap = new LinkedHashMap<>();
 		
-		for (Map.Entry<String, String[]> entry : exchange.getRequest().getParameterMap().entrySet()) {
+		for (Map.Entry<String, String[]> entry : req.getParameterMap().entrySet()) {
 			fieldMap.put(entry.getKey(), entry.getValue()[0]);
 		}
 		
 		try {
-			return _getMapSerializer().getObject(fieldMap, dtoClass);
+			return mapSerializer.getInstance().getObject(fieldMap, dtoClass);
 		} catch (MapSerializer.SerializerException ex) {
 			throw new BadRequestException("Cannot read parameters");
 		}
 	}
 	
-	protected <T> T readObject(HttpExchange exchange, Class<T> targetClass) throws BadRequestException {
-		return _getObjectSerializer().readObject(exchange.getRequest(), targetClass);
-	}
-	
-	protected void sendObject(HttpExchange exchange, Object object) {
-		_getObjectSerializer().writeObject(exchange.getResponse(), object);
-	}
 	
 	protected String getLogMessage(HttpServletRequest req, String message) {
 		AbstractUser loggedUser = WebSecurity.getCurrentUser();

@@ -24,7 +24,5 @@ import com.agapsys.security.Secured;
 public class MyService extends BaseService {
 	
 	@Secured(Defs.ACCESS_ROLE)
-	public String protectedMethod() {
-		return "OK";
-	}
+	public void securedMethod() {}
 }

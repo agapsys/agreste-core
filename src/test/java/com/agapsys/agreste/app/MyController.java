@@ -19,14 +19,13 @@ import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.WebSecurity;
 import com.agapsys.agreste.controllers.BaseController;
 import com.agapsys.jpa.FindBuilder;
-import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
 import com.agapsys.rcf.exceptions.ForbiddenException;
 import com.agapsys.security.Secured;
 import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Leandro Oliveira (leandro@agapsys.com)
@@ -43,12 +42,12 @@ public class MyController extends BaseController {
 	}
 	
 	@WebAction(httpMethods = HttpMethod.GET, mapping = "login")
-	public void login(HttpExchange exchange) {
+	public void login(HttpServletRequest req) {
 		final String PARAM_USERNAME = "username";
 		final String PARAM_PASSWORD = "password";
 		
-		String username = getMandatoryParameter(exchange, PARAM_USERNAME);
-		String password = getMandatoryParameter(exchange, PARAM_PASSWORD);
+		String username = getMandatoryParameter(req, PARAM_USERNAME);
+		String password = getMandatoryParameter(req, PARAM_PASSWORD);
 		
 		JpaTransaction jpa = getJpaTransaction();
 		MyUser user = new FindBuilder<>(MyUser.class).by("username", username).findFirst(jpa.getEntityManager());
@@ -60,26 +59,14 @@ public class MyController extends BaseController {
 	}
 	
 	@WebAction(httpMethods = HttpMethod.GET, mapping = "publicGet")
-	public void publicGet(HttpExchange exchange) throws IOException {
-		HttpServletResponse resp = exchange.getResponse();
-		
-		resp.setStatus(200);
-		resp.getWriter().print("OK");
-	}
+	public void publicGet(HttpServletRequest req) throws IOException {}
 	
 	@WebAction(httpMethods = HttpMethod.GET, mapping = "securedGet")
 	@Secured
-	public void securedGet(HttpExchange exchange) throws IOException {
-		HttpServletResponse resp = exchange.getResponse();
-		
-		resp.setStatus(200);
-		resp.getWriter().print("OK");
-	}
+	public void securedGet(HttpServletRequest req) throws IOException {}
 	
 	@WebAction(httpMethods = HttpMethod.GET, mapping = "implicitSecuredGet")
-	public void implicitSecuredGet(HttpExchange exchange) throws IOException {
-		HttpServletResponse resp = exchange.getResponse();
-		resp.setStatus(200);
-		resp.getWriter().print(myService.protectedMethod());
+	public void implicitSecuredGet(HttpServletRequest req) throws IOException {
+		myService.securedMethod();
 	}
 }

@@ -15,14 +15,14 @@
  */
 package com.agapsys.agreste.app;
 
+import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.agreste.test.TestUtils.RestEndpoint;
-import com.agapsys.agreste.dto.AbstractDtoTest;
-import com.agapsys.rcf.exceptions.ForbiddenException;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.rcf.HttpMethod;
+import com.agapsys.rcf.exceptions.ForbiddenException;
 import com.agapsys.security.web.SessionCsrfSecurityManager;
 import com.agapsys.security.web.WebSecurityManager;
 import com.agapsys.sevlet.container.ServletContainer;
@@ -111,7 +111,7 @@ public class AppTest {
 
 		resp = sc.doRequest(endpoint.getRequest());
 		testUtils.assertStatus(200, resp);
-		Assert.assertEquals("OK", resp.getContentString());
+		Assert.assertEquals("", resp.getContentString());
 	}
 	
 	@Test
@@ -129,7 +129,7 @@ public class AppTest {
 		HttpClient client = doLogin(sc, "user1", "password1");
 		resp = sc.doRequest(client, endpoint.getRequest());
 		testUtils.assertStatus(200, resp);
-		Assert.assertEquals("OK", resp.getContentString());
+		Assert.assertEquals("", resp.getContentString());
 		
 	}
 	
@@ -155,13 +155,11 @@ public class AppTest {
 		client = doLogin(sc, "user2", "password2"); // <-- "user2" have the required roles
 		resp = sc.doRequest(client, endpoint.getRequest());
 		testUtils.assertStatus(200, resp);
-		Assert.assertEquals("OK", resp.getContentString());
 		
 		// Valid access with group roles...
 		client = doLogin(sc, "user3", "password3"); // <-- "user2" have the required roles
 		resp = sc.doRequest(client, endpoint.getRequest());
 		testUtils.assertStatus(200, resp);
-		Assert.assertEquals("OK", resp.getContentString());
 	}
 	// =========================================================================
 }

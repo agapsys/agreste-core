@@ -16,10 +16,10 @@
 
 package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.test.MockedWebApplication;
-import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.modules.CorsModule;
+import com.agapsys.agreste.test.MockedWebApplication;
+import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;
@@ -29,9 +29,12 @@ import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
 import com.agapsys.sevlet.container.ServletContainer;
 import com.agapsys.web.toolkit.AbstractWebApplication;
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebListener;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -78,13 +81,13 @@ public class CorsModuleTest {
 	public static class TestController extends Controller {
 
 		@Override
-		public void beforeAction(HttpExchange exchange) {
+		public void beforeAction(HttpExchange exchange) throws ServletException, IOException {
 			CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
 			corsModule.putCorsHeaders(exchange.getResponse());
 		}
 		
 		@WebAction
-		public void get(HttpExchange exchange) {}
+		public void get(HttpServletRequest req) {}
 	}
 	// =========================================================================
 
