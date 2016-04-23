@@ -21,7 +21,6 @@ import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.http.MultipartRequest.MultipartPost;
-import com.agapsys.rcf.Action;
 import com.agapsys.rcf.Controller;
 import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.HttpMethod;
@@ -68,29 +67,21 @@ public class UploadServiceTest {
 	public static class UploadServlet extends Controller {
 
 		private final UploadService uploadService = (UploadService) SINGLETON_MANAGER.getSingleton(UploadService.class);
-		private final Action uploadAction = new Action() {
-
-			@Override
-			public void processRequest(HttpExchange exchange) throws Throwable {
-				uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse(), null);
-				List<File> sessionFiles = uploadService.getSessionFiles(exchange.getRequest());
-				if (!sessionFiles.isEmpty()) {
-					for (File file : sessionFiles) {
-						exchange.getResponse().getWriter().println(file.getAbsolutePath());
-					}
-				}
-			}
-		};
-
-		@Override
-		protected void onInit() {
-			super.onInit();
-			registerAction(HttpMethod.POST, "/upload", uploadAction);
-		}
-
+		
 		@WebAction
 		public void finish(HttpServletRequest req) {
 			uploadService.clearSessionFile(req);
+		}
+		
+		@WebAction(httpMethods = HttpMethod.POST)
+		public void upload(HttpExchange exchange) throws IOException {
+			uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse(), null);
+			List<File> sessionFiles = uploadService.getSessionFiles(exchange.getRequest());
+			if (!sessionFiles.isEmpty()) {
+				for (File file : sessionFiles) {
+					exchange.getResponse().getWriter().println(file.getAbsolutePath());
+				}
+			}
 		}
 	}
 	// =========================================================================
