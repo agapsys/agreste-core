@@ -36,7 +36,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * Upload service.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class UploadService extends BaseService {
+public class UploadService extends Service {
 	// CLASS SCOPE =============================================================
 	protected static final long DEFAULT_TOTAL_MAX_SIZE = -1; // No limit
 	protected static final long DEFAULT_MAX_FILE_SIZE  = -1; // No limit

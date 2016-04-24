@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste.dto;
 
-import com.agapsys.agreste.controllers.BaseController;
+import com.agapsys.agreste.controllers.Controller;
 import com.agapsys.agreste.dto.MapSerializer.SerializerException;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
@@ -227,7 +227,7 @@ public class MapSerializerTest {
 	}
 	
 	@WebController("test")
-	public static class TestController extends BaseController {
+	public static class TestController extends Controller {
 		
 		@Override
 		protected MapSerializer getCustomMapSerializer() {

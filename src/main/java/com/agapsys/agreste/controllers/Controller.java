@@ -21,7 +21,6 @@ import com.agapsys.agreste.JpaTransactionFilter;
 import com.agapsys.agreste.WebSecurity;
 import com.agapsys.agreste.dto.MapSerializer;
 import com.agapsys.agreste.model.AbstractUser;
-import com.agapsys.rcf.Controller;
 import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.LazyInitializer;
 import com.agapsys.rcf.exceptions.BadRequestException;
@@ -42,7 +41,7 @@ import javax.persistence.OptimisticLockException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class BaseController extends Controller {
+public abstract class Controller extends com.agapsys.rcf.Controller {
 	
 	private final LazyInitializer<MapSerializer> mapSerializer = new LazyInitializer<MapSerializer>() {
 

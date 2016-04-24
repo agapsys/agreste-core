@@ -26,7 +26,7 @@ import com.agapsys.web.toolkit.services.AttributeService;
  *
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class BaseService  extends AbstractService {
+public class Service extends AbstractService {
 
 	private AttributeService attributeService;
 	

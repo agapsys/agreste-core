@@ -17,7 +17,7 @@ package com.agapsys.agreste.app;
 
 import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.WebSecurity;
-import com.agapsys.agreste.controllers.BaseController;
+import com.agapsys.agreste.controllers.Controller;
 import com.agapsys.jpa.FindBuilder;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.WebAction;
@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 @WebController("controller")
-public class MyController extends BaseController {
+public class MyController extends Controller {
 	
 	private MyService myService;
 

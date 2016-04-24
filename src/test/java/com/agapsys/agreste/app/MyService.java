@@ -15,13 +15,13 @@
  */
 package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.services.BaseService;
+import com.agapsys.agreste.services.Service;
 import com.agapsys.security.Secured;
 
 /**
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class MyService extends BaseService {
+public class MyService extends Service {
 	
 	@Secured(Defs.ACCESS_ROLE)
 	public void securedMethod() {}
