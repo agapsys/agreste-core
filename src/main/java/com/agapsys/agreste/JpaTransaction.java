@@ -19,7 +19,7 @@ package com.agapsys.agreste;
 import javax.persistence.EntityManager;
 
 /** 
- * Represents a transaction managed by a {@linkplain TransactionalServlet}
+ * Represents a transaction managed by a {@linkplain javax.servlet.Servlet}
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public interface JpaTransaction {
