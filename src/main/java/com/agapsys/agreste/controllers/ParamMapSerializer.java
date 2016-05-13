@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.dto;
+package com.agapsys.agreste.controllers;
 
 import com.agapsys.rcf.LazyInitializer;
 import java.io.UnsupportedEncodingException;
@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class MapSerializer {
+public class ParamMapSerializer {
 	// CLASS SCOPE =============================================================
 	public static class SerializerException extends Exception {
 
@@ -39,13 +39,13 @@ public class MapSerializer {
 		}
 	}
 	
-	public static interface FieldSerializer<T> {
+	public static interface TypeSerializer<T> {
 		public String toString(T srcObject);
 
 		public T getObject(String str) throws SerializerException;
 	}
 	
-	public abstract static class DefaultFieldSerializer<T> implements FieldSerializer<T> {
+	public abstract static class DefaultTypeSerializer<T> implements TypeSerializer<T> {
 
 		@Override
 		public String toString(T srcObject) {
@@ -54,7 +54,7 @@ public class MapSerializer {
 		
 	}
 	
-	public static class StringSerializer extends DefaultFieldSerializer<String> {
+	public static class StringSerializer extends DefaultTypeSerializer<String> {
 
 		@Override
 		public String toString(String srcObject) {
@@ -76,7 +76,7 @@ public class MapSerializer {
 		}
 	}
 	
-	public static class BooleanSerializer extends DefaultFieldSerializer<Boolean> {
+	public static class BooleanSerializer extends DefaultTypeSerializer<Boolean> {
 
 		@Override
 		public Boolean getObject(String str) throws SerializerException {
@@ -97,7 +97,7 @@ public class MapSerializer {
 		
 	}
 	
-	public static class ShortSerializer extends DefaultFieldSerializer<Short> {
+	public static class ShortSerializer extends DefaultTypeSerializer<Short> {
 
 		@Override
 		public Short getObject(String str) throws SerializerException {
@@ -113,7 +113,7 @@ public class MapSerializer {
 		
 	}
 	
-	public static class IntegerSerializer extends DefaultFieldSerializer<Integer> {
+	public static class IntegerSerializer extends DefaultTypeSerializer<Integer> {
 
 		@Override
 		public Integer getObject(String str) throws SerializerException {
@@ -129,7 +129,7 @@ public class MapSerializer {
 		
 	}
 	
-	public static class LongSerializer extends DefaultFieldSerializer<Long> {
+	public static class LongSerializer extends DefaultTypeSerializer<Long> {
 
 		@Override
 		public Long getObject(String str) throws SerializerException {
@@ -145,7 +145,7 @@ public class MapSerializer {
 		
 	}
 	
-	public static class FloatSerializer extends DefaultFieldSerializer<Float> {
+	public static class FloatSerializer extends DefaultTypeSerializer<Float> {
 
 		@Override
 		public Float getObject(String str) throws SerializerException {
@@ -161,7 +161,7 @@ public class MapSerializer {
 		
 	}
 	
-	public static class DoubleSerializer extends DefaultFieldSerializer<Double> {
+	public static class DoubleSerializer extends DefaultTypeSerializer<Double> {
 
 		@Override
 		public Double getObject(String str) throws SerializerException {
@@ -177,7 +177,7 @@ public class MapSerializer {
 		
 	}
 	
-	public static class BigDecimalSerializer extends DefaultFieldSerializer<BigDecimal> {
+	public static class BigDecimalSerializer extends DefaultTypeSerializer<BigDecimal> {
 
 		@Override
 		public BigDecimal getObject(String str) throws SerializerException {
@@ -193,7 +193,7 @@ public class MapSerializer {
 		
 	}
 	
-	public static class TimestampSerializer extends DefaultFieldSerializer<Date> {
+	public static class TimestampSerializer extends DefaultTypeSerializer<Date> {
 
 		LazyInitializer<SimpleDateFormat> sdf = new LazyInitializer<SimpleDateFormat>() {
 
@@ -231,54 +231,54 @@ public class MapSerializer {
 	// =========================================================================
 
 	// INSTANCE SCOPE ==========================================================
-	private final Map<Class, FieldSerializer> fieldSerializerMap = new LinkedHashMap<>();
+	private final Map<Class, TypeSerializer> typeSerializerMap = new LinkedHashMap<>();
 	
-	public MapSerializer() {
-		fieldSerializerMap.put(String.class, new StringSerializer());
+	public ParamMapSerializer() {
+		typeSerializerMap.put(String.class, new StringSerializer());
 		
 		BooleanSerializer booleanSerializer = new BooleanSerializer();
-		fieldSerializerMap.put(Boolean.class, booleanSerializer);
-		fieldSerializerMap.put(boolean.class, booleanSerializer);
+		typeSerializerMap.put(Boolean.class, booleanSerializer);
+		typeSerializerMap.put(boolean.class, booleanSerializer);
 		
 		ShortSerializer shortSerializer = new ShortSerializer();
-		fieldSerializerMap.put(Short.class, shortSerializer);
-		fieldSerializerMap.put(short.class, shortSerializer);
+		typeSerializerMap.put(Short.class, shortSerializer);
+		typeSerializerMap.put(short.class, shortSerializer);
 		
 		IntegerSerializer integerSerializer = new IntegerSerializer();
-		fieldSerializerMap.put(Integer.class, integerSerializer);
-		fieldSerializerMap.put(int.class,     integerSerializer);
+		typeSerializerMap.put(Integer.class, integerSerializer);
+		typeSerializerMap.put(int.class,     integerSerializer);
 		
 		LongSerializer longSerializer = new LongSerializer();
-		fieldSerializerMap.put(Long.class, longSerializer);
-		fieldSerializerMap.put(long.class, longSerializer);
+		typeSerializerMap.put(Long.class, longSerializer);
+		typeSerializerMap.put(long.class, longSerializer);
 		
 		FloatSerializer floatSerializer = new FloatSerializer();
-		fieldSerializerMap.put(Float.class, floatSerializer);
-		fieldSerializerMap.put(float.class, floatSerializer);
+		typeSerializerMap.put(Float.class, floatSerializer);
+		typeSerializerMap.put(float.class, floatSerializer);
 		
 		DoubleSerializer doubleSerializer = new DoubleSerializer();
-		fieldSerializerMap.put(Double.class, doubleSerializer);
-		fieldSerializerMap.put(double.class, doubleSerializer);
+		typeSerializerMap.put(Double.class, doubleSerializer);
+		typeSerializerMap.put(double.class, doubleSerializer);
 		
-		fieldSerializerMap.put(BigDecimal.class, new BigDecimalSerializer());
-		fieldSerializerMap.put(Date.class,       new TimestampSerializer());
+		typeSerializerMap.put(BigDecimal.class, new BigDecimalSerializer());
+		typeSerializerMap.put(Date.class,       new TimestampSerializer());
 	}
 	
-	public void registerSerializer(Class<?> type, FieldSerializer serializer) {
+	public void registerTypeSerializer(Class<?> type, TypeSerializer typeSerializer) {
 		if (type == null)
 			throw new IllegalArgumentException("Null type");
 		
-		if (serializer == null)
-			throw new IllegalArgumentException("Null type");
+		if (typeSerializer == null)
+			throw new IllegalArgumentException("Null type serializer");
 		
-		fieldSerializerMap.put(type, serializer);
+		typeSerializerMap.put(type, typeSerializer);
 	}
 	
-	public <T> T getObject(Map<String, String> fieldMap, Class<T> targetClass) throws SerializerException {
+	public <T> T getObject(Map<String, String[]> paramMap, Class<T> targetClass) throws SerializerException {
 		if (targetClass == null)
 			throw new IllegalArgumentException("Null target class");
 		
-		if (fieldMap == null)
+		if (paramMap == null)
 			throw new IllegalArgumentException("Null field map");
 		
 		T targetObject;
@@ -290,16 +290,16 @@ public class MapSerializer {
 		}
 		
 		for (Field field : targetClass.getFields()) {
-			String value = fieldMap.get(field.getName());
+			String value[] = paramMap.get(field.getName());
 			
 			if (value != null) {
-				FieldSerializer serializer = fieldSerializerMap.get(field.getType());
+				TypeSerializer serializer = typeSerializerMap.get(field.getType());
 			
 				if (serializer == null)
 					throw new RuntimeException("Missing serializer for " + field.getType().getName());
 				
 				try {
-					field.set(targetObject, serializer.getObject(value));
+					field.set(targetObject, serializer.getObject(value[0]));
 				} catch (IllegalArgumentException | IllegalAccessException ex) {
 					throw new RuntimeException(ex);
 				}
@@ -309,7 +309,7 @@ public class MapSerializer {
 		return targetObject;
 	}
 	
-	public Map<String, String> toMap(Object object) {		
+	public Map<String, String> toParamMap(Object object) {		
 		if (object == null)
 			throw new IllegalArgumentException("Null object");
 		
@@ -327,7 +327,7 @@ public class MapSerializer {
 			if (fieldValue == null) {
 				map.put(field.getName(), null);
 			} else {
-				FieldSerializer serializer = fieldSerializerMap.get(field.getType());
+				TypeSerializer serializer = typeSerializerMap.get(field.getType());
 			
 				if (serializer == null)
 					throw new RuntimeException("Missing serializer for " + field.getType().getName());

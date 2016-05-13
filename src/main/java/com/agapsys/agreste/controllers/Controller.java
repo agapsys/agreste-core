@@ -19,7 +19,6 @@ package com.agapsys.agreste.controllers;
 import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.JpaTransactionFilter;
 import com.agapsys.agreste.WebSecurity;
-import com.agapsys.agreste.dto.MapSerializer;
 import com.agapsys.agreste.model.AbstractUser;
 import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.LazyInitializer;
@@ -43,11 +42,11 @@ import javax.servlet.http.HttpServletRequest;
 
 public abstract class Controller extends com.agapsys.rcf.Controller {
 	
-	private final LazyInitializer<MapSerializer> mapSerializer = new LazyInitializer<MapSerializer>() {
+	private final LazyInitializer<ParamMapSerializer> paramMapSerializer = new LazyInitializer<ParamMapSerializer>() {
 
 		@Override
-		protected MapSerializer getLazyInstance() {
-			return getCustomMapSerializer();
+		protected ParamMapSerializer getLazyInstance() {
+			return getCustomParamMapSerializer();
 		}
 		
 	};
@@ -61,13 +60,13 @@ public abstract class Controller extends com.agapsys.rcf.Controller {
 	}
 	
 	
-	protected MapSerializer getCustomMapSerializer() {
-		return new MapSerializer();
+	protected ParamMapSerializer getCustomParamMapSerializer() {
+		return new ParamMapSerializer();
 	}
 	
 	
 	protected JpaTransaction getJpaTransaction() {
-		return (JpaTransaction) attributeService.getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
+		return (JpaTransaction) getGlobalAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
 	}
 	
 	protected Object getGlobalAttribute(String name) {
@@ -148,15 +147,9 @@ public abstract class Controller extends com.agapsys.rcf.Controller {
 	}
 
 	protected <T> T readParameterObject(HttpServletRequest req, Class<T> dtoClass) throws BadRequestException {
-		Map<String, String> fieldMap = new LinkedHashMap<>();
-		
-		for (Map.Entry<String, String[]> entry : req.getParameterMap().entrySet()) {
-			fieldMap.put(entry.getKey(), entry.getValue()[0]);
-		}
-		
 		try {
-			return mapSerializer.getInstance().getObject(fieldMap, dtoClass);
-		} catch (MapSerializer.SerializerException ex) {
+			return paramMapSerializer.getInstance().getObject(req.getParameterMap(), dtoClass);
+		} catch (ParamMapSerializer.SerializerException ex) {
 			throw new BadRequestException("Cannot read parameters");
 		}
 	}

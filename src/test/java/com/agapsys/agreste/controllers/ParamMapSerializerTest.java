@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.dto;
+package com.agapsys.agreste.controllers;
 
+import com.agapsys.agreste.controllers.ParamMapSerializer;
 import com.agapsys.agreste.controllers.Controller;
-import com.agapsys.agreste.dto.MapSerializer.SerializerException;
+import com.agapsys.agreste.controllers.ParamMapSerializer.SerializerException;
+import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.http.HttpGet;
@@ -44,7 +46,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
-public class MapSerializerTest {
+public class ParamMapSerializerTest {
 	// CLASS SCOPE =============================================================
 	@BeforeClass
 	public static void beforeClass() {
@@ -158,7 +160,7 @@ public class MapSerializerTest {
 		}
 	}
 	
-	public static class UUIDFieldSerializer implements MapSerializer.FieldSerializer<UUID> {
+	public static class UUIDFieldSerializer implements ParamMapSerializer.TypeSerializer<UUID> {
 
 		@Override
 		public String toString(UUID srcObject) {
@@ -174,19 +176,19 @@ public class MapSerializerTest {
 		
 	}
 
-	public static class CustomMapSerializer extends MapSerializer {
+	public static class CustomMapSerializer extends ParamMapSerializer {
 
 		public CustomMapSerializer() {
 			super();
-			registerSerializer(UUID.class, new UUIDFieldSerializer());
-			registerSerializer(Date.class, new MapSerializer.SimpleDateSerializer());
+			registerTypeSerializer(UUID.class, new UUIDFieldSerializer());
+			registerTypeSerializer(Date.class, new ParamMapSerializer.SimpleDateSerializer());
 		}
 		
 		public String toString(Object obj) {		
 			if (obj == null)
 				throw new IllegalArgumentException("Null object");
 
-			Map<String, String> map = toMap(obj);
+			Map<String, String> map = toParamMap(obj);
 			
 			StringBuilder sb = new StringBuilder();
 
@@ -207,7 +209,7 @@ public class MapSerializerTest {
 		}
 		
 		public <T> T getObject(String str, Class<T> targetClass) throws SerializerException {
-			Map<String, String> fieldMap = new LinkedHashMap<>();
+			Map<String, String[]> fieldMap = new LinkedHashMap<>();
 		
 			String[] tokens = str.split(Pattern.quote("&"));
 			for (String token : tokens) {
@@ -219,7 +221,7 @@ public class MapSerializerTest {
 				if (tokenElements.length != 2)
 					throw new RuntimeException("Invalid string");
 
-				fieldMap.put(tokenElements[0].trim(), tokenElements[1].trim());
+				fieldMap.put(tokenElements[0].trim(), new String[] {tokenElements[1].trim()});
 			}
 
 			return getObject(fieldMap, targetClass);
@@ -230,7 +232,7 @@ public class MapSerializerTest {
 	public static class TestController extends Controller {
 		
 		@Override
-		protected MapSerializer getCustomMapSerializer() {
+		protected ParamMapSerializer getCustomParamMapSerializer() {
 			return new CustomMapSerializer();
 		}
 		
@@ -257,7 +259,7 @@ public class MapSerializerTest {
 	@Test
 	public void customSerializerTest() throws SerializerException {
 		CustomMapSerializer mapSerializer = new CustomMapSerializer();
-		mapSerializer.registerSerializer(UUID.class, new UUIDFieldSerializer());
+		mapSerializer.registerTypeSerializer(UUID.class, new UUIDFieldSerializer());
 		
 		TestDto dto = new TestDto();
 		dto.uuidField = new UUID(1, 2);
