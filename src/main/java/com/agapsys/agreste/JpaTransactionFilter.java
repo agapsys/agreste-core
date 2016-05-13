@@ -169,11 +169,16 @@ public class JpaTransactionFilter implements Filter {
 				if (error instanceof OptimisticLockException) {
 					resp.setStatus(HttpServletResponse.SC_CONFLICT);
 				} else {
-					if (error instanceof RuntimeException) {
+					if (error instanceof IOException)
+						throw (IOException)error;
+					
+					if (error instanceof ServletException)
+						throw (ServletException) error;
+					
+					if (error instanceof RuntimeException)
 						throw (RuntimeException) error;
-					} else {
-						throw new RuntimeException(error);
-					}
+					
+					throw new RuntimeException(error);
 				}
 			} finally {
 				attributeService.destroyAttribute(JPA_TRANSACTION_ATTRIBUTE);
