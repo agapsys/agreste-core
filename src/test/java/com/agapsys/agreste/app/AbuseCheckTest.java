@@ -19,12 +19,11 @@ package com.agapsys.agreste.app;
 import com.agapsys.agreste.AbuseCheckFilter;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
-import com.agapsys.agreste.dto.AbstractDtoTest;
-import com.agapsys.rcf.exceptions.RateLimitingException;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
 import com.agapsys.http.HttpResponse.StringResponse;
+import com.agapsys.rcf.exceptions.RateLimitingException;
 import com.agapsys.sevlet.container.ServletContainer;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
@@ -78,7 +77,7 @@ public class AbuseCheckTest {
 	
 	@BeforeClass
 	public static void beforeClass() {
-		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+		System.out.println(String.format("=== %s ===", AbuseCheckTest.class.getSimpleName()));
 	}
 	
 	@AfterClass

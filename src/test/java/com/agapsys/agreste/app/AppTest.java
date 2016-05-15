@@ -15,7 +15,6 @@
  */
 package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.dto.AbstractDtoTest;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.agreste.test.TestUtils.RestEndpoint;
@@ -23,8 +22,6 @@ import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.exceptions.ForbiddenException;
-import com.agapsys.security.web.SessionCsrfSecurityManager;
-import com.agapsys.security.web.WebSecurityManager;
 import com.agapsys.sevlet.container.ServletContainer;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,16 +37,14 @@ public class AppTest {
 	// STATIC SCOPE ============================================================
 	@BeforeClass
 	public static void beforeClass() {
-		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+		System.out.println(String.format("=== %s ===", AppTest.class.getSimpleName()));
 	}
 	
 	@AfterClass
 	public static void afterClass() {
 		System.out.println();
 	}
-	
-	private static final WebSecurityManager DEFAULT_SECURITY_MANAGER = new SessionCsrfSecurityManager();
-	
+		
 	public static HttpClient doLogin(ServletContainer sc, String username, String password) {
 		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login");
 		HttpClient client = new HttpClient();

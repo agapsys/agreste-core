@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.controllers;
+package com.agapsys.agreste;
 
-import com.agapsys.agreste.controllers.ParamMapSerializer;
-import com.agapsys.agreste.controllers.Controller;
-import com.agapsys.agreste.controllers.ParamMapSerializer.SerializerException;
-import com.agapsys.agreste.dto.AbstractDtoTest;
+import com.agapsys.agreste.ParamMapSerializer.SerializerException;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.http.HttpGet;
@@ -50,7 +47,7 @@ public class ParamMapSerializerTest {
 	// CLASS SCOPE =============================================================
 	@BeforeClass
 	public static void beforeClass() {
-		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+		System.out.println(String.format("=== %s ===", ParamMapSerializerTest.class.getSimpleName()));
 	}
 	
 	@AfterClass

@@ -18,7 +18,6 @@ package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
-import com.agapsys.web.toolkit.services.AttributeService;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,10 +30,11 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * Exposes a JPA transaction to application servlets.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class JpaTransactionFilter implements Filter {
@@ -133,33 +133,26 @@ public class JpaTransactionFilter implements Filter {
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================
-	private AttributeService attributeService;
 	private AbstractWebApplication webApp;
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		webApp = AbstractWebApplication.getRunningInstance();
-		if (webApp != null) {
-			attributeService = webApp.getService(AttributeService.class);
-		} else {
-			attributeService = null;
-		}
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		
 		HttpServletResponse resp = (HttpServletResponse) response;
+		HttpServletRequest  req = (HttpServletRequest) request;
 		
 		if (webApp != null) {
-			
 			PersistenceModule persistenceModule = webApp.getModule(PersistenceModule.class);
 			ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceModule.getEntityManager()).getTransaction();
 			jpaTransaction.wrappedBegin();
-			attributeService.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);
+			req.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);
 
 			try {
-				
 				chain.doFilter(request, response);
 				jpaTransaction.wrappedCommit();
 				
@@ -181,7 +174,7 @@ public class JpaTransactionFilter implements Filter {
 					throw new RuntimeException(error);
 				}
 			} finally {
-				attributeService.destroyAttribute(JPA_TRANSACTION_ATTRIBUTE);
+				req.removeAttribute(JPA_TRANSACTION_ATTRIBUTE);
 			}
 		} else {
 			chain.doFilter(request, response);

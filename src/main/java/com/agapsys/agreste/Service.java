@@ -16,22 +16,29 @@
 
 package com.agapsys.agreste;
 
-import com.agapsys.agreste.model.AbstractUser;
+import com.agapsys.web.toolkit.AbstractService;
+import com.agapsys.web.toolkit.AbstractWebApplication;
+import com.agapsys.web.toolkit.services.AttributeService;
 
 /**
  *
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class WebSecurity extends com.agapsys.security.web.WebSecurity {
-	protected WebSecurity() {}
+public class Service extends AbstractService {
+
+	private AttributeService attributeService;
 	
-	// STATIC SCOPE ============================================================
-	public static AbstractUser getCurrentUser() {
-		return (AbstractUser) com.agapsys.security.web.WebSecurity.getCurrentUser();
+	@Override
+	protected void onInit(AbstractWebApplication webApp) {
+		super.onInit(webApp);
+		attributeService = getService(AttributeService.class);
+	}
+
+	protected JpaTransaction getJpaTransaction() {
+		return (JpaTransaction) attributeService.getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
 	}
 	
-	public static void setCurrentUser(AbstractUser user) {
-		com.agapsys.security.web.WebSecurity.setCurrentUser(user);
+	protected Object getGlobalAttribute(String name) {
+		return attributeService.getAttribute(name);
 	}
-	// =========================================================================
 }

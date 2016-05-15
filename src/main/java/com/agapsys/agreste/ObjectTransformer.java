@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.dto;
+package com.agapsys.agreste;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;

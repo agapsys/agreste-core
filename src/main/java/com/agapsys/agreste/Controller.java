@@ -14,31 +14,24 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.controllers;
+package com.agapsys.agreste;
 
-import com.agapsys.agreste.JpaTransaction;
-import com.agapsys.agreste.JpaTransactionFilter;
-import com.agapsys.agreste.WebSecurity;
-import com.agapsys.agreste.model.AbstractUser;
 import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.LazyInitializer;
+import com.agapsys.rcf.User;
 import com.agapsys.rcf.exceptions.BadRequestException;
 import com.agapsys.rcf.exceptions.ClientException;
-import com.agapsys.security.NotAllowedException;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.Module;
 import com.agapsys.web.toolkit.Service;
 import com.agapsys.web.toolkit.modules.AbstractExceptionReporterModule;
-import com.agapsys.web.toolkit.services.AttributeService;
 import com.agapsys.web.toolkit.utils.HttpUtils;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import javax.persistence.EntityManager;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.NotAllowedException;
 
 public abstract class Controller extends com.agapsys.rcf.Controller {
 	
@@ -50,30 +43,15 @@ public abstract class Controller extends com.agapsys.rcf.Controller {
 		}
 		
 	};
-	
-	private AttributeService attributeService;
-
-	@Override
-	protected void onInit() {
-		super.onInit();
-		attributeService = getService(AttributeService.class);
-	}
-	
-	
+		
 	protected ParamMapSerializer getCustomParamMapSerializer() {
 		return new ParamMapSerializer();
 	}
 	
-	
-	protected JpaTransaction getJpaTransaction() {
-		return (JpaTransaction) getGlobalAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
-	}
-	
-	protected Object getGlobalAttribute(String name) {
-		return attributeService.getAttribute(name);
+	protected JpaTransaction getJpaTransaction(HttpServletRequest req) {
+		return (JpaTransaction) req.getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
 	}
 
-	
 	@Override
 	protected void onClientError(HttpServletRequest req, ClientException error) {
 		super.onClientError(req, error);
@@ -100,31 +78,6 @@ public abstract class Controller extends com.agapsys.rcf.Controller {
 	protected <T extends Service> T getService(Class<T> serviceClass) {
 		return AbstractWebApplication.getRunningInstance().getService(serviceClass);
 	}
-	
-	
-	protected AbstractUser getCurrentUser() {
-		AbstractUser loggedUser = WebSecurity.getCurrentUser();
-		JpaTransaction jpaTransaction = getJpaTransaction();
-		
-		if (loggedUser != null && jpaTransaction != null) {
-			EntityManager em = jpaTransaction.getEntityManager();
-			
-			if (!em.contains(loggedUser)) {
-				loggedUser = em.find(AbstractUser.class, loggedUser.getId());
-			}
-		}
-		
-		return loggedUser;
-	}
-	
-	protected void setCurrentUser(AbstractUser user) {
-		WebSecurity.setCurrentUser(user);
-	}
-	
-	protected void unregisterCurrentUser() {
-		WebSecurity.unregisterCurrentUser();
-	}
-	
 	
 	protected String getOptionalParameter(HttpServletRequest req, String paramName, String defaultValue) {
 		return HttpUtils.getOptionalParameter(req, paramName, defaultValue);
@@ -154,9 +107,8 @@ public abstract class Controller extends com.agapsys.rcf.Controller {
 		}
 	}
 	
-	
 	protected String getLogMessage(HttpServletRequest req, String message) {
-		AbstractUser loggedUser = WebSecurity.getCurrentUser();
+		User loggedUser = getUser(req);
 		
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)
@@ -167,7 +119,7 @@ public abstract class Controller extends com.agapsys.rcf.Controller {
 			requestUrl,
 			HttpUtils.getOriginIp(req),
 			HttpUtils.getOriginUserAgent(req),
-			loggedUser != null ? "" + loggedUser.getId() : "none",
+			loggedUser != null ? "" + loggedUser.toString(): "none",
 			message != null && !message.trim().isEmpty() ? "\n\n" + message : ""
 		);
 		

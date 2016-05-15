@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.dto;
+package com.agapsys.agreste;
 
 /**
  * Defines filtering criteria for elements in a collection transformation

@@ -13,16 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.agapsys.agreste.app.services;
 
-package com.agapsys.agreste.dto;
+import com.agapsys.agreste.JpaTransaction;
+import com.agapsys.agreste.Service;
+import com.agapsys.agreste.app.entities.User;
+import com.agapsys.jpa.FindBuilder;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+/**
+ *
+ * @author Leandro Oliveira (leandro@agapsys)
+ */
+public class UserService extends Service {
+	
+	public User getUserByCredentials(JpaTransaction jpa, String username, String password) {
+		return new FindBuilder<>(User.class).by("username", username).and("passwordHash", User.getPasswordHash(password)).findFirst(jpa.getEntityManager());
+	}
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface DtoRequired {
-	boolean acceptEmpty() default false;
 }

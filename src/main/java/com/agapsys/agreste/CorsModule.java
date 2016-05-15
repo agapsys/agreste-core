@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.modules;
+package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;

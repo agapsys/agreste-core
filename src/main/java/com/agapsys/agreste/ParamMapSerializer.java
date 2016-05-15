@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.controllers;
+package com.agapsys.agreste;
 
 import com.agapsys.rcf.LazyInitializer;
 import java.io.UnsupportedEncodingException;

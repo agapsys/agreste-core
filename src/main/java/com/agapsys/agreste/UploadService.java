@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.services;
+package com.agapsys.agreste;
 
 import com.agapsys.rcf.exceptions.BadRequestException;
 import com.agapsys.web.toolkit.utils.FileUtils;

@@ -16,8 +16,7 @@
 
 package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.dto.AbstractDtoTest;
-import com.agapsys.agreste.modules.CorsModule;
+import com.agapsys.agreste.CorsModule;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.http.HttpGet;
@@ -47,7 +46,7 @@ public class CorsModuleTest {
 	// CLASS SCOPE =============================================================
 	@BeforeClass
 	public static void beforeClass() {
-		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+		System.out.println(String.format("=== %s ===", CorsModuleTest.class.getSimpleName()));
 	}
 	
 	@AfterClass

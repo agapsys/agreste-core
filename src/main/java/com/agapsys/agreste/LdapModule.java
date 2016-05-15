@@ -4,9 +4,9 @@
  * Proprietary and confidential
  */
 
-package com.agapsys.agreste.modules;
+package com.agapsys.agreste;
 
-import com.agapsys.agreste.modules.LdapModule.LdapException.LdapExceptionType;
+import com.agapsys.agreste.LdapModule.LdapException.LdapExceptionType;
 import com.agapsys.web.toolkit.AbstractModule;
 import com.agapsys.web.toolkit.AbstractWebApplication;
 import java.util.Collections;

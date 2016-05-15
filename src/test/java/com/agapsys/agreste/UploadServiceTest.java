@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agapsys.agreste.app;
+package com.agapsys.agreste;
 
-import com.agapsys.agreste.dto.AbstractDtoTest;
-import com.agapsys.agreste.services.UploadService;
+import com.agapsys.agreste.UploadService;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse.StringResponse;
@@ -55,7 +54,7 @@ public class UploadServiceTest {
 
 	@BeforeClass
 	public static void beforeClass() {
-		System.out.println(String.format("=== %s ===", AbstractDtoTest.class.getSimpleName()));
+		System.out.println(String.format("=== %s ===", UploadServiceTest.class.getSimpleName()));
 	}
 
 	@AfterClass
