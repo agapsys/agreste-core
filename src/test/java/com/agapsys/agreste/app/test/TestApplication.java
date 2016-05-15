@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agapsys.agreste.app;
+package com.agapsys.agreste.app.test;
 
+import com.agapsys.agreste.app.Defs;
+import com.agapsys.agreste.app.entities.User;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
 import javax.persistence.EntityManager;
@@ -23,7 +25,7 @@ import javax.persistence.EntityManager;
  *
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class MyApplication extends MockedWebApplication {
+public class TestApplication extends MockedWebApplication {
 
 	@Override
 	protected void afterApplicationStart() {
@@ -33,22 +35,21 @@ public class MyApplication extends MockedWebApplication {
 		
 		EntityManager em = persistenceModule.getEntityManager();
 		
+		// ---------------------------------------------------------------------
 		em.getTransaction().begin();
 		
+		new User("user1", "password1").save(em);		
 		
-		new MyUser("user1", "password1").save(em);		
+		User user;
 		
-		MyUser user = new MyUser("user2", "password2");
+		user = new User("user2", "password2");
 		user.addRole(Defs.ACCESS_ROLE);
 		user.save(em);
 		
-		user = (MyUser) new MyUser("user3", "password3").save(em);
-		MyGroup group = new MyGroup();
-		group.addRole(Defs.ACCESS_ROLE);
-		group.addUser(user);
-		group.save(em);
+		new User("user3", "password3").save(em);
 		
 		em.getTransaction().commit();
+		// ---------------------------------------------------------------------
 		
 		em.close();
 	}

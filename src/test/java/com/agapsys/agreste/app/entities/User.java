@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Id;
 import org.mindrot.jbcrypt.BCrypt;
 
 /**
@@ -52,6 +53,7 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 	
 	// INSTANCE SCOPE ==========================================================
 	// ID ----------------------------------------------------------------------
+	@Id
 	private Long id;
 
 	@Override

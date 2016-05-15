@@ -95,7 +95,7 @@ public class CorsModuleTest {
 	
 	@Before
 	public void before() {
-		
+		System.out.println("Starting application...");
 		sc = new ServletContainerBuilder(TestApplication.class)
 			.registerController(TestController.class)
 			.build();
@@ -105,6 +105,7 @@ public class CorsModuleTest {
 	
 	@After
 	public void after() {
+		System.out.println("\nShutting the application down...");
 		sc.stopServer();
 	}
 	

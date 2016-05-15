@@ -15,6 +15,7 @@
  */
 package com.agapsys.agreste.app;
 
+import com.agapsys.agreste.app.test.TestApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.agreste.test.TestUtils.RestEndpoint;
@@ -62,7 +63,7 @@ public class AppTest {
 	@Before
 	public void before() {
 		sc = new ServletContainerBuilder(
-				MyApplication.class, 
+				TestApplication.class, 
 				DEFAULT_SECURITY_MANAGER, 
 				"com.agapsys.agreste.app.MyController", 
 				"com.agapsys.agreste.app.MyService"
