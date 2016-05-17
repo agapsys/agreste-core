@@ -16,10 +16,10 @@
 package com.agapsys.agreste.app.controllers;
 
 import com.agapsys.agreste.Controller;
+import com.agapsys.agreste.HttpExchange;
 import com.agapsys.agreste.app.entities.User;
 import com.agapsys.agreste.app.entities.User.UserDto;
 import com.agapsys.agreste.app.services.UserService;
-import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
 import com.agapsys.rcf.exceptions.ForbiddenException;
@@ -34,9 +34,8 @@ public class UserController extends Controller {
 	private UserService userService;
 
 	@Override
-	protected void onInit() {
-		super.onInit();
-		
+	protected void onControllerInit() {
+		super.onControllerInit();
 		userService = getService(UserService.class);
 	}
 	
@@ -48,15 +47,19 @@ public class UserController extends Controller {
 		String username = exchange.getMandatoryRequestParameter(PARAM_USERNAME);
 		String password = exchange.getMandatoryRequestParameter(PARAM_PASSWORD);
 		
-		User user = userService.getUserByCredentials(getJpaTransaction(exchange.getRequest()), username, password);
-		if (user == null)
-			throw new ForbiddenException();
+		User user = userService.getUserByCredentials(exchange.getJpaTransaction(), username, password);
+		
+		if (user == null) {
+			throw new ForbiddenException("Invalid credentials");
+		} else {
+			exchange.setCurrentUser(user);
+		}
 		
 		return new UserDto(user);
 	}
 	
 	@WebAction(mapping = "me", secured = true)
 	public UserDto me(HttpExchange exchange) {
-		return new UserDto((User) getUser(exchange.getRequest()));
+		return new UserDto((User) exchange.getCurrentUser());
 	}
 }

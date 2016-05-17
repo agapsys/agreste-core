@@ -16,18 +16,21 @@
 package com.agapsys.agreste.app.services;
 
 import com.agapsys.agreste.JpaTransaction;
-import com.agapsys.agreste.Service;
 import com.agapsys.agreste.app.entities.User;
 import com.agapsys.jpa.FindBuilder;
+import com.agapsys.web.toolkit.AbstractService;
 
 /**
  *
  * @author Leandro Oliveira (leandro@agapsys)
  */
-public class UserService extends Service {
+public class UserService extends AbstractService {
 	
 	public User getUserByCredentials(JpaTransaction jpa, String username, String password) {
-		return new FindBuilder<>(User.class).by("username", username).and("passwordHash", User.getPasswordHash(password)).findFirst(jpa.getEntityManager());
+		User user = new FindBuilder<>(User.class).by("username", username).findFirst(jpa.getEntityManager());
+		if (user == null) return null;
+		
+		return user.isPasswordValid(password) ? user : null;
 	}
 
 }

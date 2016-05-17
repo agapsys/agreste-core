@@ -16,10 +16,12 @@
 package com.agapsys.agreste.app.controllers;
 
 import com.agapsys.agreste.Controller;
+import com.agapsys.agreste.HttpExchange;
 import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.app.entities.User;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 /**
  *
  * @author Leandro Oliveira (leandro@agapsys)
@@ -27,20 +29,25 @@ import javax.servlet.http.HttpServletRequest;
 public class BaseController extends Controller {
 
 	@Override
-	protected User getUser(HttpServletRequest req) {
-		User user = (User) super.getUser(req);
+	protected HttpExchange getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
+		return new HttpExchange(req, resp) {
+			@Override
+			public User getCurrentUser() {
+				User user = (User) super.getCurrentUser();
 		
-		JpaTransaction jpa = getJpaTransaction(req);
-		
-		if (user != null && jpa != null) {
-			EntityManager em = jpa.getEntityManager();
-			
-			if (!em.contains(user)) {
-				user = em.find(User.class, user.getId());
+				JpaTransaction jpa = getJpaTransaction();
+
+				if (user != null && jpa != null) {
+					EntityManager em = jpa.getEntityManager();
+
+					if (!em.contains(user)) {
+						user = em.find(User.class, user.getId());
+					}
+				}
+
+				return user;
 			}
-		}
-		
-		return user;
+		};
 	}
 	
 }

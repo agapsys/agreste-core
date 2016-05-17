@@ -15,7 +15,8 @@
  */
 package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.app.test.TestApplication;
+import com.agapsys.agreste.app.controllers.UserController;
+import com.agapsys.agreste.app.entities.User.UserDto;
 import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.agreste.test.TestUtils.RestEndpoint;
@@ -47,10 +48,9 @@ public class AppTest {
 	}
 		
 	public static HttpClient doLogin(ServletContainer sc, String username, String password) {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
 		HttpClient client = new HttpClient();
-		StringResponse resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", username, password));
-		client.addDefaultHeaders(resp.getFirstHeader(SessionCsrfSecurityManager.CSRF_HEADER));
+		sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", username, password));
 		return client;
 	}
 	// =========================================================================
@@ -62,24 +62,25 @@ public class AppTest {
 	
 	@Before
 	public void before() {
-		sc = new ServletContainerBuilder(
-				TestApplication.class, 
-				DEFAULT_SECURITY_MANAGER, 
-				"com.agapsys.agreste.app.MyController", 
-				"com.agapsys.agreste.app.MyService"
-			).registerController(MyController.class)
+		System.out.println("Starting application...");
+
+		sc = new ServletContainerBuilder(TestApplication.class)
+			.registerController(UserController.class)
 			.build();
+		
 		sc.startServer();
 	}
 	
 	@After
 	public void after() {
+		System.out.println("\nShutting the application down...");
+
 		sc.stopServer();
 	}
 	
 	@Test
 	public void testLogin() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/login");
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
 		testUtils.println(endpoint.toString());
 		
 		HttpClient client = new HttpClient();
@@ -90,29 +91,17 @@ public class AppTest {
 		testUtils.assertErrorStatus(ForbiddenException.CODE, "Invalid credentials", resp);
 		
 		// Invalid password...
-		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "user1", "invalid-password"));
+		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "username", "invalid-password"));
 		testUtils.assertStatus(ForbiddenException.CODE, resp);
 		
 		// Valid credentials...
-		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "user1", "password1"));
+		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "username", "password"));
 		testUtils.assertStatus(200, resp);
 	}
 	
 	@Test
-	public void testPublicGet() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/publicGet");
-		testUtils.println(endpoint.toString());
-		
-		StringResponse resp;
-
-		resp = sc.doRequest(endpoint.getRequest());
-		testUtils.assertStatus(200, resp);
-		Assert.assertEquals("", resp.getContentString());
-	}
-	
-	@Test
-	public void testSecuredGet() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/securedGet");
+	public void testSecuredAction() {
+		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/me");
 		testUtils.println(endpoint.toString());
 		
 		StringResponse resp;
@@ -122,40 +111,11 @@ public class AppTest {
 		testUtils.assertStatus(401, resp);
 		
 		// Logged access...
-		HttpClient client = doLogin(sc, "user1", "password1");
+		HttpClient client = doLogin(sc, "username", "password");
 		resp = sc.doRequest(client, endpoint.getRequest());
 		testUtils.assertStatus(200, resp);
-		Assert.assertEquals("", resp.getContentString());
-		
-	}
-	
-	@Test
-	public void testImplicitSecuredGet() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/controller/implicitSecuredGet");
-		testUtils.println(endpoint.toString());
-		
-		StringResponse resp;
-
-		// Unlogged access...	
-		resp = sc.doRequest(endpoint.getRequest());
-		testUtils.assertStatus(401, resp);
-		
-		HttpClient client;
-		
-		// Unpriviledged access...
-		client = doLogin(sc, "user1", "password1"); // <-- "user1" does not have the required roles
-		resp = sc.doRequest(client, endpoint.getRequest());
-		testUtils.assertStatus(403, resp);
-		
-		// Valid access...
-		client = doLogin(sc, "user2", "password2"); // <-- "user2" have the required roles
-		resp = sc.doRequest(client, endpoint.getRequest());
-		testUtils.assertStatus(200, resp);
-		
-		// Valid access with group roles...
-		client = doLogin(sc, "user3", "password3"); // <-- "user2" have the required roles
-		resp = sc.doRequest(client, endpoint.getRequest());
-		testUtils.assertStatus(200, resp);
+		UserDto dto = testUtils.readObjectResponse(UserDto.class, resp);
+		Assert.assertEquals("username", dto.username);
 	}
 	// =========================================================================
 }

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package com.agapsys.agreste.app;
+package com.agapsys.agreste;
 
-import com.agapsys.agreste.CorsModule;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.ServletContainerBuilder;
+import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.rcf.Controller;
-import com.agapsys.rcf.HttpExchange;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
 import com.agapsys.sevlet.container.ServletContainer;
@@ -34,7 +33,6 @@ import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -80,7 +78,7 @@ public class CorsModuleTest {
 	public static class TestController extends Controller {
 
 		@Override
-		public void beforeAction(HttpExchange exchange) throws ServletException, IOException {
+		public void beforeAction(com.agapsys.rcf.HttpExchange exchange) throws ServletException, IOException {
 			CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
 			corsModule.putCorsHeaders(exchange.getResponse());
 		}
@@ -112,7 +110,7 @@ public class CorsModuleTest {
 	@Test
 	public void testCorsHeaders() {
 		StringResponse resp = sc.doRequest(new HttpGet("/test/get"));
-		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
+		TestUtils.getInstance().assertStatus(200, resp);
 		
 		List<HttpHeader> allowedOrigins = resp.getHeaders("Access-Control-Allow-Origin");
 		HttpHeader allowMethodsHeader = resp.getFirstHeader("Access-Control-Allow-Methods");

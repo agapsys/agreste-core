@@ -19,6 +19,7 @@ package com.agapsys.agreste;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
 import com.agapsys.utils.console.printer.FormatEscapeBuilder;
+import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
 import com.agapsys.web.toolkit.utils.DateUtils;
@@ -26,7 +27,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Level;
 
-public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.AbstractWebApplication {
+public abstract class AgresteApplication extends AbstractWebApplication {
 	// CLASS SCOPE =============================================================
 	public static final String KEY_ABUSE_INTERVAL      = "com.agapsys.agreste.abuseInterval";
 	public static final String KEY_ABUSE_COUNT_LIMIT   = "com.agapsys.agreste.abuseCountLimit";
@@ -80,6 +81,10 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 		registerModule(PersistenceModule.class);
 	}
 	
+	/**
+	 * Return application default time zone.
+	 * @return application default time zone. Default implementation returns UTC.
+	 */
 	protected TimeZone getDefaultTimeZone() {
 		return TimeZone.getTimeZone("UTC");
 	}
@@ -134,14 +139,26 @@ public abstract class AbstractWebApplication extends com.agapsys.web.toolkit.Abs
 		return properties;
 	}
 
+	/**
+	 * Return the abuse check interval (in milliseconds)
+	 * @return  the abuse check interval (in milliseconds)
+	 */
 	public long getAbuseInterval() {
 		return abuseInterval;
 	}
 	
+	/**
+	 * Returns the maximum number of requests to the application during an abuse check interval
+	 * @return the maximum number of requests to the application during an abuse check interval
+	 */
 	public int getAbuseCountLimit() {
 		return abuseCountLimit;
 	}
 	
+	/**
+	 * Returns a boolean indicating if abuse check is enabled.
+	 * @return a boolean indicating if abuse check is enabled.
+	 */
 	public boolean isAbuseCheckEnabled() {
 		return abuseCheckEnabled;
 	}

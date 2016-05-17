@@ -41,7 +41,7 @@ public class AbuseCheckFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		AbstractWebApplication app = (AbstractWebApplication) AbstractWebApplication.getRunningInstance();
+		AgresteApplication app = (AgresteApplication) AgresteApplication.getRunningInstance();
 		
 		if (!app.isAbuseCheckEnabled()) {
 			chain.doFilter(request, response);

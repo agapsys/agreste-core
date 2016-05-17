@@ -227,15 +227,21 @@ public class ParamMapSerializerTest {
 	
 	@WebController("test")
 	public static class TestController extends Controller {
-		
+
 		@Override
-		protected ParamMapSerializer getCustomParamMapSerializer() {
-			return new CustomMapSerializer();
+		protected HttpExchange getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
+			return new HttpExchange(req, resp) {
+				@Override
+				protected ParamMapSerializer getParamMapSerializer() {
+					return new CustomMapSerializer();
+				}
+			};
 		}
 		
+		
 		@WebAction(mapping = "/get")
-		public TestDto onGet(HttpServletRequest req) throws IOException, BadRequestException {
-			return readParameterObject(req, TestDto.class);
+		public TestDto onGet(HttpExchange exchange) throws IOException, BadRequestException {
+			return exchange.readParameterObject(TestDto.class);
 		}
 	}
 	// -------------------------------------------------------------------------

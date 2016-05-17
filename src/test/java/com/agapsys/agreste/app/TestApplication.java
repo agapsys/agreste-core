@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.agapsys.agreste.app.test;
+package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.app.Defs;
 import com.agapsys.agreste.app.entities.User;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
@@ -38,15 +37,7 @@ public class TestApplication extends MockedWebApplication {
 		// ---------------------------------------------------------------------
 		em.getTransaction().begin();
 		
-		new User("user1", "password1").save(em);		
-		
-		User user;
-		
-		user = new User("user2", "password2");
-		user.addRole(Defs.ACCESS_ROLE);
-		user.save(em);
-		
-		new User("user3", "password3").save(em);
+		new User("username", "password").save(em);		
 		
 		em.getTransaction().commit();
 		// ---------------------------------------------------------------------

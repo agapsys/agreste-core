@@ -22,6 +22,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -45,15 +46,20 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 		}
 	}
 	
-	public static String getPasswordHash(String password) {
+	private static String getPasswordHash(String password) {
 		int logRounds = 4;
 		return (BCrypt.hashpw(password, BCrypt.gensalt(logRounds)));
+	}
+	
+	private static boolean checkPassword(String password, String passwordHash) {
+		return BCrypt.checkpw(password, passwordHash);
 	}
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================
 	// ID ----------------------------------------------------------------------
 	@Id
+	@GeneratedValue
 	private Long id;
 
 	@Override
@@ -94,7 +100,7 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 		setPasswordHash(getPasswordHash(password));
 	}
 	public boolean isPasswordValid(String password) {
-		return BCrypt.checkpw(password, passwordHash);
+		return checkPassword(password, getPasswordHash());
 	}
 	// -------------------------------------------------------------------------
 
