@@ -84,5 +84,30 @@ public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 	public <T> T readParameterObject(Class<T> dtoClass) throws BadRequestException {
 		return readParameterObject(paramMapSerializer.getInstance(), getRequest(), dtoClass);
 	}
+	
+
+	public <T> T getOptionalRequestParameter(Class<T> targetClass, String paramName, T defaultValue) throws BadRequestException {
+		try {
+			String paramValue = getOptionalRequestParameter(paramName, null);
+			if (paramValue == null) return defaultValue;
+			
+			return paramMapSerializer.getInstance().getParameter(paramValue, targetClass);
+		} catch (ParamMapSerializer.SerializerException ex) {
+			throw new BadRequestException(ex.getMessage());
+		}
+	}
+	
+	public final <T> T getMandatoryRequestParameter(Class<T> targetClass, String paramName) throws BadRequestException {
+		return getMandatoryRequestParameter(targetClass, paramName, "Missing parameter: %s", paramName);
+	}
+	
+	public <T> T getMandatoryRequestParameter(Class<T> targetClass, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
+		try {
+			String paramValue = getMandatoryRequestParameter(paramName, errorMessage, errMsgArgs);
+			return paramMapSerializer.getInstance().getParameter(paramValue, targetClass);
+		} catch (ParamMapSerializer.SerializerException ex) {
+			throw new BadRequestException(ex.getMessage());
+		}
+	}	
 	// =========================================================================
 }

@@ -264,7 +264,7 @@ public class ParamMapSerializer {
 		typeSerializerMap.put(Date.class,       new TimestampSerializer());
 	}
 	
-	public void registerTypeSerializer(Class<?> type, TypeSerializer typeSerializer) {
+	public final void registerTypeSerializer(Class<?> type, TypeSerializer typeSerializer) {
 		if (type == null)
 			throw new IllegalArgumentException("Null type");
 		
@@ -272,6 +272,15 @@ public class ParamMapSerializer {
 			throw new IllegalArgumentException("Null type serializer");
 		
 		typeSerializerMap.put(type, typeSerializer);
+	}
+	
+	public <T> T getParameter(String paramValue, Class<T> targetClass) throws SerializerException {
+		TypeSerializer serializer = typeSerializerMap.get(targetClass);
+			
+		if (serializer == null)
+			throw new RuntimeException("Missing serializer for " + targetClass.getName());
+
+		return (T) serializer.getObject(paramValue);
 	}
 	
 	public <T> T getObject(Map<String, String[]> paramMap, Class<T> targetClass) throws SerializerException {
@@ -293,13 +302,8 @@ public class ParamMapSerializer {
 			String value[] = paramMap.get(field.getName());
 			
 			if (value != null) {
-				TypeSerializer serializer = typeSerializerMap.get(field.getType());
-			
-				if (serializer == null)
-					throw new RuntimeException("Missing serializer for " + field.getType().getName());
-				
 				try {
-					field.set(targetObject, serializer.getObject(value[0]));
+					field.set(targetObject, getParameter(value[0], field.getType()));
 				} catch (IllegalArgumentException | IllegalAccessException ex) {
 					throw new RuntimeException(ex);
 				}
