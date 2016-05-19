@@ -77,7 +77,14 @@ public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rc
 	}
 	
 	protected String getLogMessage(HE exchange, String message) {
-		User loggedUser = exchange.getCurrentUser();
+		User loggedUser;
+		
+		try {
+			loggedUser = exchange.getCurrentUser();
+		} catch (ClientException ex) {
+			loggedUser = null;
+		}
+		
 		HttpServletRequest req = exchange.getRequest();
 		
 		StringBuffer requestUrl = req.getRequestURL();

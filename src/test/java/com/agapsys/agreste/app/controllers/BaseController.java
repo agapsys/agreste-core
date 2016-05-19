@@ -16,6 +16,7 @@
 package com.agapsys.agreste.app.controllers;
 
 import com.agapsys.agreste.Controller;
+import com.agapsys.agreste.CsrfHttpExchange;
 import com.agapsys.agreste.HttpExchange;
 import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.app.entities.User;
@@ -30,7 +31,7 @@ public class BaseController extends Controller {
 
 	@Override
 	protected HttpExchange getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
-		return new HttpExchange(req, resp) {
+		return new CsrfHttpExchange(req, resp) {
 			@Override
 			public User getCurrentUser() {
 				User user = (User) super.getCurrentUser();

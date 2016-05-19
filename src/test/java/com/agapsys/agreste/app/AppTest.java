@@ -15,6 +15,7 @@
  */
 package com.agapsys.agreste.app;
 
+import com.agapsys.agreste.CsrfHttpExchange;
 import com.agapsys.agreste.app.controllers.UserController;
 import com.agapsys.agreste.app.entities.User.UserDto;
 import com.agapsys.agreste.test.ServletContainerBuilder;
@@ -22,6 +23,7 @@ import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.agreste.test.TestUtils.RestEndpoint;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpResponse.StringResponse;
+import com.agapsys.http.utils.Pair;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.exceptions.ForbiddenException;
 import com.agapsys.sevlet.container.ServletContainer;
@@ -46,12 +48,28 @@ public class AppTest {
 	public static void afterClass() {
 		System.out.println();
 	}
+	
+	public static class LoginInfo extends Pair<HttpClient, StringResponse> {
 		
-	public static HttpClient doLogin(ServletContainer sc, String username, String password) {
+		public LoginInfo(HttpClient first, StringResponse second) {
+			super(first, second);
+		}
+		
+		public HttpClient getClient() {
+			return getFirst();
+		}
+		
+		public StringResponse getResponse() {
+			return getSecond();
+		}
+		
+	}
+	
+	public static LoginInfo doLogin(ServletContainer sc, String username, String password) {
 		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
 		HttpClient client = new HttpClient();
-		sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", username, password));
-		return client;
+		StringResponse resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", username, password));
+		return new LoginInfo(client, resp);
 	}
 	// =========================================================================
 	
@@ -110,9 +128,14 @@ public class AppTest {
 		resp = sc.doRequest(endpoint.getRequest());
 		testUtils.assertStatus(401, resp);
 		
-		// Logged access...
-		HttpClient client = doLogin(sc, "username", "password");
-		resp = sc.doRequest(client, endpoint.getRequest());
+		// Logged access (without CSRF)...
+		LoginInfo loginInfo = doLogin(sc, "username", "password");
+		resp = sc.doRequest(loginInfo.getClient(), endpoint.getRequest());
+		testUtils.assertErrorStatus(403, "Invalid CSRF header", resp);
+		
+		// Logged access (with CSRF)...
+		loginInfo.getClient().addDefaultHeader(CsrfHttpExchange.CSRF_HEADER, loginInfo.getResponse().getFirstHeader(CsrfHttpExchange.CSRF_HEADER).getValue());
+		resp = sc.doRequest(loginInfo.getClient(), endpoint.getRequest());
 		testUtils.assertStatus(200, resp);
 		UserDto dto = testUtils.readObjectResponse(UserDto.class, resp);
 		Assert.assertEquals("username", dto.username);

@@ -15,7 +15,6 @@
  */
 package com.agapsys.agreste.app.controllers;
 
-import com.agapsys.agreste.Controller;
 import com.agapsys.agreste.HttpExchange;
 import com.agapsys.agreste.app.entities.User;
 import com.agapsys.agreste.app.entities.User.UserDto;
@@ -29,7 +28,7 @@ import com.agapsys.rcf.exceptions.ForbiddenException;
  * @author Leandro Oliveira
  */
 @WebController("user")
-public class UserController extends Controller {
+public class UserController extends BaseController {
 	
 	private UserService userService;
 
