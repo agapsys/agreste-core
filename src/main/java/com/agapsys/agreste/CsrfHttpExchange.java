@@ -17,8 +17,8 @@ package com.agapsys.agreste;
 
 import com.agapsys.rcf.User;
 import com.agapsys.rcf.exceptions.ForbiddenException;
+import com.agapsys.web.toolkit.utils.StringUtils;
 import java.util.Objects;
-import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -34,40 +34,6 @@ public class CsrfHttpExchange extends HttpExchange {
 	
 	/** Name of the header used to send/retrieve a CSRF token. */
 	public static final String CSRF_HEADER  = "X-Csrf-Token";
-	
-	/** 
-	 * Generates a random string (chars: [a-z][A-Z][0-9]).
-	 * @param length length of returned string
-	 * @return a random string with given length.
-	 * @throws IllegalArgumentException if (length &lt; 1)
-	 */
-	private static String getRandomString(int length) throws IllegalArgumentException {
-		char[] chars = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-		return getRandomString(length, chars);
-	}
-	
-	/**
-	 * Generates a random String 
-	 * @param length length of returned string
-	 * @param chars set of chars which will be using during random string generation
-	 * @return a random string with given length.
-	 * @throws IllegalArgumentException if (length &lt; 1 || chars == null || chars.length == 0)
-	 */
-	private static String getRandomString(int length, char[] chars) throws IllegalArgumentException {
-		if (length < 1)
-			throw new IllegalArgumentException("Invalid length: " + length);
-		
-		if (chars == null || chars.length == 0)
-			throw new IllegalArgumentException("Null/Empty chars");
-		
-		StringBuilder sb = new StringBuilder();
-		Random random = new Random();
-		for (int i = 0; i < length; i++) {
-			char c = chars[random.nextInt(chars.length)];
-			sb.append(c);
-		}
-		return sb.toString();
-	}
 	// =========================================================================
 	
 	// INSTANCE SCOPE ==========================================================
@@ -101,7 +67,7 @@ public class CsrfHttpExchange extends HttpExchange {
 		super.setCurrentUser(user);
 		if (user != null) {
 			HttpSession session = getRequest().getSession(true);
-			String token = getRandomString(CSRF_TOKEN_LENGTH);
+			String token = StringUtils.getRandomString(CSRF_TOKEN_LENGTH);
 			session.setAttribute(SESSION_ATTR_CSRF_TOKEN, token);
 			getResponse().setHeader(CSRF_HEADER, token);
 		} else {
