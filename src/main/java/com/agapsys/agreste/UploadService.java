@@ -17,7 +17,7 @@
 package com.agapsys.agreste;
 
 import com.agapsys.rcf.exceptions.BadRequestException;
-import com.agapsys.web.toolkit.AbstractService;
+import com.agapsys.web.toolkit.Service;
 import com.agapsys.web.toolkit.utils.FileUtils;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -37,20 +37,20 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * Upload service.
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class UploadService extends AbstractService {
+public class UploadService extends Service {
 	// CLASS SCOPE =============================================================
 	protected static final long DEFAULT_TOTAL_MAX_SIZE = -1; // No limit
 	protected static final long DEFAULT_MAX_FILE_SIZE  = -1; // No limit
-	
+
 	private static final String ATTR_SESSION_FILES = "com.agapsys.agrest.sessionFiles";
-	
+
 	public static interface OnFormFieldListener {
 		public void onFormField(String name, String value);
 	}
 	// =========================================================================
-	
+
 	// INSTANCE SCOPE ==========================================================
-	/** 
+	/**
 	 * Returns the directory used to store uploaded files
 	 * @return the directory used to store uploaded files
 	 * Default implementation returns {@linkplain FileUtils#DEFAULT_TEMPORARY_FOLDER}
@@ -58,7 +58,7 @@ public class UploadService extends AbstractService {
 	protected File getOutputDirectory() {
 		return FileUtils.DEFAULT_TEMPORARY_FOLDER;
 	}
-	
+
 	/**
 	 * Returns the maximum size of an uploaded file.
 	 * @return the maximum size of an upload file or -1 if there is no limit.
@@ -67,8 +67,8 @@ public class UploadService extends AbstractService {
 	protected long getMaxFileSize() {
 		return DEFAULT_MAX_FILE_SIZE;
 	}
-	
-		
+
+
 	/**
 	 * Returns the maximum size of upload bundle (when multiple files are uploaded).
 	 * @return the maximum size of upload bundle (when multiple files are uploaded) or -1 if there is no limit.
@@ -86,7 +86,7 @@ public class UploadService extends AbstractService {
 	protected  String getAllowedContentTypes() {
 		return "*";
 	}
-	
+
 	/**
 	 * Returns the encoding used for form fields
 	 * @return the encoding used for form fields. Default implementation returns "utf-8".
@@ -94,8 +94,8 @@ public class UploadService extends AbstractService {
 	protected String getFieldEncoding() {
 		return "utf-8";
 	}
-	
-	/** 
+
+	/**
 	 * @return a boolean indicating if session file list contains a file with given filename.
 	 * @param req HTTP request
 	 * @param filename filename to be searched.
@@ -106,10 +106,10 @@ public class UploadService extends AbstractService {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Process an uploaded file and returns a modified one
 	 * @param req HTTP request
@@ -120,20 +120,20 @@ public class UploadService extends AbstractService {
 	private File processFile(HttpServletRequest req, String filename, File file) {
 		String baseFilename = new File(filename).getName();
 		String sessionId = req.getSession().getId();
-		
+
 		String tmpFilename = String.format("%s_%s", sessionId, baseFilename);
 		int counter = 1;
 		while (sessionContainsFilename(req, tmpFilename)) {
 			tmpFilename = String.format("%s_%s_%d", sessionId, baseFilename, counter);
 			counter++;
 		}
-		
+
 		File newFile = new File(getOutputDirectory(), tmpFilename);
 		file.renameTo(newFile);
 		getSessionFiles(req).add(newFile);
 		return newFile;
 	}
-	
+
 	/**
 	 * Returns a list of files stored in session
 	 * @param req HTTP request
@@ -141,22 +141,22 @@ public class UploadService extends AbstractService {
 	 */
 	public List<File> getSessionFiles(HttpServletRequest req) {
 		List<File> sessionFiles = (List<File>) req.getSession().getAttribute(ATTR_SESSION_FILES);
-		
+
 		if (sessionFiles == null) {
 			sessionFiles = new LinkedList<>();
 			req.getSession().setAttribute(ATTR_SESSION_FILES, sessionFiles);
 		}
-		
+
 		return sessionFiles;
 	}
-	
+
 	/**
 	 * Removes all files stored in session.
 	 * @param req HTTP request
 	 */
 	public void clearSessionFile(HttpServletRequest req) {
 		List<File> sessionFiles = getSessionFiles(req);
-		
+
 		while(!sessionFiles.isEmpty()) {
 			File sessionFile = sessionFiles.get(0);
 			sessionFiles.remove(0);
@@ -175,14 +175,14 @@ public class UploadService extends AbstractService {
 		DiskFileItemFactory factory = new DiskFileItemFactory();
 		factory.setSizeThreshold(0); // All files will be written to disk
 		factory.setRepository(getOutputDirectory());
-		
+
 		ServletFileUpload upload = new ServletFileUpload(factory);
 		upload.setSizeMax(getTotalMaxSize());
 		upload.setFileSizeMax(getMaxFileSize());
-				
+
 		if (!ServletFileUpload.isMultipartContent(req)) throw new BadRequestException("Request is not multipart/form-data");
-				
-		try { 
+
+		try {
 			List<FileItem> fileItems = upload.parseRequest(req);
 			for (FileItem fi : fileItems) {
 				if (fi.isFormField()) {
@@ -190,7 +190,7 @@ public class UploadService extends AbstractService {
 						onFormFieldListener.onFormField(fi.getFieldName(), fi.getString(getFieldEncoding()));
 				} else {
 					boolean acceptRequest = getAllowedContentTypes().equals("*");
-					
+
 					if (!acceptRequest) {
 						String[] acceptedContentTypes = getAllowedContentTypes().split(Pattern.quote("."));
 						for (String acceptedContentType : acceptedContentTypes) {
@@ -200,14 +200,14 @@ public class UploadService extends AbstractService {
 							}
 						}
 					}
-					
+
 					if (!acceptRequest) throw new BadRequestException("Unsupported content-type: " + fi.getContentType());
 
 					File tmpFile = ((DiskFileItem)fi).getStoreLocation();
 					processFile(req, fi.getName(), tmpFile);
 				}
 			}
-			
+
 		} catch(FileUploadException ex) {
 			if (ex instanceof FileUploadBase.SizeLimitExceededException)
 				throw new BadRequestException("Size limit exceeded");

@@ -15,7 +15,6 @@
  */
 package com.agapsys.agreste;
 
-import com.agapsys.agreste.UploadService;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse.StringResponse;
@@ -26,6 +25,7 @@ import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.sevlet.container.ServletContainer;
 import com.agapsys.sevlet.container.ServletContainerBuilder;
+import com.agapsys.web.toolkit.Service;
 import com.agapsys.web.toolkit.utils.SingletonManager;
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,8 +49,7 @@ import org.junit.Test;
 public class UploadServiceTest {
 
 	// CLASS SCOPE =============================================================
-
-	private static final SingletonManager SINGLETON_MANAGER = new SingletonManager();
+	private static final SingletonManager<Service> SINGLETON_MANAGER = new SingletonManager<>(Service.class);
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -65,13 +64,13 @@ public class UploadServiceTest {
 	@WebServlet("/upload/*")
 	public static class UploadServlet extends Controller {
 
-		private final UploadService uploadService = (UploadService) SINGLETON_MANAGER.getSingleton(UploadService.class);
-		
+		private final UploadService uploadService = SINGLETON_MANAGER.getInstance(UploadService.class, true);
+
 		@WebAction
 		public void finish(HttpServletRequest req) {
 			uploadService.clearSessionFile(req);
 		}
-		
+
 		@WebAction(httpMethods = HttpMethod.POST)
 		public void upload(HttpExchange exchange) throws IOException {
 			uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse(), null);
@@ -101,6 +100,7 @@ public class UploadServiceTest {
 
 	private String getFileMd5(File file) throws IOException {
 		MessageDigest digest;
+
 		try {
 			digest = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException ex) {

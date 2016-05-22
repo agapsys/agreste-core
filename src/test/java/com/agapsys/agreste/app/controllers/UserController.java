@@ -29,7 +29,7 @@ import com.agapsys.rcf.exceptions.ForbiddenException;
  */
 @WebController("user")
 public class UserController extends BaseController {
-	
+
 	private UserService userService;
 
 	@Override
@@ -37,26 +37,26 @@ public class UserController extends BaseController {
 		super.onControllerInit();
 		userService = getService(UserService.class);
 	}
-	
+
 	@WebAction(mapping = "login")
 	public UserDto login(HttpExchange exchange) {
 		final String PARAM_USERNAME = "username";
 		final String PARAM_PASSWORD = "password";
-		
+
 		String username = exchange.getMandatoryRequestParameter(PARAM_USERNAME);
 		String password = exchange.getMandatoryRequestParameter(PARAM_PASSWORD);
-		
+
 		User user = userService.getUserByCredentials(exchange.getJpaTransaction(), username, password);
-		
+
 		if (user == null) {
 			throw new ForbiddenException("Invalid credentials");
 		} else {
 			exchange.setCurrentUser(user);
 		}
-		
+
 		return new UserDto(user);
 	}
-	
+
 	@WebAction(mapping = "me", secured = true)
 	public UserDto me(HttpExchange exchange) {
 		return new UserDto((User) exchange.getCurrentUser());

@@ -104,7 +104,7 @@ public class CorsModuleTest {
 
 	@After
 	public void after() {
-		System.out.println("\nShutting the application down...");
+		System.out.println("\nShutting down application...");
 		sc.stopServer();
 	}
 

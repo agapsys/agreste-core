@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 /**
  *
- * @author Leandro Oliveira (leandro@agapsys)
+ * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class BaseController extends Controller {
 
@@ -35,7 +35,7 @@ public class BaseController extends Controller {
 			@Override
 			public User getCurrentUser() {
 				User user = (User) super.getCurrentUser();
-		
+
 				JpaTransaction jpa = getJpaTransaction();
 
 				if (user != null && jpa != null) {
@@ -50,5 +50,5 @@ public class BaseController extends Controller {
 			}
 		};
 	}
-	
+
 }

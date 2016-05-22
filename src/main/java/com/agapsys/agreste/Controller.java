@@ -22,7 +22,7 @@ import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.LogType;
 import com.agapsys.web.toolkit.Module;
 import com.agapsys.web.toolkit.Service;
-import com.agapsys.web.toolkit.modules.AbstractExceptionReporterModule;
+import com.agapsys.web.toolkit.modules.ExceptionReporterModule;
 import java.io.IOException;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.ServletException;
@@ -40,7 +40,7 @@ public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rc
 	public static <M extends Module> M getModule(Class<M> moduleClass) {
 		return AbstractWebApplication.getRunningInstance().getModule(moduleClass);
 	}
-	
+
 	/**
 	 * Returns an application service.
 	 * @param <S> service type
@@ -51,42 +51,42 @@ public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rc
 		return AbstractWebApplication.getRunningInstance().getService(serviceClass);
 	}
 	// =========================================================================
-	
+
 	// INSTANCE SCOPE ==========================================================
 	@Override
 	protected void onClientError(HE exchange, ClientException error) {
 		super.onClientError(exchange, error);
 		logRequest(exchange, LogType.WARNING, error.getMessage());
 	}
-	
+
 	@Override
 	protected boolean onControllerError(HE exchange, Throwable t) throws ServletException, IOException {
 		super.onControllerError(exchange, t);
-		
+
 		if (!(t instanceof OptimisticLockException)) { // <-- OptimisticLockException will be handled by JpaFilter!
-			String stackTrace = AbstractExceptionReporterModule.getStackTrace(t);
+			String stackTrace = ExceptionReporterModule.getStackTrace(t);
 			logRequest(exchange, LogType.ERROR, stackTrace);
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	protected HE getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
 		return (HE) new HttpExchange(req, resp);
 	}
-	
+
 	protected String getLogMessage(HE exchange, String message) {
 		User loggedUser;
-		
+
 		try {
 			loggedUser = exchange.getCurrentUser();
 		} catch (ClientException ex) {
 			loggedUser = null;
 		}
-		
+
 		HttpServletRequest req = exchange.getRequest();
-		
+
 		StringBuffer requestUrl = req.getRequestURL();
 		if (req.getQueryString() != null)
 			requestUrl.append("?").append(req.getQueryString());
@@ -99,7 +99,7 @@ public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rc
 			loggedUser != null ? "" + loggedUser.toString(): "none",
 			message != null && !message.trim().isEmpty() ? "\n\n" + message : ""
 		);
-		
+
 		return finalMessage;
 	}
 
