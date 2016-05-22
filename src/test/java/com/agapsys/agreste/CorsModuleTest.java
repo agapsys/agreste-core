@@ -46,34 +46,35 @@ public class CorsModuleTest {
 	public static void beforeClass() {
 		System.out.println(String.format("=== %s ===", CorsModuleTest.class.getSimpleName()));
 	}
-	
+
 	@AfterClass
 	public static void afterClass() {
 		System.out.println();
 	}
-	
+
 	@WebListener
 	public static class TestApplication extends MockedWebApplication {
 		public static final String VAL_ALLOWED_HEADERS = "testHeaders";
 		public static final String VAL_ALLOWED_ORIGINS = "testOrigin1, testOrigin2";
 		public static final String VAL_ALLOWED_METHODS = "testMethods";
-		
-		@Override
-		protected Properties getDefaultProperties() {
-			Properties props = new Properties();
-			props.setProperty(CorsModule.KEY_ALLOWED_HEADERS, VAL_ALLOWED_HEADERS);
-			props.setProperty(CorsModule.KEY_ALLOWED_ORIGINS, VAL_ALLOWED_ORIGINS);
-			props.setProperty(CorsModule.KEY_ALLOWED_METHODS, VAL_ALLOWED_METHODS);
-			return props;
-		}
-		
+
 		@Override
 		protected void beforeApplicationStart() {
 			super.beforeApplicationStart();
-			registerModule(CorsModule.class);
+			registerModule(new CorsModule() {
+				@Override
+				public Properties getDefaultProperties() {
+					Properties props = super.getDefaultProperties();
+
+					props.setProperty(CorsModule.KEY_ALLOWED_HEADERS, VAL_ALLOWED_HEADERS);
+					props.setProperty(CorsModule.KEY_ALLOWED_ORIGINS, VAL_ALLOWED_ORIGINS);
+					props.setProperty(CorsModule.KEY_ALLOWED_METHODS, VAL_ALLOWED_METHODS);
+					return props;
+				}
+			});
 		}
 	}
-	
+
 	@WebController("test")
 	public static class TestController extends Controller {
 
@@ -82,7 +83,7 @@ public class CorsModuleTest {
 			CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
 			corsModule.putCorsHeaders(exchange.getResponse());
 		}
-		
+
 		@WebAction
 		public void get(HttpServletRequest req) {}
 	}
@@ -90,36 +91,36 @@ public class CorsModuleTest {
 
 	// INSTANCE SCOPE ==========================================================
 	private ServletContainer sc;
-	
+
 	@Before
 	public void before() {
 		System.out.println("Starting application...");
 		sc = new ServletContainerBuilder(TestApplication.class)
 			.registerController(TestController.class)
 			.build();
-		
+
 		sc.startServer();
 	}
-	
+
 	@After
 	public void after() {
 		System.out.println("\nShutting the application down...");
 		sc.stopServer();
 	}
-	
+
 	@Test
 	public void testCorsHeaders() {
 		StringResponse resp = sc.doRequest(new HttpGet("/test/get"));
 		TestUtils.getInstance().assertStatus(200, resp);
-		
+
 		List<HttpHeader> allowedOrigins = resp.getHeaders("Access-Control-Allow-Origin");
 		HttpHeader allowMethodsHeader = resp.getFirstHeader("Access-Control-Allow-Methods");
 		HttpHeader allowHeadersHeader = resp.getFirstHeader("Access-Control-Allow-Headers");
-		
+
 		Assert.assertEquals(2, allowedOrigins.size());
 		Assert.assertNotNull(allowMethodsHeader);
 		Assert.assertNotNull(allowHeadersHeader);
-		
+
 		Assert.assertEquals("testOrigin1", allowedOrigins.get(0).getValue());
 		Assert.assertEquals("testOrigin2", allowedOrigins.get(1).getValue());
 		Assert.assertEquals(TestApplication.VAL_ALLOWED_METHODS, allowMethodsHeader.getValue());
