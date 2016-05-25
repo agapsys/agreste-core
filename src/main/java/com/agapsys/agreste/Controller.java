@@ -24,6 +24,14 @@ import com.agapsys.web.toolkit.Module;
 import com.agapsys.web.toolkit.Service;
 import com.agapsys.web.toolkit.modules.ExceptionReporterModule;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.persistence.OptimisticLockException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -107,5 +115,74 @@ public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rc
 		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
 		AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
 	}
+
+	private Object getSingleDto(Object obj) {
+		if (obj == null)
+			return null;
+
+		Dto dtoAnnotation = obj.getClass().getAnnotation(Dto.class);
+
+		if (dtoAnnotation == null)
+			return super.getDtoObject(obj);
+
+		Class<?> dtoClass = dtoAnnotation.value();
+
+		try {
+			Constructor constructor = dtoClass.getConstructor(obj.getClass());
+			return constructor.newInstance(obj);
+		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+			throw new RuntimeException(String.format("DTO class (%s) does not have an accessible constructor accepting an instance of '%s'", dtoClass.getName(), obj.getClass().getName()), ex);
+		}
+
+	}
+
+	private List getDtoList(List objList) {
+		List dto = new LinkedList();
+
+		for (Object obj : objList) {
+			dto.add(getSingleDto(obj));
+		}
+
+		return dto;
+	}
+
+	private Map getDtoMap(Map<Object, Object> objMap) {
+		Map dto = new LinkedHashMap();
+
+		for (Map.Entry entry : objMap.entrySet()) {
+			dto.put(getSingleDto(entry.getKey()), getSingleDto(entry.getValue()));
+		}
+
+		return dto;
+	}
+
+	private Set getDtoSet(Set objSet) {
+		Set dto = new LinkedHashSet();
+
+		for (Object obj : objSet) {
+			dto.add(getSingleDto(obj));
+		}
+
+		return dto;
+	}
+
+	@Override
+	protected final Object getDtoObject(Object src) {
+		Object dto;
+
+		if (src instanceof List) {
+			dto = getDtoList((List) src);
+		} else if (src instanceof Set) {
+			dto = getDtoSet((Set) src);
+		} else if (src instanceof Map) {
+			dto = getDtoMap((Map<Object, Object>) src);
+		} else {
+			dto = getSingleDto(src);
+		}
+
+		return dto;
+	}
 	// =========================================================================
+
+
 }
