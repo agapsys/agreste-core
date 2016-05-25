@@ -15,8 +15,11 @@
  */
 package com.agapsys.agreste;
 
+import com.agapsys.jpa.AbstractEntity;
 import com.agapsys.rcf.LazyInitializer;
+import com.agapsys.rcf.User;
 import com.agapsys.rcf.exceptions.BadRequestException;
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -43,7 +46,7 @@ public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 		}
 	}
 	// =========================================================================
-	
+
 	// INSTANCE SCOPE ==========================================================
 	private final LazyInitializer<ParamMapSerializer> paramMapSerializer = new LazyInitializer<ParamMapSerializer>() {
 
@@ -51,13 +54,13 @@ public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 		protected ParamMapSerializer getLazyInstance() {
 			return getParamMapSerializer();
 		}
-		
+
 	};
-	
+
 	public HttpExchange(HttpServletRequest req, HttpServletResponse resp) {
 		super(req, resp);
 	}
-	
+
 	/**
 	 * Returns the parameter map serializer used by this HTTP exchange.
 	 * @return the parameter map serializer used by this HTTP exchange.
@@ -65,7 +68,7 @@ public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 	protected ParamMapSerializer getParamMapSerializer() {
 		return new ParamMapSerializer();
 	}
-	
+
 	/**
 	 * Returns the managed JPA transaction associated with this HTTP exchange.
 	 * @return the managed JPA transaction associated with this HTTP exchange.
@@ -73,7 +76,7 @@ public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 	public JpaTransaction getJpaTransaction() {
 		return (JpaTransaction) getRequest().getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
 	}
-	
+
 	/**
 	 * Reads an object passed as request parameters.
 	 * @param <T> object type
@@ -84,23 +87,23 @@ public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 	public <T> T readParameterObject(Class<T> dtoClass) throws BadRequestException {
 		return readParameterObject(paramMapSerializer.getInstance(), getRequest(), dtoClass);
 	}
-	
+
 
 	public <T> T getOptionalRequestParameter(Class<T> targetClass, String paramName, T defaultValue) throws BadRequestException {
 		try {
 			String paramValue = getOptionalRequestParameter(paramName, null);
 			if (paramValue == null) return defaultValue;
-			
+
 			return paramMapSerializer.getInstance().getParameter(paramValue, targetClass);
 		} catch (ParamMapSerializer.SerializerException ex) {
 			throw new BadRequestException(ex.getMessage());
 		}
 	}
-	
+
 	public final <T> T getMandatoryRequestParameter(Class<T> targetClass, String paramName) throws BadRequestException {
 		return getMandatoryRequestParameter(targetClass, paramName, "Missing parameter: %s", paramName);
 	}
-	
+
 	public <T> T getMandatoryRequestParameter(Class<T> targetClass, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
 		try {
 			String paramValue = getMandatoryRequestParameter(paramName, errorMessage, errMsgArgs);
@@ -108,6 +111,27 @@ public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 		} catch (ParamMapSerializer.SerializerException ex) {
 			throw new BadRequestException(ex.getMessage());
 		}
-	}	
+	}
+
+	@Override
+	public User getCurrentUser() {
+		User user = super.getCurrentUser();
+
+		if (user != null && (user instanceof AbstractEntity)) {
+			JpaTransaction jpa = getJpaTransaction();
+
+			if (jpa != null) {
+				EntityManager em = jpa.getEntityManager();
+
+				if (!em.contains(user)) {
+					user = em.find(user.getClass(), ((AbstractEntity)user).getId());
+				}
+			}
+		}
+
+		return user;
+	}
 	// =========================================================================
+
+
 }
