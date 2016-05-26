@@ -15,7 +15,9 @@
  */
 package com.agapsys.agreste.app.entities;
 
+import com.agapsys.agreste.app.entities.User.UserDto;
 import com.agapsys.jpa.AbstractEntity;
+import com.agapsys.rcf.Dto;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.Column;
@@ -31,13 +33,14 @@ import org.mindrot.jbcrypt.BCrypt;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 @Entity
+@Dto(UserDto.class)
 public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 	// STATIC SCOPE ============================================================
 	public static class UserDto {
 		public Long id;
 		public String username;
 		public List<String> roles;
-		
+
 		public UserDto() {}
 		public UserDto(User user) {
 			this.id = user.getId();
@@ -45,17 +48,17 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 			this.roles = user.getRoleList();
 		}
 	}
-	
+
 	private static String getPasswordHash(String password) {
 		int logRounds = 4;
 		return (BCrypt.hashpw(password, BCrypt.gensalt(logRounds)));
 	}
-	
+
 	private static boolean checkPassword(String password, String passwordHash) {
 		return BCrypt.checkpw(password, passwordHash);
 	}
 	// =========================================================================
-	
+
 	// INSTANCE SCOPE ==========================================================
 	// ID ----------------------------------------------------------------------
 	@Id
@@ -66,27 +69,27 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 	public Long getId() {
 		return id;
 	}
-	
+
 	public void setId(long id) {
 		this.id = id;
 	}
 	// -------------------------------------------------------------------------
-	
+
 	// Username ----------------------------------------------------------------
 	@Column(unique = true)
 	private String username;
-	
+
 	public String getUsername() {
 		return username;
 	}
 	public final void setUsername(String username) {
 		if (username == null || username.trim().isEmpty())
 			throw new IllegalArgumentException("Null/Empty username");
-		
+
 		this.username = username;
 	}
 	// -------------------------------------------------------------------------
-	
+
 	// Password ----------------------------------------------------------------
 	private String passwordHash;
 	public String getPasswordHash() {
@@ -107,12 +110,12 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 	// Roles -------------------------------------------------------------------
 	@ElementCollection(fetch = FetchType.EAGER)
 	private List<String> roleList;
-	
+
 	public void addRole(String...roles) {
 		int i = 0;
 		for (String role : roles) {
 			if (role == null) throw new IllegalArgumentException("Null role at index " + i);
-			
+
 			getRoleList().add(role);
 			i++;
 		}
@@ -127,17 +130,17 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 		return roleList;
 	}
 	// -------------------------------------------------------------------------
-	
+
 	// Constructors ------------------------------------------------------------
 	public User() {}
-	
+
 	public User(String username, String password, String...roles) {
 		setUsername(username);
 		setPassword(password);
 		setRoleList(roles);
 	}
 	// -------------------------------------------------------------------------
-	
+
 	@Override
 	public String[] getRoles() {
 		List<String> roleList = getRoleList();

@@ -58,7 +58,7 @@ public class UserController extends BaseController {
 	}
 
 	@WebAction(mapping = "me", secured = true)
-	public UserDto me(HttpExchange exchange) {
-		return new UserDto((User) exchange.getCurrentUser());
+	public User me(HttpExchange exchange) {
+		return (User) exchange.getCurrentUser();
 	}
 }
