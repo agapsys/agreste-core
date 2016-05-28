@@ -6,7 +6,7 @@ Welcome to the AGRESTE project.
 
 ## Major features:
 
-* Security
+* Security (provided by [Agapsys RCF](https://github.com/agapsys/rcf))
 * Transactional requests (automatic JPA transaction management)
 * JPA query builders (provided by [Agapsys JPA Utils](https://github.com/agapsys/jpa-utils))
 * REST endpoints mapping to servlet methods (provided by [Agapsys RCF](https://github.com/agapsys/rcf))
