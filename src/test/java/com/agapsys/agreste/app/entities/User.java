@@ -19,7 +19,8 @@ import com.agapsys.agreste.app.entities.User.UserDto;
 import com.agapsys.jpa.AbstractEntity;
 import com.agapsys.rcf.Dto;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -39,13 +40,13 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 	public static class UserDto {
 		public Long id;
 		public String username;
-		public List<String> roles;
+		public Set<String> roles;
 
 		public UserDto() {}
 		public UserDto(User user) {
 			this.id = user.getId();
 			this.username = user.getUsername();
-			this.roles = user.getRoleList();
+			this.roles = user.getRoles();
 		}
 	}
 
@@ -109,25 +110,33 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 
 	// Roles -------------------------------------------------------------------
 	@ElementCollection(fetch = FetchType.EAGER)
-	private List<String> roleList;
+	private Set<String> roles = new LinkedHashSet<>();
+
+	@Override
+	public Set<String> getRoles() {
+		return roles;
+	}
+	public void setRoles(Set<String> roles) {
+		if (roles == null)
+			throw new IllegalArgumentException("Role set cannot be null");
+
+		this.roles = roles;
+	}
+	public final void setRoles(String...roles) {
+		setRoles(new LinkedHashSet<>(Arrays.asList(roles)));
+	}
 
 	public void addRole(String...roles) {
 		int i = 0;
 		for (String role : roles) {
 			if (role == null) throw new IllegalArgumentException("Null role at index " + i);
 
-			getRoleList().add(role);
+			getRoles().add(role);
 			i++;
 		}
 	}
 	public void clearRoles() {
-		getRoleList().clear();
-	}
-	public final void setRoleList(String...roles) {
-		this.roleList = Arrays.asList(roles);
-	}
-	public List<String> getRoleList() {
-		return roleList;
+		getRoles().clear();
 	}
 	// -------------------------------------------------------------------------
 
@@ -137,14 +146,9 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 	public User(String username, String password, String...roles) {
 		setUsername(username);
 		setPassword(password);
-		setRoleList(roles);
+		setRoles(roles);
 	}
 	// -------------------------------------------------------------------------
 
-	@Override
-	public String[] getRoles() {
-		List<String> roleList = getRoleList();
-		return roleList.toArray(new String[roleList.size()]);
-	}
 	// =========================================================================
 }
