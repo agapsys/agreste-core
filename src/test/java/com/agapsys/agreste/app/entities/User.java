@@ -15,7 +15,6 @@
  */
 package com.agapsys.agreste.app.entities;
 
-import com.agapsys.agreste.app.entities.User.UserDto;
 import com.agapsys.jpa.AbstractEntity;
 import com.agapsys.rcf.Dto;
 import java.util.Arrays;
@@ -34,8 +33,7 @@ import org.mindrot.jbcrypt.BCrypt;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 @Entity
-@Dto(UserDto.class)
-public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
+public class User extends AbstractEntity<User> implements com.agapsys.rcf.User, Dto{
 	// STATIC SCOPE ============================================================
 	public static class UserDto {
 		public Long id;
@@ -150,5 +148,9 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User {
 	}
 	// -------------------------------------------------------------------------
 
+	@Override
+	public Object getDto() {
+		return new UserDto(this);
+	}
 	// =========================================================================
 }

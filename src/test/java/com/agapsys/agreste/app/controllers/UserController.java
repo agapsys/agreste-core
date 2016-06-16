@@ -27,7 +27,7 @@ import com.agapsys.rcf.exceptions.ForbiddenException;
  *
  * @author Leandro Oliveira
  */
-@WebController("user")
+@WebController
 public class UserController extends BaseController {
 
 	private UserService userService;
