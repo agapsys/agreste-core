@@ -67,7 +67,7 @@ public class CsrfHttpExchange extends HttpExchange {
 		super.setCurrentUser(user);
 		if (user != null) {
 			HttpSession session = getRequest().getSession(true);
-			String token = StringUtils.getRandomString(CSRF_TOKEN_LENGTH);
+			String token = StringUtils.getInstance().getRandom(CSRF_TOKEN_LENGTH);
 			session.setAttribute(SESSION_ATTR_CSRF_TOKEN, token);
 			getResponse().setHeader(CSRF_HEADER, token);
 		} else {
