@@ -49,12 +49,12 @@ public class ParamMapSerializerTest {
 	public static void beforeClass() {
 		System.out.println(String.format("=== %s ===", ParamMapSerializerTest.class.getSimpleName()));
 	}
-	
+
 	@AfterClass
 	public static void afterClass() {
 		System.out.println();
 	}
-	
+
 	// Classes -----------------------------------------------------------------
 	public static class TestDto {
 		public String     strField;
@@ -156,12 +156,12 @@ public class ParamMapSerializerTest {
 			return true;
 		}
 	}
-	
+
 	public static class UUIDFieldSerializer implements ParamMapSerializer.TypeSerializer<UUID> {
 
 		@Override
 		public String toString(UUID srcObject) {
-			
+
 			return String.format("%s|%s", srcObject.getLeastSignificantBits(), srcObject.getMostSignificantBits());
 		}
 
@@ -170,7 +170,7 @@ public class ParamMapSerializerTest {
 			String[] tokens = str.split(Pattern.quote("|"));
 			return new UUID(Long.parseLong(tokens[1]), Long.parseLong(tokens[0]));
 		}
-		
+
 	}
 
 	public static class CustomMapSerializer extends ParamMapSerializer {
@@ -180,13 +180,13 @@ public class ParamMapSerializerTest {
 			registerTypeSerializer(UUID.class, new UUIDFieldSerializer());
 			registerTypeSerializer(Date.class, new ParamMapSerializer.SimpleDateSerializer());
 		}
-		
-		public String toString(Object obj) {		
+
+		public String toString(Object obj) {
 			if (obj == null)
 				throw new IllegalArgumentException("Null object");
 
 			Map<String, String> map = toParamMap(obj);
-			
+
 			StringBuilder sb = new StringBuilder();
 
 			boolean first = true;
@@ -204,10 +204,10 @@ public class ParamMapSerializerTest {
 
 			return sb.toString();
 		}
-		
+
 		public <T> T getObject(String str, Class<T> targetClass) throws SerializerException {
 			Map<String, String[]> fieldMap = new LinkedHashMap<>();
-		
+
 			String[] tokens = str.split(Pattern.quote("&"));
 			for (String token : tokens) {
 				token = token.trim();
@@ -224,28 +224,28 @@ public class ParamMapSerializerTest {
 			return getObject(fieldMap, targetClass);
 		}
 	}
-	
+
 	@WebController("test")
 	public static class TestController extends Controller {
 
 		@Override
 		protected HttpExchange getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
 			return new HttpExchange(req, resp) {
+
 				@Override
-				protected ParamMapSerializer getParamMapSerializer() {
+				protected ParamMapSerializer getCustomParamMapSerializer() {
 					return new CustomMapSerializer();
 				}
 			};
 		}
-		
-		
+
 		@WebAction(mapping = "/get")
 		public TestDto onGet(HttpExchange exchange) throws IOException, BadRequestException {
-			return exchange.readParameterObject(TestDto.class);
+			return exchange.getRequest().readParameterObject(TestDto.class);
 		}
 	}
 	// -------------------------------------------------------------------------
-	
+
 	// Utility methods ---------------------------------------------------------
 	public static Date getSimpleDate(String str) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -263,18 +263,18 @@ public class ParamMapSerializerTest {
 	public void customSerializerTest() throws SerializerException {
 		CustomMapSerializer mapSerializer = new CustomMapSerializer();
 		mapSerializer.registerTypeSerializer(UUID.class, new UUIDFieldSerializer());
-		
+
 		TestDto dto = new TestDto();
 		dto.uuidField = new UUID(1, 2);
 		String serialized = mapSerializer.toString(dto);
 		Assert.assertEquals("booleanField=false&shortField=0&integerField=0&longField=0&floatField=0.0&doubleField=0.0&uuidField=2|1", serialized);
 		Assert.assertEquals(dto, mapSerializer.getObject(serialized, TestDto.class));
-		
+
 		serialized = "dateField=2015-11-28";
 		dto = mapSerializer.getObject(serialized, TestDto.class);
-		Assert.assertEquals(getSimpleDate("2015-11-28"), dto.dateField);		
+		Assert.assertEquals(getSimpleDate("2015-11-28"), dto.dateField);
 	}
-	
+
 	@Test
 	public void stringSerializationTest() throws SerializerException {
 		CustomMapSerializer mapSerializer = new CustomMapSerializer();
@@ -284,15 +284,15 @@ public class ParamMapSerializerTest {
 		Assert.assertEquals("strField=Hello+World%21+%C3%A1%C3%A9%C3%AD%C3%B3%C3%BA&booleanField=false&shortField=0&integerField=0&longField=0&floatField=0.0&doubleField=0.0", serialized);
 		Assert.assertEquals(dto, mapSerializer.getObject(serialized, TestDto.class));
 	}
-	
+
 	@Test
 	public void testServlet () {
 		ServletContainer sc = new ServletContainerBuilder(MockedWebApplication.class)
 			.registerController(TestController.class)
 			.build();
-		
+
 		sc.startServer();
-		
+
 		HttpResponse.StringResponse resp = sc.doRequest(new HttpGet("/test/get?uuidField=%s&dateField=%s&strField=%s", "2|1", "2015-11-28", "Hello+World áéíóú"));
 		Assert.assertEquals(HttpServletResponse.SC_OK, resp.getStatusCode());
 		Assert.assertEquals("{\"strField\":\"Hello World áéíóú\",\"booleanField\":false,\"shortField\":0,\"integerField\":0,\"longField\":0,\"floatField\":0.0,\"doubleField\":0.0,\"dateField\":\"2015-11-28T00:00:00.000Z\",\"uuidField\":\"00000000-0000-0001-0000-000000000002\"}", resp.getContentString());

@@ -81,7 +81,7 @@ public class CorsModuleTest {
 		@Override
 		public void beforeAction(com.agapsys.rcf.HttpExchange exchange) throws ServletException, IOException {
 			CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
-			corsModule.putCorsHeaders(exchange.getResponse());
+			corsModule.putCorsHeaders(exchange.getCoreResponse());
 		}
 
 		@WebAction

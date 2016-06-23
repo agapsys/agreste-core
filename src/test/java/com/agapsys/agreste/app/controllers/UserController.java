@@ -43,8 +43,8 @@ public class UserController extends BaseController {
 		final String PARAM_USERNAME = "username";
 		final String PARAM_PASSWORD = "password";
 
-		String username = exchange.getMandatoryRequestParameter(PARAM_USERNAME);
-		String password = exchange.getMandatoryRequestParameter(PARAM_PASSWORD);
+		String username = exchange.getRequest().getMandatoryParameter(PARAM_USERNAME);
+		String password = exchange.getRequest().getMandatoryParameter(PARAM_PASSWORD);
 
 		User user = userService.getUserByCredentials(exchange.getJpaTransaction(), username, password);
 

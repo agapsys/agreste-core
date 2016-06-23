@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rcf.Controller<HE> {
+	
 	// STATIC SCOPE ============================================================
 	/**
 	 * Returns an application module.
@@ -54,9 +55,9 @@ public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rc
 
 	// INSTANCE SCOPE ==========================================================
 	@Override
-	protected void onClientError(HE exchange, ClientException error) {
-		super.onClientError(exchange, error);
+	protected void onClientError(HE exchange, ClientException error) throws ServletException, IOException {
 		logRequest(exchange, LogType.WARNING, error.getMessage());
+		super.onClientError(exchange, error);
 	}
 
 	@Override
@@ -85,17 +86,18 @@ public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rc
 			loggedUser = null;
 		}
 
-		HttpServletRequest req = exchange.getRequest();
+		HttpServletRequest coreReq = exchange.getCoreRequest();
+		HttpRequest req = exchange.getRequest();
 
-		StringBuffer requestUrl = req.getRequestURL();
-		if (req.getQueryString() != null)
-			requestUrl.append("?").append(req.getQueryString());
+		StringBuffer requestUrl = coreReq.getRequestURL();
+		if (coreReq.getQueryString() != null)
+			requestUrl.append("?").append(coreReq.getQueryString());
 
 		String finalMessage =  String.format("%s %s\nIP: %s\nUser-agent: %s\nUser id: %s%s",
-			req.getMethod(),
+			coreReq.getMethod(),
 			requestUrl,
-			exchange.getRequestOriginIp(),
-			exchange.getRequestUserAgent(),
+			req.getOriginIp(),
+			req.getUserAgent(),
 			loggedUser != null ? "" + loggedUser.toString(): "none",
 			message != null && !message.trim().isEmpty() ? "\n\n" + message : ""
 		);
@@ -107,9 +109,6 @@ public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rc
 		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
 		AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
 	}
-
-
 	// =========================================================================
-
 
 }

@@ -41,7 +41,7 @@ public class ClientExceptionFilter implements Filter {
 			chain.doFilter(request, response);
 		} catch (ClientException ex) {
 			HttpServletResponse resp = (HttpServletResponse) response;
-			resp.setStatus(ex.getHttpsStatus());
+			resp.setStatus(ex.getHttpStatus());
 			Integer appStatus = ex.getAppStatus();
 			resp.getWriter().print(
 				String.format(

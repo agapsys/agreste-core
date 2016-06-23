@@ -16,9 +16,7 @@
 package com.agapsys.agreste;
 
 import com.agapsys.jpa.AbstractEntity;
-import com.agapsys.rcf.LazyInitializer;
 import com.agapsys.rcf.User;
-import com.agapsys.rcf.exceptions.BadRequestException;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,88 +27,22 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 	// STATIC SCOPE ============================================================
-	/**
-	 * Reads an object passed as request parameters.
-	 * @param <T> object type
-	 * @param serializer serializer
-	 * @param req HTTP request
-	 * @param dtoClass object class
-	 * @return read object
-	 * @throws BadRequestException if it was not possible to read expected object.
-	 */
-	public static <T> T readParameterObject(ParamMapSerializer serializer, HttpServletRequest req, Class<T> dtoClass) throws BadRequestException {
-		try {
-			return serializer.getObject(req.getParameterMap(), dtoClass);
-		} catch (ParamMapSerializer.SerializerException ex) {
-			throw new BadRequestException("Cannot read parameters");
-		}
-	}
+	public static final ParamMapSerializer DEFAULT_PARAM_MAP_SERIALIZER = new ParamMapSerializer();
 	// =========================================================================
 
 	// INSTANCE SCOPE ==========================================================
-	private final LazyInitializer<ParamMapSerializer> paramMapSerializer = new LazyInitializer<ParamMapSerializer>() {
-
-		@Override
-		protected ParamMapSerializer getLazyInstance() {
-			return getParamMapSerializer();
-		}
-
-	};
-
 	public HttpExchange(HttpServletRequest req, HttpServletResponse resp) {
 		super(req, resp);
 	}
 
-	/**
-	 * Returns the parameter map serializer used by this HTTP exchange.
-	 * @return the parameter map serializer used by this HTTP exchange.
-	 */
-	protected ParamMapSerializer getParamMapSerializer() {
-		return new ParamMapSerializer();
+	@Override
+	protected HttpRequest getCustomRequest(HttpServletRequest coreRequest) {
+		return new HttpRequest(this, coreRequest);
 	}
 
-	/**
-	 * Returns the managed JPA transaction associated with this HTTP exchange.
-	 * @return the managed JPA transaction associated with this HTTP exchange.
-	 */
-	public JpaTransaction getJpaTransaction() {
-		return (JpaTransaction) getRequest().getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
-	}
-
-	/**
-	 * Reads an object passed as request parameters.
-	 * @param <T> object type
-	 * @param dtoClass object class
-	 * @return read object
-	 * @throws BadRequestException if it was not possible to read expected object.
-	 */
-	public <T> T readParameterObject(Class<T> dtoClass) throws BadRequestException {
-		return readParameterObject(paramMapSerializer.getInstance(), getRequest(), dtoClass);
-	}
-
-
-	public <T> T getOptionalRequestParameter(Class<T> targetClass, String paramName, T defaultValue) throws BadRequestException {
-		try {
-			String paramValue = getOptionalRequestParameter(paramName, null);
-			if (paramValue == null) return defaultValue;
-
-			return paramMapSerializer.getInstance().getParameter(paramValue, targetClass);
-		} catch (ParamMapSerializer.SerializerException ex) {
-			throw new BadRequestException(ex.getMessage());
-		}
-	}
-
-	public final <T> T getMandatoryRequestParameter(Class<T> targetClass, String paramName) throws BadRequestException {
-		return getMandatoryRequestParameter(targetClass, paramName, "Missing parameter: %s", paramName);
-	}
-
-	public <T> T getMandatoryRequestParameter(Class<T> targetClass, String paramName, String errorMessage, Object...errMsgArgs) throws BadRequestException {
-		try {
-			String paramValue = getMandatoryRequestParameter(paramName, errorMessage, errMsgArgs);
-			return paramMapSerializer.getInstance().getParameter(paramValue, targetClass);
-		} catch (ParamMapSerializer.SerializerException ex) {
-			throw new BadRequestException(ex.getMessage());
-		}
+	@Override
+	public HttpRequest getRequest() {
+		return (HttpRequest) super.getRequest();
 	}
 
 	@Override
@@ -131,7 +63,39 @@ public class HttpExchange extends com.agapsys.rcf.HttpExchange {
 
 		return user;
 	}
+
+	// -------------------------------------------------------------------------
+	private ParamMapSerializer paramMapSerializer;
+
+	/**
+	 * Returns the default parameter map serializer used by this HTTP exchange.
+	 *
+	 * @return the default parameter map serializer used by this HTTP exchange.
+	 */
+	public ParamMapSerializer getParamMapSerializer() {
+		if (paramMapSerializer == null) {
+			paramMapSerializer = getCustomParamMapSerializer();
+		}
+		return paramMapSerializer;
+	}
+
+	/**
+	 * Returns a customized parameter map serializer used by this exchange.
+	 *
+	 * @return a customized parameter map serializer used by this exchange.
+	 */
+	protected ParamMapSerializer getCustomParamMapSerializer() {
+		return DEFAULT_PARAM_MAP_SERIALIZER;
+	}
+	// -------------------------------------------------------------------------
+
+	/**
+	 * Returns the managed JPA transaction associated with this HTTP exchange.
+	 *
+	 * @return the managed JPA transaction associated with this HTTP exchange.
+	 */
+	public JpaTransaction getJpaTransaction() {
+		return (JpaTransaction) getCoreRequest().getAttribute(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
+	}
 	// =========================================================================
-
-
 }

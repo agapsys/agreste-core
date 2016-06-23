@@ -73,11 +73,11 @@ public class UploadServiceTest {
 
 		@WebAction(httpMethods = HttpMethod.POST)
 		public void upload(HttpExchange exchange) throws IOException {
-			uploadService.receiveFiles(exchange.getRequest(), exchange.getResponse(), null);
-			List<File> sessionFiles = uploadService.getSessionFiles(exchange.getRequest());
+			uploadService.receiveFiles(exchange.getCoreRequest(), exchange.getCoreResponse(), null);
+			List<File> sessionFiles = uploadService.getSessionFiles(exchange.getCoreRequest());
 			if (!sessionFiles.isEmpty()) {
 				for (File file : sessionFiles) {
-					exchange.getResponse().getWriter().println(file.getAbsolutePath());
+					exchange.getCoreResponse().getWriter().println(file.getAbsolutePath());
 				}
 			}
 		}

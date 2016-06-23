@@ -48,13 +48,13 @@ public class CsrfHttpExchange extends HttpExchange {
 		if (currentUser == null)
 			return null;
 
-		HttpSession session = getRequest().getSession(false);
+		HttpSession session = getCoreRequest().getSession(false);
 
 		if (session == null)
 			throw new ForbiddenException("Missing CSRF header");
 
 		String sessionToken = (String) session.getAttribute(SESSION_ATTR_CSRF_TOKEN);
-		String requestToken = getRequest().getHeader(CSRF_HEADER);
+		String requestToken = getCoreRequest().getHeader(CSRF_HEADER);
 
 		if (!Objects.equals(sessionToken, requestToken))
 			throw new ForbiddenException("Invalid CSRF header");
@@ -65,13 +65,15 @@ public class CsrfHttpExchange extends HttpExchange {
 	@Override
 	public void setCurrentUser(User user) {
 		super.setCurrentUser(user);
+
 		if (user != null) {
-			HttpSession session = getRequest().getSession(true);
+			HttpSession session = getCoreRequest().getSession(true);
+
 			String token = StringUtils.getInstance().getRandom(CSRF_TOKEN_LENGTH);
 			session.setAttribute(SESSION_ATTR_CSRF_TOKEN, token);
-			getResponse().setHeader(CSRF_HEADER, token);
+			getCoreResponse().setHeader(CSRF_HEADER, token);
 		} else {
-			HttpSession session = getRequest().getSession(false);
+			HttpSession session = getCoreRequest().getSession(false);
 			if (session != null) session.removeAttribute(SESSION_ATTR_CSRF_TOKEN);
 		}
 	}
