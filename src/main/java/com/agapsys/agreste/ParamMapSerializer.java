@@ -274,7 +274,7 @@ public class ParamMapSerializer {
 		typeSerializerMap.put(type, typeSerializer);
 	}
 
-	public <T> T getParameter(String paramValue, Class<T> targetClass) throws SerializerException {
+	<T> T getParameter(String paramValue, Class<T> targetClass) throws SerializerException {
 		TypeSerializer serializer = typeSerializerMap.get(targetClass);
 
 		if (serializer == null)
@@ -298,21 +298,21 @@ public class ParamMapSerializer {
 			throw new RuntimeException(ex);
 		}
 
-		for (Field field : targetClass.getFields()) {
-			String value[] = paramMap.get(field.getName());
-
-			if (value != null) {
-				try {
-					field.set(targetObject, getParameter(value[0], field.getType()));
-				} catch (IllegalArgumentException | IllegalAccessException ex) {
-					throw new RuntimeException(ex);
-				}
+		for (Map.Entry<String, String[]> entry : paramMap.entrySet()) {
+			try {
+				Field field = targetClass.getDeclaredField(entry.getKey());
+				boolean wasAccessible = field.isAccessible();
+				field.setAccessible(true);
+				field.set(targetObject, getParameter(paramMap.get(entry.getKey())[0], field.getType()));
+				field.setAccessible(wasAccessible);
+			} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException ex) {
+				throw new RuntimeException(ex);
 			}
 		}
 
 		return targetObject;
 	}
-
+	
 	public Map<String, String> toParamMap(Object object) {
 		if (object == null)
 			throw new IllegalArgumentException("Null object");
