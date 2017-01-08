@@ -22,10 +22,10 @@ package com.agapsys.agreste;
  * @param <S> Source type
  */
 public interface CollectionFilter<S> {
-	/**
-	 * Returns a boolean indicating if an object shall be processed while transforming a source collection
-	 * @param srcObj source object
-	 * @return a boolean indicating if an object shall be processed while transforming a source collection
-	 */
-	public boolean process(S srcObj);
+    /**
+     * Returns a boolean indicating if an object shall be processed while transforming a source collection
+     * @param srcObj source object
+     * @return a boolean indicating if an object shall be processed while transforming a source collection
+     */
+    public boolean process(S srcObj);
 }

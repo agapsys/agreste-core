@@ -30,35 +30,35 @@ import com.agapsys.rcf.exceptions.ForbiddenException;
 @WebController
 public class UserController extends BaseController {
 
-	private UserService userService;
+    private UserService userService;
 
-	@Override
-	protected void onControllerInit() {
-		super.onControllerInit();
-		userService = getService(UserService.class);
-	}
+    @Override
+    protected void onControllerInit() {
+        super.onControllerInit();
+        userService = getService(UserService.class);
+    }
 
-	@WebAction(mapping = "login")
-	public UserDto login(HttpExchange exchange) {
-		final String PARAM_USERNAME = "username";
-		final String PARAM_PASSWORD = "password";
+    @WebAction(mapping = "login")
+    public UserDto login(HttpExchange exchange) {
+        final String PARAM_USERNAME = "username";
+        final String PARAM_PASSWORD = "password";
 
-		String username = exchange.getRequest().getMandatoryParameter(PARAM_USERNAME);
-		String password = exchange.getRequest().getMandatoryParameter(PARAM_PASSWORD);
+        String username = exchange.getRequest().getMandatoryParameter(PARAM_USERNAME);
+        String password = exchange.getRequest().getMandatoryParameter(PARAM_PASSWORD);
 
-		User user = userService.getUserByCredentials(exchange.getJpaTransaction(), username, password);
+        User user = userService.getUserByCredentials(exchange.getJpaTransaction(), username, password);
 
-		if (user == null) {
-			throw new ForbiddenException("Invalid credentials");
-		} else {
-			exchange.setCurrentUser(user);
-		}
+        if (user == null) {
+            throw new ForbiddenException("Invalid credentials");
+        } else {
+            exchange.setCurrentUser(user);
+        }
 
-		return new UserDto(user);
-	}
+        return new UserDto(user);
+    }
 
-	@WebAction(mapping = "me", secured = true)
-	public User me(HttpExchange exchange) {
-		return (User) exchange.getCurrentUser();
-	}
+    @WebAction(mapping = "me", secured = true)
+    public User me(HttpExchange exchange) {
+        return (User) exchange.getCurrentUser();
+    }
 }
