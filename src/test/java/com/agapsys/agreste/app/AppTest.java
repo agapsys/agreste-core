@@ -38,107 +38,107 @@ import org.junit.Test;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class AppTest {
-	// STATIC SCOPE ============================================================
-	@BeforeClass
-	public static void beforeClass() {
-		System.out.println(String.format("=== %s ===", AppTest.class.getSimpleName()));
-	}
+    // STATIC SCOPE ============================================================
+    @BeforeClass
+    public static void beforeClass() {
+        System.out.println(String.format("=== %s ===", AppTest.class.getSimpleName()));
+    }
 
-	@AfterClass
-	public static void afterClass() {
-		System.out.println();
-	}
+    @AfterClass
+    public static void afterClass() {
+        System.out.println();
+    }
 
-	public static class LoginInfo extends Pair<HttpClient, StringResponse> {
+    public static class LoginInfo extends Pair<HttpClient, StringResponse> {
 
-		public LoginInfo(HttpClient first, StringResponse second) {
-			super(first, second);
-		}
+        public LoginInfo(HttpClient first, StringResponse second) {
+            super(first, second);
+        }
 
-		public HttpClient getClient() {
-			return getFirst();
-		}
+        public HttpClient getClient() {
+            return getFirst();
+        }
 
-		public StringResponse getResponse() {
-			return getSecond();
-		}
+        public StringResponse getResponse() {
+            return getSecond();
+        }
 
-	}
+    }
 
-	public static LoginInfo doLogin(ServletContainer sc, String username, String password) {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
-		HttpClient client = new HttpClient();
-		StringResponse resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", username, password));
-		return new LoginInfo(client, resp);
-	}
-	// =========================================================================
+    public static LoginInfo doLogin(ServletContainer sc, String username, String password) {
+        RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
+        HttpClient client = new HttpClient();
+        StringResponse resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", username, password));
+        return new LoginInfo(client, resp);
+    }
+    // =========================================================================
 
-	// INSTANCE SCOPE ==========================================================
-	private final TestUtils testUtils = TestUtils.getInstance();
+    // INSTANCE SCOPE ==========================================================
+    private final TestUtils testUtils = TestUtils.getInstance();
 
-	private ServletContainer sc;
+    private ServletContainer sc;
 
-	@Before
-	public void before() {
-		System.out.println("Starting application...");
+    @Before
+    public void before() {
+        System.out.println("Starting application...");
 
-		sc = new ServletContainerBuilder(TestApplication.class)
-			.registerController(UserController.class)
-			.build();
+        sc = new ServletContainerBuilder(TestApplication.class)
+            .registerController(UserController.class)
+            .build();
 
-		sc.startServer();
-	}
+        sc.startServer();
+    }
 
-	@After
-	public void after() {
-		System.out.println("\nShutting down the application...");
+    @After
+    public void after() {
+        System.out.println("\nShutting down the application...");
 
-		sc.stopServer();
-	}
+        sc.stopServer();
+    }
 
-	@Test
-	public void testLogin() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
-		testUtils.println(endpoint.toString());
+    @Test
+    public void testLogin() {
+        RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
+        testUtils.println(endpoint.toString());
 
-		HttpClient client = new HttpClient();
-		StringResponse resp;
+        HttpClient client = new HttpClient();
+        StringResponse resp;
 
-		// Invalid username...
-		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "invalid_user", "invalid_password"));
-		testUtils.assertErrorStatus(ForbiddenException.CODE, "Invalid credentials", resp);
+        // Invalid username...
+        resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "invalid_user", "invalid_password"));
+        testUtils.assertErrorStatus(ForbiddenException.CODE, "Invalid credentials", resp);
 
-		// Invalid password...
-		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "username", "invalid-password"));
-		testUtils.assertStatus(ForbiddenException.CODE, resp);
+        // Invalid password...
+        resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "username", "invalid-password"));
+        testUtils.assertStatus(ForbiddenException.CODE, resp);
 
-		// Valid credentials...
-		resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "username", "password"));
-		testUtils.assertStatus(200, resp);
-	}
+        // Valid credentials...
+        resp = sc.doRequest(client, endpoint.getRequest("username=%s&password=%s", "username", "password"));
+        testUtils.assertStatus(200, resp);
+    }
 
-	@Test
-	public void testSecuredAction() {
-		RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/me");
-		testUtils.println(endpoint.toString());
+    @Test
+    public void testSecuredAction() {
+        RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/me");
+        testUtils.println(endpoint.toString());
 
-		StringResponse resp;
+        StringResponse resp;
 
-		// Unlogged access...
-		resp = sc.doRequest(endpoint.getRequest());
-		testUtils.assertStatus(401, resp);
+        // Unlogged access...
+        resp = sc.doRequest(endpoint.getRequest());
+        testUtils.assertStatus(401, resp);
 
-		// Logged access (without CSRF)...
-		LoginInfo loginInfo = doLogin(sc, "username", "password");
-		resp = sc.doRequest(loginInfo.getClient(), endpoint.getRequest());
-		testUtils.assertErrorStatus(403, "Invalid CSRF header", resp);
+        // Logged access (without CSRF)...
+        LoginInfo loginInfo = doLogin(sc, "username", "password");
+        resp = sc.doRequest(loginInfo.getClient(), endpoint.getRequest());
+        testUtils.assertErrorStatus(403, "Invalid CSRF header", resp);
 
-		// Logged access (with CSRF)...
-		loginInfo.getClient().addDefaultHeader(CsrfHttpExchange.CSRF_HEADER, loginInfo.getResponse().getFirstHeader(CsrfHttpExchange.CSRF_HEADER).getValue());
-		resp = sc.doRequest(loginInfo.getClient(), endpoint.getRequest());
-		testUtils.assertStatus(200, resp);
-		UserDto dto = testUtils.readObjectResponse(UserDto.class, resp);
-		Assert.assertEquals("username", dto.username);
-	}
-	// =========================================================================
+        // Logged access (with CSRF)...
+        loginInfo.getClient().addDefaultHeader(CsrfHttpExchange.CSRF_HEADER, loginInfo.getResponse().getFirstHeader(CsrfHttpExchange.CSRF_HEADER).getValue());
+        resp = sc.doRequest(loginInfo.getClient(), endpoint.getRequest());
+        testUtils.assertStatus(200, resp);
+        UserDto dto = testUtils.readObjectResponse(UserDto.class, resp);
+        Assert.assertEquals("username", dto.username);
+    }
+    // =========================================================================
 }

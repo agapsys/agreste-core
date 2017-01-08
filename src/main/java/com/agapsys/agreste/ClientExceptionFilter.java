@@ -32,27 +32,27 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ClientExceptionFilter implements Filter {
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {}
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		try {
-			chain.doFilter(request, response);
-		} catch (ClientException ex) {
-			HttpServletResponse resp = (HttpServletResponse) response;
-			resp.setStatus(ex.getHttpStatus());
-			Integer appStatus = ex.getAppStatus();
-			resp.getWriter().print(
-				String.format(
-					"%s%s",
-					appStatus != null ? String.format("%d:", appStatus) : "",
-					ex.getMessage()
-				)
-			);
-		}
-	}
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        try {
+            chain.doFilter(request, response);
+        } catch (ClientException ex) {
+            HttpServletResponse resp = (HttpServletResponse) response;
+            resp.setStatus(ex.getHttpStatus());
+            Integer appStatus = ex.getAppStatus();
+            resp.getWriter().print(
+                String.format(
+                    "%s%s",
+                    appStatus != null ? String.format("%d:", appStatus) : "",
+                    ex.getMessage()
+                )
+            );
+        }
+    }
 
-	@Override
-	public void destroy() {}
+    @Override
+    public void destroy() {}
 }

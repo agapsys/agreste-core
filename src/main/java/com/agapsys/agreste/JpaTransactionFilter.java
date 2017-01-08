@@ -38,150 +38,150 @@ import javax.servlet.http.HttpServletResponse;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class JpaTransactionFilter implements Filter {
-	// STATIC SCOPE ============================================================
-	public static final String JPA_TRANSACTION_ATTRIBUTE = JpaTransactionFilter.class.getName() + ".jpaTransaction";
-	
-	private static class ServletTransaction extends EntityTransactionWrapper implements JpaTransaction {
-		private final UnsupportedOperationException unsupportedOperationException = new UnsupportedOperationException("Transaction is managed by servlet");
-		private final EntityManager em;
-		private final List<Runnable> commitQueue = new LinkedList<>();
-		private final List<Runnable> rollbackQueue = new LinkedList<>();
-		
-		public ServletTransaction(ServletEntityManger em, EntityTransaction wrappedTransaction) {
-			super(wrappedTransaction);
-			this.em = em;
-		}
-		
-		private void processQueue(List<Runnable> queue) {
-			for (Runnable runnable : queue) {
-				runnable.run();
-			}
-			queue.clear();
-		}
-		
-		@Override
-		public void commit() {
-			throw unsupportedOperationException;
-		}
-		public void wrappedCommit() {
-			super.commit();
-			processQueue(commitQueue);
-		}
-		
-		@Override
-		public void begin() {
-			throw unsupportedOperationException;
-		}
-		public void wrappedBegin() {
-			super.begin();
-		}
+    // STATIC SCOPE ============================================================
+    public static final String JPA_TRANSACTION_ATTRIBUTE = JpaTransactionFilter.class.getName() + ".jpaTransaction";
+    
+    private static class ServletTransaction extends EntityTransactionWrapper implements JpaTransaction {
+        private final UnsupportedOperationException unsupportedOperationException = new UnsupportedOperationException("Transaction is managed by servlet");
+        private final EntityManager em;
+        private final List<Runnable> commitQueue = new LinkedList<>();
+        private final List<Runnable> rollbackQueue = new LinkedList<>();
+        
+        public ServletTransaction(ServletEntityManger em, EntityTransaction wrappedTransaction) {
+            super(wrappedTransaction);
+            this.em = em;
+        }
+        
+        private void processQueue(List<Runnable> queue) {
+            for (Runnable runnable : queue) {
+                runnable.run();
+            }
+            queue.clear();
+        }
+        
+        @Override
+        public void commit() {
+            throw unsupportedOperationException;
+        }
+        public void wrappedCommit() {
+            super.commit();
+            processQueue(commitQueue);
+        }
+        
+        @Override
+        public void begin() {
+            throw unsupportedOperationException;
+        }
+        public void wrappedBegin() {
+            super.begin();
+        }
 
-		@Override
-		public void rollback() {
-			throw unsupportedOperationException;
-		}
-		public void wrappedRollback() {
-			super.rollback();
-			processQueue(rollbackQueue);
-		}
+        @Override
+        public void rollback() {
+            throw unsupportedOperationException;
+        }
+        public void wrappedRollback() {
+            super.rollback();
+            processQueue(rollbackQueue);
+        }
 
-		@Override
-		public EntityManager getEntityManager() {
-			return em;
-		}
+        @Override
+        public EntityManager getEntityManager() {
+            return em;
+        }
 
-		private void invokeAfter(List<Runnable> queue, Runnable runnable) {
-			if (runnable == null)
-				throw new IllegalArgumentException("Null runnable");
-			
-			queue.add(runnable);
-		}
-		
-		@Override
-		public void invokeAfterCommit(Runnable runnable) {
-			invokeAfter(commitQueue, runnable);
-		}
+        private void invokeAfter(List<Runnable> queue, Runnable runnable) {
+            if (runnable == null)
+                throw new IllegalArgumentException("Null runnable");
+            
+            queue.add(runnable);
+        }
+        
+        @Override
+        public void invokeAfterCommit(Runnable runnable) {
+            invokeAfter(commitQueue, runnable);
+        }
 
-		@Override
-		public void invokeAfterRollback(Runnable runnable) {
-			invokeAfter(rollbackQueue, runnable);
-		}
-	}
-	
-	private static class ServletEntityManger extends EntityManagerWrapper {
-		private final UnsupportedOperationException unsupportedOperationException = new UnsupportedOperationException("Entity manager is managed by servlet");
-		private final ServletTransaction singleTransaction;
-		
-		public ServletEntityManger(EntityManager wrappedEntityManager) {
-			super(wrappedEntityManager);
-			singleTransaction = new ServletTransaction(this, super.getTransaction());
-		}
+        @Override
+        public void invokeAfterRollback(Runnable runnable) {
+            invokeAfter(rollbackQueue, runnable);
+        }
+    }
+    
+    private static class ServletEntityManger extends EntityManagerWrapper {
+        private final UnsupportedOperationException unsupportedOperationException = new UnsupportedOperationException("Entity manager is managed by servlet");
+        private final ServletTransaction singleTransaction;
+        
+        public ServletEntityManger(EntityManager wrappedEntityManager) {
+            super(wrappedEntityManager);
+            singleTransaction = new ServletTransaction(this, super.getTransaction());
+        }
 
-		@Override
-		public EntityTransaction getTransaction() {
-			return singleTransaction;
-		}
+        @Override
+        public EntityTransaction getTransaction() {
+            return singleTransaction;
+        }
 
-		@Override
-		public void close() {
-			throw unsupportedOperationException;
-		}
-		public void wrappedClose() {
-			super.close();
-		}
-	}
-	// =========================================================================
-	
-	// INSTANCE SCOPE ==========================================================
-	private AbstractWebApplication webApp;
-	
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		webApp = AbstractWebApplication.getRunningInstance();
-	}
+        @Override
+        public void close() {
+            throw unsupportedOperationException;
+        }
+        public void wrappedClose() {
+            super.close();
+        }
+    }
+    // =========================================================================
+    
+    // INSTANCE SCOPE ==========================================================
+    private AbstractWebApplication webApp;
+    
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        webApp = AbstractWebApplication.getRunningInstance();
+    }
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		
-		HttpServletResponse resp = (HttpServletResponse) response;
-		HttpServletRequest  req = (HttpServletRequest) request;
-		
-		if (webApp != null) {
-			PersistenceModule persistenceModule = webApp.getModule(PersistenceModule.class);
-			ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceModule.getEntityManager()).getTransaction();
-			jpaTransaction.wrappedBegin();
-			req.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        
+        HttpServletResponse resp = (HttpServletResponse) response;
+        HttpServletRequest  req = (HttpServletRequest) request;
+        
+        if (webApp != null) {
+            PersistenceModule persistenceModule = webApp.getModule(PersistenceModule.class);
+            ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceModule.getEntityManager()).getTransaction();
+            jpaTransaction.wrappedBegin();
+            req.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);
 
-			try {
-				chain.doFilter(request, response);
-				jpaTransaction.wrappedCommit();
-				
-			} catch (Throwable error) {
-				jpaTransaction.wrappedRollback();
-				
-				if (error instanceof OptimisticLockException) {
-					resp.setStatus(HttpServletResponse.SC_CONFLICT);
-				} else {
-					if (error instanceof IOException)
-						throw (IOException)error;
-					
-					if (error instanceof ServletException)
-						throw (ServletException) error;
-					
-					if (error instanceof RuntimeException)
-						throw (RuntimeException) error;
-					
-					throw new RuntimeException(error);
-				}
-			} finally {
-				req.removeAttribute(JPA_TRANSACTION_ATTRIBUTE);
-			}
-		} else {
-			chain.doFilter(request, response);
-		}
-	}
+            try {
+                chain.doFilter(request, response);
+                jpaTransaction.wrappedCommit();
+                
+            } catch (Throwable error) {
+                jpaTransaction.wrappedRollback();
+                
+                if (error instanceof OptimisticLockException) {
+                    resp.setStatus(HttpServletResponse.SC_CONFLICT);
+                } else {
+                    if (error instanceof IOException)
+                        throw (IOException)error;
+                    
+                    if (error instanceof ServletException)
+                        throw (ServletException) error;
+                    
+                    if (error instanceof RuntimeException)
+                        throw (RuntimeException) error;
+                    
+                    throw new RuntimeException(error);
+                }
+            } finally {
+                req.removeAttribute(JPA_TRANSACTION_ATTRIBUTE);
+            }
+        } else {
+            chain.doFilter(request, response);
+        }
+    }
 
-	@Override
-	public void destroy() {}
-	// =========================================================================
+    @Override
+    public void destroy() {}
+    // =========================================================================
 }

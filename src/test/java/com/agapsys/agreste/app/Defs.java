@@ -20,7 +20,7 @@ package com.agapsys.agreste.app;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class Defs {
-	private Defs() {}
-	
-	public static final String ACCESS_ROLE = "access";
+    private Defs() {}
+    
+    public static final String ACCESS_ROLE = "access";
 }

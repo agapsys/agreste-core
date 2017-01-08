@@ -23,67 +23,67 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
 public class MockedTransaction implements JpaTransaction {
-	private final List<Runnable> commitQueue = new LinkedList<>();
-	private final List<Runnable> rollbackQueue = new LinkedList<>();
+    private final List<Runnable> commitQueue = new LinkedList<>();
+    private final List<Runnable> rollbackQueue = new LinkedList<>();
 
-	private EntityManager em;
-	private EntityTransaction et;
+    private EntityManager em;
+    private EntityTransaction et;
 
-	public MockedTransaction(EntityManager em) {
-		this.em = em;
-		this.et = em.getTransaction();
+    public MockedTransaction(EntityManager em) {
+        this.em = em;
+        this.et = em.getTransaction();
 
-		if (!this.et.isActive())
-			this.et.begin();
-	}
+        if (!this.et.isActive())
+            this.et.begin();
+    }
 
-	@Override
-	public EntityManager getEntityManager() {
-		return em;
-	}
+    @Override
+    public EntityManager getEntityManager() {
+        return em;
+    }
 
-	@Override
-	public void invokeAfterCommit(Runnable runnable) {
-		if (runnable == null) throw new IllegalArgumentException("Null runnable");
-		commitQueue.add(runnable);
-	}
+    @Override
+    public void invokeAfterCommit(Runnable runnable) {
+        if (runnable == null) throw new IllegalArgumentException("Null runnable");
+        commitQueue.add(runnable);
+    }
 
-	@Override
-	public void invokeAfterRollback(Runnable runnable) {
-		if (runnable == null) throw new IllegalArgumentException("Null runnable");
-		rollbackQueue.add(runnable);
-	}
+    @Override
+    public void invokeAfterRollback(Runnable runnable) {
+        if (runnable == null) throw new IllegalArgumentException("Null runnable");
+        rollbackQueue.add(runnable);
+    }
 
-	private void close(boolean commit) {
-		if (commit) {
-			et.commit();
-		} else {
-			et.rollback();
-		}
+    private void close(boolean commit) {
+        if (commit) {
+            et.commit();
+        } else {
+            et.rollback();
+        }
 
-		et = em.getTransaction();
-	}
+        et = em.getTransaction();
+    }
 
-	private void processQueue(List<Runnable> queue) {
-		for (Runnable runnable : queue) {
-			runnable.run();
-		}
+    private void processQueue(List<Runnable> queue) {
+        for (Runnable runnable : queue) {
+            runnable.run();
+        }
 
-		queue.clear();
-	}
+        queue.clear();
+    }
 
-	public void begin() {
-		if (!et.isActive())
-			et.begin();
-	}
+    public void begin() {
+        if (!et.isActive())
+            et.begin();
+    }
 
-	public void rollback() {
-		close(false);
-		processQueue(rollbackQueue);
-	}
+    public void rollback() {
+        close(false);
+        processQueue(rollbackQueue);
+    }
 
-	public void commit() {
-		close(true);
-		processQueue(commitQueue);
-	}
+    public void commit() {
+        close(true);
+        processQueue(commitQueue);
+    }
 }

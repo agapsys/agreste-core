@@ -29,26 +29,26 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BaseController extends Controller {
 
-	@Override
-	protected HttpExchange getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
-		return new CsrfHttpExchange(req, resp) {
-			@Override
-			public User getCurrentUser() {
-				User user = (User) super.getCurrentUser();
+    @Override
+    protected HttpExchange getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
+        return new CsrfHttpExchange(req, resp) {
+            @Override
+            public User getCurrentUser() {
+                User user = (User) super.getCurrentUser();
 
-				JpaTransaction jpa = getJpaTransaction();
+                JpaTransaction jpa = getJpaTransaction();
 
-				if (user != null && jpa != null) {
-					EntityManager em = jpa.getEntityManager();
+                if (user != null && jpa != null) {
+                    EntityManager em = jpa.getEntityManager();
 
-					if (!em.contains(user)) {
-						user = em.find(User.class, user.getId());
-					}
-				}
+                    if (!em.contains(user)) {
+                        user = em.find(User.class, user.getId());
+                    }
+                }
 
-				return user;
-			}
-		};
-	}
+                return user;
+            }
+        };
+    }
 
 }

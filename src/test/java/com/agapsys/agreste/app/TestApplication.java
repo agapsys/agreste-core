@@ -26,22 +26,22 @@ import javax.persistence.EntityManager;
  */
 public class TestApplication extends MockedWebApplication {
 
-	@Override
-	protected void afterApplicationStart() {
-		super.afterApplicationStart();
-		
-		PersistenceModule persistenceModule = getModule(PersistenceModule.class);
-		
-		EntityManager em = persistenceModule.getEntityManager();
-		
-		// ---------------------------------------------------------------------
-		em.getTransaction().begin();
-		
-		new User("username", "password").save(em);		
-		
-		em.getTransaction().commit();
-		// ---------------------------------------------------------------------
-		
-		em.close();
-	}
+    @Override
+    protected void afterApplicationStart() {
+        super.afterApplicationStart();
+        
+        PersistenceModule persistenceModule = getModule(PersistenceModule.class);
+        
+        EntityManager em = persistenceModule.getEntityManager();
+        
+        // ---------------------------------------------------------------------
+        em.getTransaction().begin();
+        
+        new User("username", "password").save(em);        
+        
+        em.getTransaction().commit();
+        // ---------------------------------------------------------------------
+        
+        em.close();
+    }
 }

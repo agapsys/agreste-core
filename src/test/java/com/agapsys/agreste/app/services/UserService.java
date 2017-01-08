@@ -26,11 +26,11 @@ import com.agapsys.web.toolkit.Service;
  */
 public class UserService extends Service {
 
-	public User getUserByCredentials(JpaTransaction jpa, String username, String password) {
-		User user = new FindBuilder<>(User.class).by("username", username).findFirst(jpa.getEntityManager());
-		if (user == null) return null;
+    public User getUserByCredentials(JpaTransaction jpa, String username, String password) {
+        User user = new FindBuilder<>(User.class).by("username", username).findFirst(jpa.getEntityManager());
+        if (user == null) return null;
 
-		return user.isPasswordValid(password) ? user : null;
-	}
+        return user.isPasswordValid(password) ? user : null;
+    }
 
 }

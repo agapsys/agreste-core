@@ -30,85 +30,85 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public abstract class Controller<HE extends HttpExchange> extends com.agapsys.rcf.Controller<HE> {
-	
-	// STATIC SCOPE ============================================================
-	/**
-	 * Returns an application module.
-	 * @param <M> module type
-	 * @param moduleClass module class.
-	 * @return application module associated with given class.
-	 */
-	public static <M extends Module> M getModule(Class<M> moduleClass) {
-		return AbstractWebApplication.getRunningInstance().getModule(moduleClass);
-	}
+    
+    // STATIC SCOPE ============================================================
+    /**
+     * Returns an application module.
+     * @param <M> module type
+     * @param moduleClass module class.
+     * @return application module associated with given class.
+     */
+    public static <M extends Module> M getModule(Class<M> moduleClass) {
+        return AbstractWebApplication.getRunningInstance().getModule(moduleClass);
+    }
 
-	/**
-	 * Returns an application service.
-	 * @param <S> service type
-	 * @param serviceClass service class.
-	 * @return application service associated with given class.
-	 */
-	public static <S extends Service> S getService(Class<S> serviceClass) {
-		return AbstractWebApplication.getRunningInstance().getService(serviceClass);
-	}
-	// =========================================================================
+    /**
+     * Returns an application service.
+     * @param <S> service type
+     * @param serviceClass service class.
+     * @return application service associated with given class.
+     */
+    public static <S extends Service> S getService(Class<S> serviceClass) {
+        return AbstractWebApplication.getRunningInstance().getService(serviceClass);
+    }
+    // =========================================================================
 
-	// INSTANCE SCOPE ==========================================================
-	@Override
-	protected void onClientError(HE exchange, ClientException error) throws ServletException, IOException {
-		logRequest(exchange, LogType.WARNING, error.getMessage());
-		super.onClientError(exchange, error);
-	}
+    // INSTANCE SCOPE ==========================================================
+    @Override
+    protected void onClientError(HE exchange, ClientException error) throws ServletException, IOException {
+        logRequest(exchange, LogType.WARNING, error.getMessage());
+        super.onClientError(exchange, error);
+    }
 
-	@Override
-	protected boolean onControllerError(HE exchange, Throwable t) throws ServletException, IOException {
-		super.onControllerError(exchange, t);
+    @Override
+    protected boolean onControllerError(HE exchange, Throwable t) throws ServletException, IOException {
+        super.onControllerError(exchange, t);
 
-		if (!(t instanceof OptimisticLockException)) { // <-- OptimisticLockException will be handled by JpaFilter!
-			String stackTrace = ExceptionReporterModule.getStackTrace(t);
-			logRequest(exchange, LogType.ERROR, stackTrace);
-		}
+        if (!(t instanceof OptimisticLockException)) { // <-- OptimisticLockException will be handled by JpaFilter!
+            String stackTrace = ExceptionReporterModule.getStackTrace(t);
+            logRequest(exchange, LogType.ERROR, stackTrace);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	protected HE getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
-		return (HE) new HttpExchange(req, resp);
-	}
+    @Override
+    protected HE getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
+        return (HE) new HttpExchange(req, resp);
+    }
 
-	protected String getLogMessage(HE exchange, String message) {
-		User loggedUser;
+    protected String getLogMessage(HE exchange, String message) {
+        User loggedUser;
 
-		try {
-			loggedUser = exchange.getCurrentUser();
-		} catch (ClientException ex) {
-			loggedUser = null;
-		}
+        try {
+            loggedUser = exchange.getCurrentUser();
+        } catch (ClientException ex) {
+            loggedUser = null;
+        }
 
-		HttpServletRequest coreReq = exchange.getCoreRequest();
-		HttpRequest req = exchange.getRequest();
+        HttpServletRequest coreReq = exchange.getCoreRequest();
+        HttpRequest req = exchange.getRequest();
 
-		StringBuffer requestUrl = coreReq.getRequestURL();
-		if (coreReq.getQueryString() != null)
-			requestUrl.append("?").append(coreReq.getQueryString());
+        StringBuffer requestUrl = coreReq.getRequestURL();
+        if (coreReq.getQueryString() != null)
+            requestUrl.append("?").append(coreReq.getQueryString());
 
-		String finalMessage =  String.format("%s %s\nIP: %s\nUser-agent: %s\nUser id: %s%s",
-			coreReq.getMethod(),
-			requestUrl,
-			req.getOriginIp(),
-			req.getUserAgent(),
-			loggedUser != null ? "" + loggedUser.toString(): "none",
-			message != null && !message.trim().isEmpty() ? "\n\n" + message : ""
-		);
+        String finalMessage =  String.format("%s %s\nIP: %s\nUser-agent: %s\nUser id: %s%s",
+            coreReq.getMethod(),
+            requestUrl,
+            req.getOriginIp(),
+            req.getUserAgent(),
+            loggedUser != null ? "" + loggedUser.toString(): "none",
+            message != null && !message.trim().isEmpty() ? "\n\n" + message : ""
+        );
 
-		return finalMessage;
-	}
+        return finalMessage;
+    }
 
-	public void logRequest(HE exchange, LogType logType, String message) {
-		String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
-		AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
-	}
-	// =========================================================================
+    public void logRequest(HE exchange, LogType logType, String message) {
+        String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(exchange, null));
+        AbstractWebApplication.getRunningInstance().log(logType, consoleLogMessage);
+    }
+    // =========================================================================
 
 }

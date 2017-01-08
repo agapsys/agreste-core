@@ -34,123 +34,123 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 @Entity
 public class User extends AbstractEntity<User> implements com.agapsys.rcf.User, Dto{
-	// STATIC SCOPE ============================================================
-	public static class UserDto {
-		public Long id;
-		public String username;
-		public Set<String> roles;
+    // STATIC SCOPE ============================================================
+    public static class UserDto {
+        public Long id;
+        public String username;
+        public Set<String> roles;
 
-		public UserDto() {}
-		public UserDto(User user) {
-			this.id = user.getId();
-			this.username = user.getUsername();
-			this.roles = user.getRoles();
-		}
-	}
+        public UserDto() {}
+        public UserDto(User user) {
+            this.id = user.getId();
+            this.username = user.getUsername();
+            this.roles = user.getRoles();
+        }
+    }
 
-	private static String getPasswordHash(String password) {
-		int logRounds = 4;
-		return (BCrypt.hashpw(password, BCrypt.gensalt(logRounds)));
-	}
+    private static String getPasswordHash(String password) {
+        int logRounds = 4;
+        return (BCrypt.hashpw(password, BCrypt.gensalt(logRounds)));
+    }
 
-	private static boolean checkPassword(String password, String passwordHash) {
-		return BCrypt.checkpw(password, passwordHash);
-	}
-	// =========================================================================
+    private static boolean checkPassword(String password, String passwordHash) {
+        return BCrypt.checkpw(password, passwordHash);
+    }
+    // =========================================================================
 
-	// INSTANCE SCOPE ==========================================================
-	// ID ----------------------------------------------------------------------
-	@Id
-	@GeneratedValue
-	private Long id;
+    // INSTANCE SCOPE ==========================================================
+    // ID ----------------------------------------------------------------------
+    @Id
+    @GeneratedValue
+    private Long id;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setId(long id) {
-		this.id = id;
-	}
-	// -------------------------------------------------------------------------
+    public void setId(long id) {
+        this.id = id;
+    }
+    // -------------------------------------------------------------------------
 
-	// Username ----------------------------------------------------------------
-	@Column(unique = true)
-	private String username;
+    // Username ----------------------------------------------------------------
+    @Column(unique = true)
+    private String username;
 
-	public String getUsername() {
-		return username;
-	}
-	public final void setUsername(String username) {
-		if (username == null || username.trim().isEmpty())
-			throw new IllegalArgumentException("Null/Empty username");
+    public String getUsername() {
+        return username;
+    }
+    public final void setUsername(String username) {
+        if (username == null || username.trim().isEmpty())
+            throw new IllegalArgumentException("Null/Empty username");
 
-		this.username = username;
-	}
-	// -------------------------------------------------------------------------
+        this.username = username;
+    }
+    // -------------------------------------------------------------------------
 
-	// Password ----------------------------------------------------------------
-	private String passwordHash;
-	public String getPasswordHash() {
-		return passwordHash;
-	}
-	public void setPasswordHash(String passwordHash) {
-		if (passwordHash == null || passwordHash.trim().isEmpty()) throw new IllegalArgumentException("Null/Empty password hash");
-			this.passwordHash = passwordHash;
-	}
-	public final void setPassword(String password) {
-		setPasswordHash(getPasswordHash(password));
-	}
-	public boolean isPasswordValid(String password) {
-		return checkPassword(password, getPasswordHash());
-	}
-	// -------------------------------------------------------------------------
+    // Password ----------------------------------------------------------------
+    private String passwordHash;
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+    public void setPasswordHash(String passwordHash) {
+        if (passwordHash == null || passwordHash.trim().isEmpty()) throw new IllegalArgumentException("Null/Empty password hash");
+            this.passwordHash = passwordHash;
+    }
+    public final void setPassword(String password) {
+        setPasswordHash(getPasswordHash(password));
+    }
+    public boolean isPasswordValid(String password) {
+        return checkPassword(password, getPasswordHash());
+    }
+    // -------------------------------------------------------------------------
 
-	// Roles -------------------------------------------------------------------
-	@ElementCollection(fetch = FetchType.EAGER)
-	private Set<String> roles = new LinkedHashSet<>();
+    // Roles -------------------------------------------------------------------
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new LinkedHashSet<>();
 
-	@Override
-	public Set<String> getRoles() {
-		return roles;
-	}
-	public void setRoles(Set<String> roles) {
-		if (roles == null)
-			throw new IllegalArgumentException("Role set cannot be null");
+    @Override
+    public Set<String> getRoles() {
+        return roles;
+    }
+    public void setRoles(Set<String> roles) {
+        if (roles == null)
+            throw new IllegalArgumentException("Role set cannot be null");
 
-		this.roles = roles;
-	}
-	public final void setRoles(String...roles) {
-		setRoles(new LinkedHashSet<>(Arrays.asList(roles)));
-	}
+        this.roles = roles;
+    }
+    public final void setRoles(String...roles) {
+        setRoles(new LinkedHashSet<>(Arrays.asList(roles)));
+    }
 
-	public void addRole(String...roles) {
-		int i = 0;
-		for (String role : roles) {
-			if (role == null) throw new IllegalArgumentException("Null role at index " + i);
+    public void addRole(String...roles) {
+        int i = 0;
+        for (String role : roles) {
+            if (role == null) throw new IllegalArgumentException("Null role at index " + i);
 
-			getRoles().add(role);
-			i++;
-		}
-	}
-	public void clearRoles() {
-		getRoles().clear();
-	}
-	// -------------------------------------------------------------------------
+            getRoles().add(role);
+            i++;
+        }
+    }
+    public void clearRoles() {
+        getRoles().clear();
+    }
+    // -------------------------------------------------------------------------
 
-	// Constructors ------------------------------------------------------------
-	public User() {}
+    // Constructors ------------------------------------------------------------
+    public User() {}
 
-	public User(String username, String password, String...roles) {
-		setUsername(username);
-		setPassword(password);
-		setRoles(roles);
-	}
-	// -------------------------------------------------------------------------
+    public User(String username, String password, String...roles) {
+        setUsername(username);
+        setPassword(password);
+        setRoles(roles);
+    }
+    // -------------------------------------------------------------------------
 
-	@Override
-	public Object getDto() {
-		return new UserDto(this);
-	}
-	// =========================================================================
+    @Override
+    public Object getDto() {
+        return new UserDto(this);
+    }
+    // =========================================================================
 }

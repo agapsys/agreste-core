@@ -28,109 +28,109 @@ import javax.servlet.http.HttpServletResponse;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class CorsModule extends WebModule {
-	// CLASS SCOPE =============================================================
-	private static final String[] EMPTY_STRING_ARRAY = new String[] {};
+    // CLASS SCOPE =============================================================
+    private static final String[] EMPTY_STRING_ARRAY = new String[] {};
 
-	public static String SETTINGS_GROUP_NAME = CorsModule.class.getName();
+    public static String SETTINGS_GROUP_NAME = CorsModule.class.getName();
 
-	public static final String KEY_ALLOWED_ORIGINS = "agapsys.agrest.cors.allowedOrigins";
-	public static final String KEY_ALLOWED_METHODS = "agapsys.agrest.cors.allowedMethods";
-	public static final String KEY_ALLOWED_HEADERS = "agapsys.agrest.cors.allowedHeaders";
+    public static final String KEY_ALLOWED_ORIGINS = "agapsys.agrest.cors.allowedOrigins";
+    public static final String KEY_ALLOWED_METHODS = "agapsys.agrest.cors.allowedMethods";
+    public static final String KEY_ALLOWED_HEADERS = "agapsys.agrest.cors.allowedHeaders";
 
-	private static final String ORIGIN_DELIMITER = ",";
+    private static final String ORIGIN_DELIMITER = ",";
 
-	private static final String HEADER_ALLOWED_ORIGINS = "Access-Control-Allow-Origin";
-	private static final String HEADER_ALLOWED_METHODS = "Access-Control-Allow-Methods";
-	private static final String HEADER_ALLOWED_HEADERS = "Access-Control-Allow-Headers";
+    private static final String HEADER_ALLOWED_ORIGINS = "Access-Control-Allow-Origin";
+    private static final String HEADER_ALLOWED_METHODS = "Access-Control-Allow-Methods";
+    private static final String HEADER_ALLOWED_HEADERS = "Access-Control-Allow-Headers";
 
-	private static final String DEFAULT_ALLOWED_ORIGINS = "";
-	private static final String DEFAULT_ALLOWED_METHODS = "";
-	private static final String DEFAULT_ALLOWED_HEADERS = "";
-	// =========================================================================
+    private static final String DEFAULT_ALLOWED_ORIGINS = "";
+    private static final String DEFAULT_ALLOWED_METHODS = "";
+    private static final String DEFAULT_ALLOWED_HEADERS = "";
+    // =========================================================================
 
-	// INSTANCE SCOPE ==========================================================
-	private String[] allowedOrigins;
-	private String allowedMethods;
-	private String allowedHeaders;
+    // INSTANCE SCOPE ==========================================================
+    private String[] allowedOrigins;
+    private String allowedMethods;
+    private String allowedHeaders;
 
-	private void reset() {
-		allowedOrigins = null;
-		allowedMethods = null;
-		allowedHeaders = null;
-	}
+    private void reset() {
+        allowedOrigins = null;
+        allowedMethods = null;
+        allowedHeaders = null;
+    }
 
-	public CorsModule() {
-		reset();
-	}
+    public CorsModule() {
+        reset();
+    }
 
-	@Override
-	protected final String getSettingsGroupName() {
-		return SETTINGS_GROUP_NAME;
-	}
+    @Override
+    protected final String getSettingsGroupName() {
+        return SETTINGS_GROUP_NAME;
+    }
 
-	@Override
-	public Properties getDefaultProperties() {
-		Properties defaultProperties = super.getDefaultProperties();
+    @Override
+    public Properties getDefaultProperties() {
+        Properties defaultProperties = super.getDefaultProperties();
 
-		defaultProperties.setProperty(KEY_ALLOWED_ORIGINS, DEFAULT_ALLOWED_ORIGINS);
-		defaultProperties.setProperty(KEY_ALLOWED_METHODS, DEFAULT_ALLOWED_METHODS);
-		defaultProperties.setProperty(KEY_ALLOWED_HEADERS, DEFAULT_ALLOWED_HEADERS);
+        defaultProperties.setProperty(KEY_ALLOWED_ORIGINS, DEFAULT_ALLOWED_ORIGINS);
+        defaultProperties.setProperty(KEY_ALLOWED_METHODS, DEFAULT_ALLOWED_METHODS);
+        defaultProperties.setProperty(KEY_ALLOWED_HEADERS, DEFAULT_ALLOWED_HEADERS);
 
-		return defaultProperties;
-	}
+        return defaultProperties;
+    }
 
-	@Override
-	protected void onInit(AbstractApplication webApp) {
-		super.onInit(webApp);
+    @Override
+    protected void onInit(AbstractApplication webApp) {
+        super.onInit(webApp);
 
-		reset();
+        reset();
 
-		Properties props = getProperties();
+        Properties props = getProperties();
 
-		String val = ApplicationSettings.getProperty(props, KEY_ALLOWED_ORIGINS);
+        String val = ApplicationSettings.getProperty(props, KEY_ALLOWED_ORIGINS);
 
-		if (val != null) {
-			allowedOrigins = val.split(Pattern.quote(ORIGIN_DELIMITER));
+        if (val != null) {
+            allowedOrigins = val.split(Pattern.quote(ORIGIN_DELIMITER));
 
-			for (int i = 0; i < allowedOrigins.length; i++)
-				allowedOrigins[i] = allowedOrigins[i].trim();
-		} else {
-			allowedOrigins = EMPTY_STRING_ARRAY;
-		}
+            for (int i = 0; i < allowedOrigins.length; i++)
+                allowedOrigins[i] = allowedOrigins[i].trim();
+        } else {
+            allowedOrigins = EMPTY_STRING_ARRAY;
+        }
 
-		allowedMethods = ApplicationSettings.getProperty(props, KEY_ALLOWED_METHODS);
-		allowedHeaders = ApplicationSettings.getProperty(props, KEY_ALLOWED_HEADERS);
-	}
+        allowedMethods = ApplicationSettings.getProperty(props, KEY_ALLOWED_METHODS);
+        allowedHeaders = ApplicationSettings.getProperty(props, KEY_ALLOWED_HEADERS);
+    }
 
-	public String[] getAllowedOrigins() {
-		return allowedOrigins;
-	}
+    public String[] getAllowedOrigins() {
+        return allowedOrigins;
+    }
 
-	public String getAllowedMethods() {
-		return allowedMethods;
-	}
+    public String getAllowedMethods() {
+        return allowedMethods;
+    }
 
-	public String getAllowedHeaders() {
-		return allowedHeaders;
-	}
+    public String getAllowedHeaders() {
+        return allowedHeaders;
+    }
 
-	public final void putCorsHeaders(HttpServletResponse resp) {
-		if (!isActive()) throw new RuntimeException("Module is not running");
+    public final void putCorsHeaders(HttpServletResponse resp) {
+        if (!isActive()) throw new RuntimeException("Module is not running");
 
-		String _allowedMethod = getAllowedMethods();
-		String _allowedHeaders = getAllowedHeaders();
-		String[] _allowedOrigins = getAllowedOrigins();
+        String _allowedMethod = getAllowedMethods();
+        String _allowedHeaders = getAllowedHeaders();
+        String[] _allowedOrigins = getAllowedOrigins();
 
-		if (_allowedMethod != null && !_allowedMethod.isEmpty())
-			resp.setHeader(HEADER_ALLOWED_METHODS, getAllowedMethods());
+        if (_allowedMethod != null && !_allowedMethod.isEmpty())
+            resp.setHeader(HEADER_ALLOWED_METHODS, getAllowedMethods());
 
-		if (_allowedHeaders != null && !_allowedHeaders.isEmpty())
-			resp.setHeader(HEADER_ALLOWED_HEADERS, getAllowedHeaders());
+        if (_allowedHeaders != null && !_allowedHeaders.isEmpty())
+            resp.setHeader(HEADER_ALLOWED_HEADERS, getAllowedHeaders());
 
-		if (_allowedOrigins != null) {
-			for (String allowedOrigin : getAllowedOrigins())
-				resp.addHeader(HEADER_ALLOWED_ORIGINS, allowedOrigin);
-		}
-	}
-	// =========================================================================
+        if (_allowedOrigins != null) {
+            for (String allowedOrigin : getAllowedOrigins())
+                resp.addHeader(HEADER_ALLOWED_ORIGINS, allowedOrigin);
+        }
+    }
+    // =========================================================================
 }

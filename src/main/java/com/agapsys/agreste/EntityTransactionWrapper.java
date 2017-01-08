@@ -23,43 +23,43 @@ import javax.persistence.EntityTransaction;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class EntityTransactionWrapper implements EntityTransaction {
-	private final EntityTransaction wrappedTransaction;
-	
-	/**
-	 * Constructor
-	 * @param wrappedTransaction wrapped instance.
-	 */
-	public EntityTransactionWrapper(EntityTransaction wrappedTransaction) {
-		this.wrappedTransaction = wrappedTransaction;
-	}
+    private final EntityTransaction wrappedTransaction;
+    
+    /**
+     * Constructor
+     * @param wrappedTransaction wrapped instance.
+     */
+    public EntityTransactionWrapper(EntityTransaction wrappedTransaction) {
+        this.wrappedTransaction = wrappedTransaction;
+    }
 
-	@Override
-	public void begin() {
-		wrappedTransaction.begin();
-	}
+    @Override
+    public void begin() {
+        wrappedTransaction.begin();
+    }
 
-	@Override
-	public void commit() {
-		wrappedTransaction.commit();
-	}
+    @Override
+    public void commit() {
+        wrappedTransaction.commit();
+    }
 
-	@Override
-	public void rollback() {
-		wrappedTransaction.rollback();
-	}
+    @Override
+    public void rollback() {
+        wrappedTransaction.rollback();
+    }
 
-	@Override
-	public void setRollbackOnly() {
-		wrappedTransaction.setRollbackOnly();
-	}
+    @Override
+    public void setRollbackOnly() {
+        wrappedTransaction.setRollbackOnly();
+    }
 
-	@Override
-	public boolean getRollbackOnly() {
-		return wrappedTransaction.getRollbackOnly();
-	}
+    @Override
+    public boolean getRollbackOnly() {
+        return wrappedTransaction.getRollbackOnly();
+    }
 
-	@Override
-	public boolean isActive() {
-		return wrappedTransaction.isActive();
-	}
+    @Override
+    public boolean isActive() {
+        return wrappedTransaction.isActive();
+    }
 }

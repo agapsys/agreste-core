@@ -41,90 +41,90 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class CorsModuleTest {
-	// CLASS SCOPE =============================================================
-	@BeforeClass
-	public static void beforeClass() {
-		System.out.println(String.format("=== %s ===", CorsModuleTest.class.getSimpleName()));
-	}
+    // CLASS SCOPE =============================================================
+    @BeforeClass
+    public static void beforeClass() {
+        System.out.println(String.format("=== %s ===", CorsModuleTest.class.getSimpleName()));
+    }
 
-	@AfterClass
-	public static void afterClass() {
-		System.out.println();
-	}
+    @AfterClass
+    public static void afterClass() {
+        System.out.println();
+    }
 
-	@WebListener
-	public static class TestApplication extends MockedWebApplication {
-		public static final String VAL_ALLOWED_HEADERS = "testHeaders";
-		public static final String VAL_ALLOWED_ORIGINS = "testOrigin1, testOrigin2";
-		public static final String VAL_ALLOWED_METHODS = "testMethods";
+    @WebListener
+    public static class TestApplication extends MockedWebApplication {
+        public static final String VAL_ALLOWED_HEADERS = "testHeaders";
+        public static final String VAL_ALLOWED_ORIGINS = "testOrigin1, testOrigin2";
+        public static final String VAL_ALLOWED_METHODS = "testMethods";
 
-		@Override
-		protected void beforeApplicationStart() {
-			super.beforeApplicationStart();
-			registerModule(new CorsModule() {
-				@Override
-				public Properties getDefaultProperties() {
-					Properties props = super.getDefaultProperties();
+        @Override
+        protected void beforeApplicationStart() {
+            super.beforeApplicationStart();
+            registerModule(new CorsModule() {
+                @Override
+                public Properties getDefaultProperties() {
+                    Properties props = super.getDefaultProperties();
 
-					props.setProperty(CorsModule.KEY_ALLOWED_HEADERS, VAL_ALLOWED_HEADERS);
-					props.setProperty(CorsModule.KEY_ALLOWED_ORIGINS, VAL_ALLOWED_ORIGINS);
-					props.setProperty(CorsModule.KEY_ALLOWED_METHODS, VAL_ALLOWED_METHODS);
-					return props;
-				}
-			});
-		}
-	}
+                    props.setProperty(CorsModule.KEY_ALLOWED_HEADERS, VAL_ALLOWED_HEADERS);
+                    props.setProperty(CorsModule.KEY_ALLOWED_ORIGINS, VAL_ALLOWED_ORIGINS);
+                    props.setProperty(CorsModule.KEY_ALLOWED_METHODS, VAL_ALLOWED_METHODS);
+                    return props;
+                }
+            });
+        }
+    }
 
-	@WebController("test")
-	public static class TestController extends Controller {
+    @WebController("test")
+    public static class TestController extends Controller {
 
-		@Override
-		public void beforeAction(com.agapsys.rcf.HttpExchange exchange) throws ServletException, IOException {
-			CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
-			corsModule.putCorsHeaders(exchange.getCoreResponse());
-		}
+        @Override
+        public void beforeAction(com.agapsys.rcf.HttpExchange exchange) throws ServletException, IOException {
+            CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
+            corsModule.putCorsHeaders(exchange.getCoreResponse());
+        }
 
-		@WebAction
-		public void get(HttpServletRequest req) {}
-	}
-	// =========================================================================
+        @WebAction
+        public void get(HttpServletRequest req) {}
+    }
+    // =========================================================================
 
-	// INSTANCE SCOPE ==========================================================
-	private ServletContainer sc;
+    // INSTANCE SCOPE ==========================================================
+    private ServletContainer sc;
 
-	@Before
-	public void before() {
-		System.out.println("Starting application...");
-		sc = new ServletContainerBuilder(TestApplication.class)
-			.registerController(TestController.class)
-			.build();
+    @Before
+    public void before() {
+        System.out.println("Starting application...");
+        sc = new ServletContainerBuilder(TestApplication.class)
+            .registerController(TestController.class)
+            .build();
 
-		sc.startServer();
-	}
+        sc.startServer();
+    }
 
-	@After
-	public void after() {
-		System.out.println("\nShutting down application...");
-		sc.stopServer();
-	}
+    @After
+    public void after() {
+        System.out.println("\nShutting down application...");
+        sc.stopServer();
+    }
 
-	@Test
-	public void testCorsHeaders() {
-		StringResponse resp = sc.doRequest(new HttpGet("/test/get"));
-		TestUtils.getInstance().assertStatus(200, resp);
+    @Test
+    public void testCorsHeaders() {
+        StringResponse resp = sc.doRequest(new HttpGet("/test/get"));
+        TestUtils.getInstance().assertStatus(200, resp);
 
-		List<HttpHeader> allowedOrigins = resp.getHeaders("Access-Control-Allow-Origin");
-		HttpHeader allowMethodsHeader = resp.getFirstHeader("Access-Control-Allow-Methods");
-		HttpHeader allowHeadersHeader = resp.getFirstHeader("Access-Control-Allow-Headers");
+        List<HttpHeader> allowedOrigins = resp.getHeaders("Access-Control-Allow-Origin");
+        HttpHeader allowMethodsHeader = resp.getFirstHeader("Access-Control-Allow-Methods");
+        HttpHeader allowHeadersHeader = resp.getFirstHeader("Access-Control-Allow-Headers");
 
-		Assert.assertEquals(2, allowedOrigins.size());
-		Assert.assertNotNull(allowMethodsHeader);
-		Assert.assertNotNull(allowHeadersHeader);
+        Assert.assertEquals(2, allowedOrigins.size());
+        Assert.assertNotNull(allowMethodsHeader);
+        Assert.assertNotNull(allowHeadersHeader);
 
-		Assert.assertEquals("testOrigin1", allowedOrigins.get(0).getValue());
-		Assert.assertEquals("testOrigin2", allowedOrigins.get(1).getValue());
-		Assert.assertEquals(TestApplication.VAL_ALLOWED_METHODS, allowMethodsHeader.getValue());
-		Assert.assertEquals(TestApplication.VAL_ALLOWED_HEADERS, allowHeadersHeader.getValue());
-	}
-	// =========================================================================
+        Assert.assertEquals("testOrigin1", allowedOrigins.get(0).getValue());
+        Assert.assertEquals("testOrigin2", allowedOrigins.get(1).getValue());
+        Assert.assertEquals(TestApplication.VAL_ALLOWED_METHODS, allowMethodsHeader.getValue());
+        Assert.assertEquals(TestApplication.VAL_ALLOWED_HEADERS, allowHeadersHeader.getValue());
+    }
+    // =========================================================================
 }

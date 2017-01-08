@@ -27,34 +27,34 @@ import java.util.Date;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class ColoredConsoleLogStream extends LogModule.ConsoleLogStream {
-	private final boolean useLightColors;
+    private final boolean useLightColors;
 
-	public ColoredConsoleLogStream(boolean useLightColors) {
-		this.useLightColors = useLightColors;
-	}
+    public ColoredConsoleLogStream(boolean useLightColors) {
+        this.useLightColors = useLightColors;
+    }
 
-	public ColoredConsoleLogStream() {
-		this(false);
-	}
+    public ColoredConsoleLogStream() {
+        this(false);
+    }
 
-	private ConsoleColor getColor(LogType logType) {
-		switch (logType) {
-			case INFO:
-				return useLightColors ? ConsoleColor.LIGHT_GREEN : ConsoleColor.GREEN;
+    private ConsoleColor getColor(LogType logType) {
+        switch (logType) {
+            case INFO:
+                return useLightColors ? ConsoleColor.LIGHT_GREEN : ConsoleColor.GREEN;
 
-			case WARNING:
-				return useLightColors ? ConsoleColor.LIGHT_YELLOW : ConsoleColor.YELLOW;
+            case WARNING:
+                return useLightColors ? ConsoleColor.LIGHT_YELLOW : ConsoleColor.YELLOW;
 
-			case ERROR:
-				return useLightColors ? ConsoleColor.LIGHT_RED : ConsoleColor.RED;
+            case ERROR:
+                return useLightColors ? ConsoleColor.LIGHT_RED : ConsoleColor.RED;
 
-			default:
-				throw new UnsupportedOperationException("Unsupported log type: " + logType);
-		}
-	}
+            default:
+                throw new UnsupportedOperationException("Unsupported log type: " + logType);
+        }
+    }
 
-	@Override
-	protected String getMessage(Date timestamp, LogType logType, String message) {
-		return String.format("%s [%s] %s", DateUtils.getInstance().getIso8601Date(), ConsolePrinter.toString(getColor(logType), logType.name()), message);
-	}
+    @Override
+    protected String getMessage(Date timestamp, LogType logType, String message) {
+        return String.format("%s [%s] %s", DateUtils.getInstance().getIso8601Date(), ConsolePrinter.toString(getColor(logType), logType.name()), message);
+    }
 }

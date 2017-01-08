@@ -34,95 +34,95 @@ import java.io.InputStreamReader;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class ServletContainerBuilder<T extends ServletContainerBuilder> extends com.agapsys.web.toolkit.ServletContainerBuilder<T> {
-	// STATIC SCOPE ============================================================
-	public static ServletContainer getControllerContainer(Class<? extends Controller>...controllers) {
-		return getControllerContainer(MockedWebApplication.class, controllers);
-	}
+    // STATIC SCOPE ============================================================
+    public static ServletContainer getControllerContainer(Class<? extends Controller>...controllers) {
+        return getControllerContainer(MockedWebApplication.class, controllers);
+    }
 
-	public static ServletContainer getControllerContainer(Class<? extends AbstractWebApplication> webApp, Class<? extends Controller>...controllers) {
-		ServletContainerBuilder builder = new ServletContainerBuilder(webApp);
-		for (Class<? extends Controller> controller : controllers) {
-			builder.registerController(controller);
-		}
-		return builder.build();
-	}
+    public static ServletContainer getControllerContainer(Class<? extends AbstractWebApplication> webApp, Class<? extends Controller>...controllers) {
+        ServletContainerBuilder builder = new ServletContainerBuilder(webApp);
+        for (Class<? extends Controller> controller : controllers) {
+            builder.registerController(controller);
+        }
+        return builder.build();
+    }
 
-	private static final String EMBEDDED_CONTROLER_INFO = "/META-INF/rcf.info";
-	private static final String EMBEDDED_CONTROLER_INFO_ENCODING = "utf-8";
-	// =========================================================================
+    private static final String EMBEDDED_CONTROLER_INFO = "/META-INF/rcf.info";
+    private static final String EMBEDDED_CONTROLER_INFO_ENCODING = "utf-8";
+    // =========================================================================
 
-	// INSTANCE SCOPE ==========================================================
-	private void registerScannedControllers() {
-		InputStream is = null;
-		try {
+    // INSTANCE SCOPE ==========================================================
+    private void registerScannedControllers() {
+        InputStream is = null;
+        try {
 
-			is = ServletContainerBuilder.class.getResourceAsStream(EMBEDDED_CONTROLER_INFO);
+            is = ServletContainerBuilder.class.getResourceAsStream(EMBEDDED_CONTROLER_INFO);
 
-			if (is == null)
-				return;
+            if (is == null)
+                return;
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(is, EMBEDDED_CONTROLER_INFO_ENCODING));
+            BufferedReader in = new BufferedReader(new InputStreamReader(is, EMBEDDED_CONTROLER_INFO_ENCODING));
 
-			String readLine;
+            String readLine;
 
-			while ((readLine = in.readLine()) != null) {
-				readLine = readLine.trim();
+            while ((readLine = in.readLine()) != null) {
+                readLine = readLine.trim();
 
-				if (readLine.isEmpty() || readLine.startsWith("#"))
-					continue;
+                if (readLine.isEmpty() || readLine.startsWith("#"))
+                    continue;
 
-				registerController((Class<? extends Controller>) Class.forName(readLine));
-			}
+                registerController((Class<? extends Controller>) Class.forName(readLine));
+            }
 
-			in.close();
+            in.close();
 
-		} catch (IOException | ClassNotFoundException ex) {
-			throw new RuntimeException(ex);
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-			} catch (IOException ex) {
-				throw new RuntimeException(ex);
-			}
-		}
-	}
+        } catch (IOException | ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            if (is != null)
+                try {
+                    is.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
 
-	private void init() {
-		super.registerFilter(AbuseCheckFilter.class, "/*");
-		super.registerFilter(ClientExceptionFilter.class, "/*");
-		super.registerFilter(JpaTransactionFilter.class, "/*");
+    private void init() {
+        super.registerFilter(AbuseCheckFilter.class, "/*");
+        super.registerFilter(ClientExceptionFilter.class, "/*");
+        super.registerFilter(JpaTransactionFilter.class, "/*");
 
-		registerScannedControllers();
-	}
+        registerScannedControllers();
+    }
 
-	public ServletContainerBuilder(Class<? extends AbstractWebApplication> webApp) {
-		super(webApp);
-		init();
-	}
+    public ServletContainerBuilder(Class<? extends AbstractWebApplication> webApp) {
+        super(webApp);
+        init();
+    }
 
-	public ServletContainerBuilder() {
-		this(MockedWebApplication.class);
-	}
+    public ServletContainerBuilder() {
+        this(MockedWebApplication.class);
+    }
 
-	public ServletContainerBuilder registerController(Class<? extends Controller> controllerClass, String name) {
-		return (ServletContainerBuilder) super.registerServlet(controllerClass, String.format("/%s/*", name));
-	}
+    public ServletContainerBuilder registerController(Class<? extends Controller> controllerClass, String name) {
+        return (ServletContainerBuilder) super.registerServlet(controllerClass, String.format("/%s/*", name));
+    }
 
-	public ServletContainerBuilder registerController(Class<? extends Controller> controllerClass) {
-		WebController annotation = controllerClass.getAnnotation(WebController.class);
+    public ServletContainerBuilder registerController(Class<? extends Controller> controllerClass) {
+        WebController annotation = controllerClass.getAnnotation(WebController.class);
 
-		if (annotation == null)
-			throw new IllegalArgumentException(String.format("Missing annotation '%s' for '%s'", WebController.class.getName(), controllerClass.getName()));
+        if (annotation == null)
+            throw new IllegalArgumentException(String.format("Missing annotation '%s' for '%s'", WebController.class.getName(), controllerClass.getName()));
 
-		String name = annotation.value().trim();
+        String name = annotation.value().trim();
 
-		if (name.isEmpty())
-			name = ControllerRegistrationListener.getDefaultMapping(controllerClass);
+        if (name.isEmpty())
+            name = ControllerRegistrationListener.getDefaultMapping(controllerClass);
 
-		registerController(controllerClass, name);
+        registerController(controllerClass, name);
 
-		return this;
-	}
-	// =========================================================================
+        return this;
+    }
+    // =========================================================================
 }

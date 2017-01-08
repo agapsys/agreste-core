@@ -46,279 +46,279 @@ import javax.persistence.EntityManager;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
-	// STATIC SCOPE =============================================================
-	private static TestUtils singleton = null;
+    // STATIC SCOPE =============================================================
+    private static TestUtils singleton = null;
 
-	public static TestUtils getInstance() {
-		if (singleton == null)
-			singleton = new TestUtils();
+    public static TestUtils getInstance() {
+        if (singleton == null)
+            singleton = new TestUtils();
 
-		return singleton;
-	}
+        return singleton;
+    }
 
-	public static class RestEndpoint {
-		private final TestUtils testUtils = getInstance();
-		public final  HttpMethod method;
-		public final  String uri;
+    public static class RestEndpoint {
+        private final TestUtils testUtils = getInstance();
+        public final  HttpMethod method;
+        public final  String uri;
 
-		public RestEndpoint(HttpMethod method, String uri) {
-			if (method == null)
-				throw new IllegalArgumentException("Null HTTP method");
+        public RestEndpoint(HttpMethod method, String uri) {
+            if (method == null)
+                throw new IllegalArgumentException("Null HTTP method");
 
-			if (uri == null || uri.trim().isEmpty())
-				throw new IllegalArgumentException("Null/Empty URI");
+            if (uri == null || uri.trim().isEmpty())
+                throw new IllegalArgumentException("Null/Empty URI");
 
-			this.method = method;
-			this.uri = uri;
-		}
+            this.method = method;
+            this.uri = uri;
+        }
 
-		public HttpRequest getRequest(String params, Object...paramArgs) {
-			if (params == null)
-				params = "";
+        public HttpRequest getRequest(String params, Object...paramArgs) {
+            if (params == null)
+                params = "";
 
-			if (paramArgs.length > 0)
-				params = String.format(params, paramArgs);
+            if (paramArgs.length > 0)
+                params = String.format(params, paramArgs);
 
-			params = params.trim();
+            params = params.trim();
 
-			String finalUri = params.isEmpty() ? uri : String.format("%s?%s", getUri(), params);
+            String finalUri = params.isEmpty() ? uri : String.format("%s?%s", getUri(), params);
 
-			switch (method) {
-				case DELETE:
-					return new HttpDelete(finalUri);
+            switch (method) {
+                case DELETE:
+                    return new HttpDelete(finalUri);
 
-				case GET:
-					return new HttpGet(finalUri);
+                case GET:
+                    return new HttpGet(finalUri);
 
-				case HEAD:
-					return new HttpHead(finalUri);
+                case HEAD:
+                    return new HttpHead(finalUri);
 
-				case OPTIONS:
-					return new HttpOptions(finalUri);
+                case OPTIONS:
+                    return new HttpOptions(finalUri);
 
-				case TRACE:
-					return new HttpTrace(finalUri);
+                case TRACE:
+                    return new HttpTrace(finalUri);
 
-				case PATCH:
-					return testUtils.createObjectRequest(StringEntityPatch.class, null, finalUri);
+                case PATCH:
+                    return testUtils.createObjectRequest(StringEntityPatch.class, null, finalUri);
 
-				case POST:
-					return testUtils.createObjectRequest(StringEntityPost.class, null, finalUri);
+                case POST:
+                    return testUtils.createObjectRequest(StringEntityPost.class, null, finalUri);
 
-				case PUT:
-					return testUtils.createObjectRequest(StringEntityPut.class, null, finalUri);
+                case PUT:
+                    return testUtils.createObjectRequest(StringEntityPut.class, null, finalUri);
 
-				default:
-					throw new UnsupportedOperationException("Unsupported method: " + getMethod().name());
-			}
-		}
+                default:
+                    throw new UnsupportedOperationException("Unsupported method: " + getMethod().name());
+            }
+        }
 
-		public final HttpRequest getRequest() {
-			return getRequest("");
-		}
+        public final HttpRequest getRequest() {
+            return getRequest("");
+        }
 
-		public HttpMethod getMethod() {
-			return method;
-		}
+        public HttpMethod getMethod() {
+            return method;
+        }
 
-		public String getUri() {
-			return uri;
-		}
+        public String getUri() {
+            return uri;
+        }
 
-		@Override
-		public String toString() {
-			return String.format("%s %s", method.name(), uri);
-		}
-	}
+        @Override
+        public String toString() {
+            return String.format("%s %s", method.name(), uri);
+        }
+    }
 
-	public static class EntityRestEndpoint extends RestEndpoint {
-		private final TestUtils testUtils = getInstance();
+    public static class EntityRestEndpoint extends RestEndpoint {
+        private final TestUtils testUtils = getInstance();
 
-		private HttpObjectSerializer serializer;
+        private HttpObjectSerializer serializer;
 
-		private boolean isEntityMethod(HttpMethod method) {
-			switch(method) {
-				case POST:
-				case PUT:
-				case PATCH:
-					return true;
-			}
+        private boolean isEntityMethod(HttpMethod method) {
+            switch(method) {
+                case POST:
+                case PUT:
+                case PATCH:
+                    return true;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		public EntityRestEndpoint(HttpMethod method, HttpObjectSerializer serializer, String uri) {
-			super(method, uri);
+        public EntityRestEndpoint(HttpMethod method, HttpObjectSerializer serializer, String uri) {
+            super(method, uri);
 
-			if (!isEntityMethod(method))
-				throw new UnsupportedOperationException("Unsupported method: " + method.name());
+            if (!isEntityMethod(method))
+                throw new UnsupportedOperationException("Unsupported method: " + method.name());
 
-			if (serializer == null)
-				throw new IllegalArgumentException("Serializer cannot be null");
+            if (serializer == null)
+                throw new IllegalArgumentException("Serializer cannot be null");
 
-			this.serializer = serializer;
-		}
+            this.serializer = serializer;
+        }
 
-		public EntityRestEndpoint(HttpMethod method, String uri) {
-			this(method, HttpExchange.DEFAULT_SERIALIZER, uri);
-		}
+        public EntityRestEndpoint(HttpMethod method, String uri) {
+            this(method, HttpExchange.DEFAULT_SERIALIZER, uri);
+        }
 
-		public HttpObjectSerializer getSerializer() {
-			return serializer;
-		}
+        public HttpObjectSerializer getSerializer() {
+            return serializer;
+        }
 
-		public HttpRequest getRequest(Object dto, String uriParams, Object...uriParamArgs) {
-			if (uriParams == null)
-				uriParams = "";
+        public HttpRequest getRequest(Object dto, String uriParams, Object...uriParamArgs) {
+            if (uriParams == null)
+                uriParams = "";
 
-			if (uriParamArgs.length > 0)
-				uriParams = String.format(uriParams, uriParamArgs);
+            if (uriParamArgs.length > 0)
+                uriParams = String.format(uriParams, uriParamArgs);
 
-			uriParams = uriParams.trim();
+            uriParams = uriParams.trim();
 
-			String finalUri = uriParams.isEmpty() ? getUri() : String.format("%s?%s", getUri(), uriParams);
+            String finalUri = uriParams.isEmpty() ? getUri() : String.format("%s?%s", getUri(), uriParams);
 
-			Class<? extends StringEntityRequest> requestClass;
-			switch (getMethod()) {
-				case POST:
-					requestClass = StringEntityRequest.StringEntityPost.class;
-					break;
-				case PUT:
-					requestClass = StringEntityRequest.StringEntityPut.class;
-					break;
+            Class<? extends StringEntityRequest> requestClass;
+            switch (getMethod()) {
+                case POST:
+                    requestClass = StringEntityRequest.StringEntityPost.class;
+                    break;
+                case PUT:
+                    requestClass = StringEntityRequest.StringEntityPut.class;
+                    break;
 
-				case PATCH:
-					requestClass = StringEntityRequest.StringEntityPatch.class;
-					break;
+                case PATCH:
+                    requestClass = StringEntityRequest.StringEntityPatch.class;
+                    break;
 
-				default:
-					throw new UnsupportedOperationException("Unsupported method: " + getMethod().name());
-			}
+                default:
+                    throw new UnsupportedOperationException("Unsupported method: " + getMethod().name());
+            }
 
-			return testUtils.createObjectRequest(getSerializer(), requestClass, dto, finalUri);
-		}
+            return testUtils.createObjectRequest(getSerializer(), requestClass, dto, finalUri);
+        }
 
-		public HttpRequest getRequest(Object dto) {
-			return getRequest(dto, "");
-		}
-	}
-	// =========================================================================
+        public HttpRequest getRequest(Object dto) {
+            return getRequest(dto, "");
+        }
+    }
+    // =========================================================================
 
-	// INSTANCE SCOPE ==========================================================
-	protected TestUtils() {}
+    // INSTANCE SCOPE ==========================================================
+    protected TestUtils() {}
 
-	/**
-	 * Creates a {@linkplain StringEntityRequest}
-	 * @param <T> Type of returned request
-	 * @param requestClass {@linkplain StringEntityRequest} subclass
-	 * @param serializer object serializer
-	 * @param obj object to be serialized and added to request
-	 * @param uri request URI
-	 * @param uriParams optional request URI parameters
-	 * @return request containing given object
-	 */
-	public <T extends StringEntityRequest> T createObjectRequest(HttpObjectSerializer serializer, Class<T> requestClass, Object obj, String uri, Object...uriParams) {
-		try {
-			Constructor c = requestClass.getConstructor(String.class, String.class, String.class, Object[].class);
-			T t = (T) c.newInstance(serializer.getContentType(), serializer.getCharset(), uri, uriParams);
+    /**
+     * Creates a {@linkplain StringEntityRequest}
+     * @param <T> Type of returned request
+     * @param requestClass {@linkplain StringEntityRequest} subclass
+     * @param serializer object serializer
+     * @param obj object to be serialized and added to request
+     * @param uri request URI
+     * @param uriParams optional request URI parameters
+     * @return request containing given object
+     */
+    public <T extends StringEntityRequest> T createObjectRequest(HttpObjectSerializer serializer, Class<T> requestClass, Object obj, String uri, Object...uriParams) {
+        try {
+            Constructor c = requestClass.getConstructor(String.class, String.class, String.class, Object[].class);
+            T t = (T) c.newInstance(serializer.getContentType(), serializer.getCharset(), uri, uriParams);
 
-			if (obj != null)
-				t.setContentBody(serializer.toString(obj));
+            if (obj != null)
+                t.setContentBody(serializer.toString(obj));
 
-			return t;
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException |IllegalArgumentException | InvocationTargetException ex) {
-			throw new RuntimeException(ex);
-		}
+            return t;
+        } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException |IllegalArgumentException | InvocationTargetException ex) {
+            throw new RuntimeException(ex);
+        }
 
-	}
+    }
 
-	public final <T extends StringEntityRequest> T createObjectRequest(Class<T> requestClass, Object obj, String uri, Object...uriParams) {
-		return createObjectRequest(HttpExchange.DEFAULT_SERIALIZER, requestClass, obj, uri, uriParams);
-	}
+    public final <T extends StringEntityRequest> T createObjectRequest(Class<T> requestClass, Object obj, String uri, Object...uriParams) {
+        return createObjectRequest(HttpExchange.DEFAULT_SERIALIZER, requestClass, obj, uri, uriParams);
+    }
 
-	/**
-	 * Read an object from a {@linkplain StringResponse}.
-	 * @param <T> type of object to be read
-	 * @param objClass object class
-	 * @param serializer object serializer used when reading the response
-	 * @param resp server response
-	 * @return read object.
-	 */
-	public <T> T readObjectResponse(HttpObjectSerializer serializer, Class<T> objClass, StringResponse resp) {
-		try {
-			return (T) serializer.readObject(resp.getContentInputStream(), serializer.getCharset(), objClass);
-		} catch (IOException | SerializerException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
+    /**
+     * Read an object from a {@linkplain StringResponse}.
+     * @param <T> type of object to be read
+     * @param objClass object class
+     * @param serializer object serializer used when reading the response
+     * @param resp server response
+     * @return read object.
+     */
+    public <T> T readObjectResponse(HttpObjectSerializer serializer, Class<T> objClass, StringResponse resp) {
+        try {
+            return (T) serializer.readObject(resp.getContentInputStream(), serializer.getCharset(), objClass);
+        } catch (IOException | SerializerException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
-	public final <T> T readObjectResponse(Class<T> objClass, StringResponse resp) {
-		return readObjectResponse(HttpExchange.DEFAULT_SERIALIZER, objClass, resp);
-	}
+    public final <T> T readObjectResponse(Class<T> objClass, StringResponse resp) {
+        return readObjectResponse(HttpExchange.DEFAULT_SERIALIZER, objClass, resp);
+    }
 
-	/**
-	 * Reads a JSON list from given response.
-	 * @param <E> List element type
-	 * @param jsonSerializer JSON serializer.
-	 * @param elementClass List element class.
-	 * @param resp server response
-	 * @return JSON list contained in given response.
-	 */
-	public <E> List<E> readJsonList(JsonHttpSerializer jsonSerializer, Class<E> elementClass, StringResponse resp) {
-		try {
-			return jsonSerializer.getJsonList(resp.getContentInputStream(), "utf-8", elementClass);
-		} catch (IOException | SerializerException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
+    /**
+     * Reads a JSON list from given response.
+     * @param <E> List element type
+     * @param jsonSerializer JSON serializer.
+     * @param elementClass List element class.
+     * @param resp server response
+     * @return JSON list contained in given response.
+     */
+    public <E> List<E> readJsonList(JsonHttpSerializer jsonSerializer, Class<E> elementClass, StringResponse resp) {
+        try {
+            return jsonSerializer.getJsonList(resp.getContentInputStream(), "utf-8", elementClass);
+        } catch (IOException | SerializerException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
-	/**
-	 * Reads a JSON list from given response.
-	 * @param <E> List element type
-	 * @param elementClass List element class.
-	 * @param resp server response
-	 * @return JSON list contained in given response.
-	 */
-	public final <E> List<E> readJsonList(Class<E> elementClass, StringResponse resp) {
-		return readJsonList((JsonHttpSerializer)HttpExchange.DEFAULT_SERIALIZER, elementClass, resp);
-	}
+    /**
+     * Reads a JSON list from given response.
+     * @param <E> List element type
+     * @param elementClass List element class.
+     * @param resp server response
+     * @return JSON list contained in given response.
+     */
+    public final <E> List<E> readJsonList(Class<E> elementClass, StringResponse resp) {
+        return readJsonList((JsonHttpSerializer)HttpExchange.DEFAULT_SERIALIZER, elementClass, resp);
+    }
 
-	@Override
-	public void println(String msg, Object...msgArgs) {
-		println(ConsoleColor.MAGENTA, msg, msgArgs);
-	}
+    @Override
+    public void println(String msg, Object...msgArgs) {
+        println(ConsoleColor.MAGENTA, msg, msgArgs);
+    }
 
-	@Override
-	public void print(String msg, Object...msgArgs) {
-		print(ConsoleColor.MAGENTA, msg, msgArgs);
-	}
+    @Override
+    public void print(String msg, Object...msgArgs) {
+        print(ConsoleColor.MAGENTA, msg, msgArgs);
+    }
 
-	/**
-	 * Prints a colored message to console.
-	 * @param fgColor foreground color
-	 * @param msg message to be print
-	 * @param msgArgs optional message arguments
-	 */
-	public void println(ConsoleColor fgColor, String msg, Object...msgArgs) {
-		ConsolePrinter.println(fgColor, msg, msgArgs);
-	}
+    /**
+     * Prints a colored message to console.
+     * @param fgColor foreground color
+     * @param msg message to be print
+     * @param msgArgs optional message arguments
+     */
+    public void println(ConsoleColor fgColor, String msg, Object...msgArgs) {
+        ConsolePrinter.println(fgColor, msg, msgArgs);
+    }
 
-	/**
-	 * Prints a colored message to console.
-	 * @param fgColor foreground color
-	 * @param msg message to be print
-	 * @param msgArgs optional message arguments
-	 */
-	public void print(ConsoleColor fgColor, String msg, Object...msgArgs) {
-		ConsolePrinter.print(fgColor, msg, msgArgs);
-	}
+    /**
+     * Prints a colored message to console.
+     * @param fgColor foreground color
+     * @param msg message to be print
+     * @param msgArgs optional message arguments
+     */
+    public void print(ConsoleColor fgColor, String msg, Object...msgArgs) {
+        ConsolePrinter.print(fgColor, msg, msgArgs);
+    }
 
-	/**
-	 * Returns an {@linkplain EntityManager} provided by {@linkplain PersistenceModule} registered with running application.
-	 * @return {@linkplain EntityManager} instance. Do not forget to close it after use in order to avoid resource leakage.
-	 */
-	public EntityManager getApplicationEntityManager() {
-		return getApplicationModule(PersistenceModule.class).getEntityManager();
-	}
-	// =========================================================================
+    /**
+     * Returns an {@linkplain EntityManager} provided by {@linkplain PersistenceModule} registered with running application.
+     * @return {@linkplain EntityManager} instance. Do not forget to close it after use in order to avoid resource leakage.
+     */
+    public EntityManager getApplicationEntityManager() {
+        return getApplicationModule(PersistenceModule.class).getEntityManager();
+    }
+    // =========================================================================
 }

@@ -38,271 +38,271 @@ import javax.persistence.metamodel.Metamodel;
  * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class EntityManagerWrapper implements EntityManager {
-	private final EntityManager wrappedEntityManager;
+    private final EntityManager wrappedEntityManager;
 
-	/**
-	 * Constructor.
-	 * @param wrappedEntityManager wrapped instance.
-	 */
-	public EntityManagerWrapper(EntityManager wrappedEntityManager) {
-		if (wrappedEntityManager == null)
-			throw new IllegalArgumentException("Null entityManager");
-		
-		this.wrappedEntityManager = wrappedEntityManager;
-	}
+    /**
+     * Constructor.
+     * @param wrappedEntityManager wrapped instance.
+     */
+    public EntityManagerWrapper(EntityManager wrappedEntityManager) {
+        if (wrappedEntityManager == null)
+            throw new IllegalArgumentException("Null entityManager");
+        
+        this.wrappedEntityManager = wrappedEntityManager;
+    }
 
-	@Override
-	public void persist(Object entity) {
-		wrappedEntityManager.persist(entity);
-	}
+    @Override
+    public void persist(Object entity) {
+        wrappedEntityManager.persist(entity);
+    }
 
-	@Override
-	public <T> T merge(T entity) {
-		return wrappedEntityManager.merge(entity);
-	}
+    @Override
+    public <T> T merge(T entity) {
+        return wrappedEntityManager.merge(entity);
+    }
 
-	@Override
-	public void remove(Object entity) {
-		wrappedEntityManager.remove(entity);
-	}
+    @Override
+    public void remove(Object entity) {
+        wrappedEntityManager.remove(entity);
+    }
 
-	@Override
-	public <T> T find(Class<T> entityClass, Object primaryKey) {
-		return wrappedEntityManager.find(entityClass, primaryKey);
-	}
+    @Override
+    public <T> T find(Class<T> entityClass, Object primaryKey) {
+        return wrappedEntityManager.find(entityClass, primaryKey);
+    }
 
-	@Override
-	public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {
-		return wrappedEntityManager.find(entityClass, primaryKey, properties);
-	}
+    @Override
+    public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {
+        return wrappedEntityManager.find(entityClass, primaryKey, properties);
+    }
 
-	@Override
-	public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode) {
-		return wrappedEntityManager.find(entityClass, primaryKey, lockMode);
-	}
+    @Override
+    public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode) {
+        return wrappedEntityManager.find(entityClass, primaryKey, lockMode);
+    }
 
-	@Override
-	public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
-		return wrappedEntityManager.find(entityClass, primaryKey, lockMode, properties);
-	}
+    @Override
+    public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
+        return wrappedEntityManager.find(entityClass, primaryKey, lockMode, properties);
+    }
 
-	@Override
-	public <T> T getReference(Class<T> entityClass, Object primaryKey) {
-		return wrappedEntityManager.getReference(entityClass, primaryKey);
-	}
+    @Override
+    public <T> T getReference(Class<T> entityClass, Object primaryKey) {
+        return wrappedEntityManager.getReference(entityClass, primaryKey);
+    }
 
-	@Override
-	public void flush() {
-		wrappedEntityManager.flush();
-	}
+    @Override
+    public void flush() {
+        wrappedEntityManager.flush();
+    }
 
-	@Override
-	public void setFlushMode(FlushModeType flushMode) {
-		wrappedEntityManager.setFlushMode(flushMode);
-	}
+    @Override
+    public void setFlushMode(FlushModeType flushMode) {
+        wrappedEntityManager.setFlushMode(flushMode);
+    }
 
-	@Override
-	public FlushModeType getFlushMode() {
-		return wrappedEntityManager.getFlushMode();
-	}
+    @Override
+    public FlushModeType getFlushMode() {
+        return wrappedEntityManager.getFlushMode();
+    }
 
-	@Override
-	public void lock(Object entity, LockModeType lockMode) {
-		wrappedEntityManager.lock(entity, lockMode);
-	}
+    @Override
+    public void lock(Object entity, LockModeType lockMode) {
+        wrappedEntityManager.lock(entity, lockMode);
+    }
 
-	@Override
-	public void lock(Object entity, LockModeType lockMode, Map<String, Object> properties) {
-		wrappedEntityManager.lock(entity, lockMode, properties);
-	}
+    @Override
+    public void lock(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+        wrappedEntityManager.lock(entity, lockMode, properties);
+    }
 
-	@Override
-	public void refresh(Object entity) {
-		wrappedEntityManager.refresh(entity);
-	}
+    @Override
+    public void refresh(Object entity) {
+        wrappedEntityManager.refresh(entity);
+    }
 
-	@Override
-	public void refresh(Object entity, Map<String, Object> properties) {
-		wrappedEntityManager.refresh(entity, properties);
-	}
+    @Override
+    public void refresh(Object entity, Map<String, Object> properties) {
+        wrappedEntityManager.refresh(entity, properties);
+    }
 
-	@Override
-	public void refresh(Object entity, LockModeType lockMode) {
-		wrappedEntityManager.refresh(entity, lockMode);
-	}
+    @Override
+    public void refresh(Object entity, LockModeType lockMode) {
+        wrappedEntityManager.refresh(entity, lockMode);
+    }
 
-	@Override
-	public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties) {
-		wrappedEntityManager.refresh(entity, lockMode, properties);
-	}
+    @Override
+    public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+        wrappedEntityManager.refresh(entity, lockMode, properties);
+    }
 
-	@Override
-	public void clear() {
-		wrappedEntityManager.clear();
-	}
+    @Override
+    public void clear() {
+        wrappedEntityManager.clear();
+    }
 
-	@Override
-	public void detach(Object entity) {
-		wrappedEntityManager.detach(entity);
-	}
+    @Override
+    public void detach(Object entity) {
+        wrappedEntityManager.detach(entity);
+    }
 
-	@Override
-	public boolean contains(Object entity) {
-		return wrappedEntityManager.contains(entity);
-	}
+    @Override
+    public boolean contains(Object entity) {
+        return wrappedEntityManager.contains(entity);
+    }
 
-	@Override
-	public LockModeType getLockMode(Object entity) {
-		return wrappedEntityManager.getLockMode(entity);
-	}
+    @Override
+    public LockModeType getLockMode(Object entity) {
+        return wrappedEntityManager.getLockMode(entity);
+    }
 
-	@Override
-	public void setProperty(String propertyName, Object value) {
-		wrappedEntityManager.setProperty(propertyName, value);
-	}
+    @Override
+    public void setProperty(String propertyName, Object value) {
+        wrappedEntityManager.setProperty(propertyName, value);
+    }
 
-	@Override
-	public Map<String, Object> getProperties() {
-		return wrappedEntityManager.getProperties();
-	}
+    @Override
+    public Map<String, Object> getProperties() {
+        return wrappedEntityManager.getProperties();
+    }
 
-	@Override
-	public Query createQuery(String qlString) {
-		return wrappedEntityManager.createQuery(qlString);
-	}
+    @Override
+    public Query createQuery(String qlString) {
+        return wrappedEntityManager.createQuery(qlString);
+    }
 
-	@Override
-	public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
-		return wrappedEntityManager.createQuery(criteriaQuery);
-	}
+    @Override
+    public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
+        return wrappedEntityManager.createQuery(criteriaQuery);
+    }
 
-	@Override
-	public Query createQuery(CriteriaUpdate updateQuery) {
-		return wrappedEntityManager.createQuery(updateQuery);
-	}
+    @Override
+    public Query createQuery(CriteriaUpdate updateQuery) {
+        return wrappedEntityManager.createQuery(updateQuery);
+    }
 
-	@Override
-	public Query createQuery(CriteriaDelete deleteQuery) {
-		return wrappedEntityManager.createQuery(deleteQuery);
-	}
+    @Override
+    public Query createQuery(CriteriaDelete deleteQuery) {
+        return wrappedEntityManager.createQuery(deleteQuery);
+    }
 
-	@Override
-	public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
-		return wrappedEntityManager.createQuery(qlString, resultClass);
-	}
+    @Override
+    public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
+        return wrappedEntityManager.createQuery(qlString, resultClass);
+    }
 
-	@Override
-	public Query createNamedQuery(String name) {
-		return wrappedEntityManager.createNamedQuery(name);
-	}
+    @Override
+    public Query createNamedQuery(String name) {
+        return wrappedEntityManager.createNamedQuery(name);
+    }
 
-	@Override
-	public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
-		return wrappedEntityManager.createNamedQuery(name, resultClass);
-	}
+    @Override
+    public <T> TypedQuery<T> createNamedQuery(String name, Class<T> resultClass) {
+        return wrappedEntityManager.createNamedQuery(name, resultClass);
+    }
 
-	@Override
-	public Query createNativeQuery(String sqlString) {
-		return wrappedEntityManager.createNativeQuery(sqlString);
-	}
+    @Override
+    public Query createNativeQuery(String sqlString) {
+        return wrappedEntityManager.createNativeQuery(sqlString);
+    }
 
-	@Override
-	public Query createNativeQuery(String sqlString, Class resultClass) {
-		return wrappedEntityManager.createNativeQuery(sqlString, resultClass);
-	}
+    @Override
+    public Query createNativeQuery(String sqlString, Class resultClass) {
+        return wrappedEntityManager.createNativeQuery(sqlString, resultClass);
+    }
 
-	@Override
-	public Query createNativeQuery(String sqlString, String resultSetMapping) {
-		return wrappedEntityManager.createNativeQuery(sqlString, resultSetMapping);
-	}
+    @Override
+    public Query createNativeQuery(String sqlString, String resultSetMapping) {
+        return wrappedEntityManager.createNativeQuery(sqlString, resultSetMapping);
+    }
 
-	@Override
-	public StoredProcedureQuery createNamedStoredProcedureQuery(String name) {
-		return wrappedEntityManager.createNamedStoredProcedureQuery(name);
-	}
+    @Override
+    public StoredProcedureQuery createNamedStoredProcedureQuery(String name) {
+        return wrappedEntityManager.createNamedStoredProcedureQuery(name);
+    }
 
-	@Override
-	public StoredProcedureQuery createStoredProcedureQuery(String procedureName) {
-		return wrappedEntityManager.createStoredProcedureQuery(procedureName);
-	}
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(String procedureName) {
+        return wrappedEntityManager.createStoredProcedureQuery(procedureName);
+    }
 
-	@Override
-	public StoredProcedureQuery createStoredProcedureQuery(String procedureName, Class... resultClasses) {
-		return wrappedEntityManager.createStoredProcedureQuery(procedureName, resultClasses);
-	}
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(String procedureName, Class... resultClasses) {
+        return wrappedEntityManager.createStoredProcedureQuery(procedureName, resultClasses);
+    }
 
-	@Override
-	public StoredProcedureQuery createStoredProcedureQuery(String procedureName, String... resultSetMappings) {
-		return wrappedEntityManager.createStoredProcedureQuery(procedureName, resultSetMappings);
-	}
+    @Override
+    public StoredProcedureQuery createStoredProcedureQuery(String procedureName, String... resultSetMappings) {
+        return wrappedEntityManager.createStoredProcedureQuery(procedureName, resultSetMappings);
+    }
 
-	@Override
-	public void joinTransaction() {
-		wrappedEntityManager.joinTransaction();
-	}
+    @Override
+    public void joinTransaction() {
+        wrappedEntityManager.joinTransaction();
+    }
 
-	@Override
-	public boolean isJoinedToTransaction() {
-		return wrappedEntityManager.isJoinedToTransaction();
-	}
+    @Override
+    public boolean isJoinedToTransaction() {
+        return wrappedEntityManager.isJoinedToTransaction();
+    }
 
-	@Override
-	public <T> T unwrap(Class<T> cls) {
-		return wrappedEntityManager.unwrap(cls);
-	}
+    @Override
+    public <T> T unwrap(Class<T> cls) {
+        return wrappedEntityManager.unwrap(cls);
+    }
 
-	@Override
-	public Object getDelegate() {
-		return wrappedEntityManager.getDelegate();
-	}
+    @Override
+    public Object getDelegate() {
+        return wrappedEntityManager.getDelegate();
+    }
 
-	@Override
-	public void close() {
-		wrappedEntityManager.close();
-	}
+    @Override
+    public void close() {
+        wrappedEntityManager.close();
+    }
 
-	@Override
-	public boolean isOpen() {
-		return wrappedEntityManager.isOpen();
-	}
+    @Override
+    public boolean isOpen() {
+        return wrappedEntityManager.isOpen();
+    }
 
-	@Override
-	public EntityTransaction getTransaction() {
-		return wrappedEntityManager.getTransaction();
-	}
+    @Override
+    public EntityTransaction getTransaction() {
+        return wrappedEntityManager.getTransaction();
+    }
 
-	@Override
-	public EntityManagerFactory getEntityManagerFactory() {
-		return wrappedEntityManager.getEntityManagerFactory();
-	}
+    @Override
+    public EntityManagerFactory getEntityManagerFactory() {
+        return wrappedEntityManager.getEntityManagerFactory();
+    }
 
-	@Override
-	public CriteriaBuilder getCriteriaBuilder() {
-		return wrappedEntityManager.getCriteriaBuilder();
-	}
+    @Override
+    public CriteriaBuilder getCriteriaBuilder() {
+        return wrappedEntityManager.getCriteriaBuilder();
+    }
 
-	@Override
-	public Metamodel getMetamodel() {
-		return wrappedEntityManager.getMetamodel();
-	}
+    @Override
+    public Metamodel getMetamodel() {
+        return wrappedEntityManager.getMetamodel();
+    }
 
-	@Override
-	public <T> EntityGraph<T> createEntityGraph(Class<T> rootType) {
-		return wrappedEntityManager.createEntityGraph(rootType);
-	}
+    @Override
+    public <T> EntityGraph<T> createEntityGraph(Class<T> rootType) {
+        return wrappedEntityManager.createEntityGraph(rootType);
+    }
 
-	@Override
-	public EntityGraph<?> createEntityGraph(String graphName) {
-		return wrappedEntityManager.createEntityGraph(graphName);
-	}
+    @Override
+    public EntityGraph<?> createEntityGraph(String graphName) {
+        return wrappedEntityManager.createEntityGraph(graphName);
+    }
 
-	@Override
-	public EntityGraph<?> getEntityGraph(String graphName) {
-		return wrappedEntityManager.getEntityGraph(graphName);
-	}
+    @Override
+    public EntityGraph<?> getEntityGraph(String graphName) {
+        return wrappedEntityManager.getEntityGraph(graphName);
+    }
 
-	@Override
-	public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) {
-		return wrappedEntityManager.getEntityGraphs(entityClass);
-	}
+    @Override
+    public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) {
+        return wrappedEntityManager.getEntityGraphs(entityClass);
+    }
 }
