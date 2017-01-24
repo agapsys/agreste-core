@@ -19,7 +19,7 @@ import com.agapsys.agreste.app.controllers.UserController;
 import com.agapsys.agreste.app.entities.User.UserDto;
 import com.agapsys.agreste.test.AgresteContainer;
 import com.agapsys.agreste.test.TestUtils;
-import com.agapsys.agreste.test.TestUtils.RestEndpoint;
+import com.agapsys.agreste.test.TestUtils.RequestEndpoint;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.http.utils.Pair;
@@ -62,7 +62,7 @@ public class AppTest {
     }
 
     public static LoginInfo doLogin(AgresteContainer ac, String username, String password) {
-        RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
+        RequestEndpoint endpoint = new RequestEndpoint(HttpMethod.GET, "/user/login");
         HttpClient client = new HttpClient();
         StringResponse resp = ac.doRequest(client, endpoint.getRequest("username=%s&password=%s", username, password));
         return new LoginInfo(client, resp);
@@ -91,7 +91,7 @@ public class AppTest {
 
     @Test
     public void testLogin() {
-        RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/login");
+        RequestEndpoint endpoint = new RequestEndpoint(HttpMethod.GET, "/user/login");
         TestUtils.println(endpoint.toString());
 
         HttpClient client = new HttpClient();
@@ -112,7 +112,7 @@ public class AppTest {
 
     @Test
     public void testSecuredAction() {
-        RestEndpoint endpoint = new RestEndpoint(HttpMethod.GET, "/user/me");
+        RequestEndpoint endpoint = new RequestEndpoint(HttpMethod.GET, "/user/me");
         TestUtils.println(endpoint.toString());
 
         StringResponse resp;
@@ -130,7 +130,7 @@ public class AppTest {
         loginInfo.getClient().addDefaultHeader(Controller.CSRF_HEADER, loginInfo.getResponse().getFirstHeader(Controller.CSRF_HEADER).getValue());
         resp = ac.doRequest(loginInfo.getClient(), endpoint.getRequest());
         TestUtils.assertStatus(200, resp);
-        UserDto dto = TestUtils.readJsonResponse(UserDto.class, resp);
+        UserDto dto = TestUtils.readJsonObject(UserDto.class, resp);
         Assert.assertEquals("username", dto.username);
     }
     // =========================================================================

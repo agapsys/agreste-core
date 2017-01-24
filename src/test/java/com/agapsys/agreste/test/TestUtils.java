@@ -55,11 +55,11 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
             return false;
         }
 
-    public static class RestEndpoint {
+    public static class RequestEndpoint {
         public final  HttpMethod method;
         public final  String uri;
 
-        public RestEndpoint(HttpMethod method, String uri) {
+        public RequestEndpoint(HttpMethod method, String uri) {
             if (method == null)
                 throw new IllegalArgumentException("Null HTTP method");
 
@@ -123,9 +123,9 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
         }
     }
 
-    public static class JsonEndpoint extends RestEndpoint {
+    public static class JsonRequestEndpoint extends RequestEndpoint {
 
-        public JsonEndpoint(HttpMethod method, String uri) {
+        public JsonRequestEndpoint(HttpMethod method, String uri) {
             super(method, uri);
 
             if (!__isEntityMethod(method))
@@ -182,7 +182,7 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
         }
     }
 
-    public static <T> T readJsonResponse(Class<T> objClass, StringResponse resp) {
+    public static <T> T readJsonObject(Class<T> objClass, StringResponse resp) {
         try {
             return JsonRequest.readObject(new InputStreamReader(resp.getContentInputStream()), objClass);
         } catch (IOException ex) {
