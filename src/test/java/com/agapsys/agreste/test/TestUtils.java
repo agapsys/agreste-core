@@ -26,6 +26,7 @@ import com.agapsys.http.HttpTrace;
 import com.agapsys.http.StringEntityRequest;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.JsonRequest;
+import com.agapsys.rcf.JsonResponse;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
@@ -173,7 +174,7 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
             R r = (R) c.newInstance(JsonRequest.JSON_CONTENT_TYPE, JsonRequest.JSON_ENCODING, uri, uriParams);
 
             if (obj != null)
-                r.setContentBody(JsonRequest.toJson(obj));
+                r.setContentBody(JsonResponse.toJson(obj));
 
             return r;
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException |IllegalArgumentException | InvocationTargetException ex) {
