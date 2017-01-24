@@ -18,13 +18,12 @@ package com.agapsys.agreste.app;
 
 import com.agapsys.agreste.AbuseCheckFilter;
 import com.agapsys.agreste.test.MockedWebApplication;
-import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
 import com.agapsys.http.HttpResponse.StringResponse;
+import com.agapsys.jee.ServletContainer;
 import com.agapsys.rcf.exceptions.RateLimitingException;
-import com.agapsys.sevlet.container.ServletContainer;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
 import com.agapsys.utils.console.printer.FormatEscapeBuilder;
@@ -47,7 +46,7 @@ public class AbuseCheckTest {
     // Utility methods ---------------------------------------------------------
     private static void pause(long millis) {
         final Object sync = new Object();
-        
+
         synchronized(sync) {
             try {
                 sync.wait(millis);
@@ -56,35 +55,35 @@ public class AbuseCheckTest {
             }
         }
     }
-    
+
     private static void assertStatus(int expected, StringResponse resp) {
         if (resp.getStatusCode() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
             System.out.println(resp.getContentString());
         }
-        
+
         Assert.assertEquals(expected, resp.getStatusCode());
     }
-    
+
     private static void println(ConsoleColor fgColor, String message, Object...args) {
         if (args.length > 0)
             message = String.format(message, args);
-        
+
         FormatEscapeBuilder feb = new FormatEscapeBuilder().setFgColor(fgColor);
         message = feb.toString(message);
         ConsolePrinter.println(message);
     }
     // -------------------------------------------------------------------------
-    
+
     @BeforeClass
     public static void beforeClass() {
         System.out.println(String.format("=== %s ===", AbuseCheckTest.class.getSimpleName()));
     }
-    
+
     @AfterClass
     public static void afterClass() {
         System.out.println();
     }
-    
+
     // Classes -----------------------------------------------------------------
     @WebListener
     public static class TestApplication extends MockedWebApplication {
@@ -92,7 +91,7 @@ public class AbuseCheckTest {
         public static final long ABUSE_INTERVAL = 500;
         public static final int  ABUSE_COUNT_LIMIT = 3;
         // =====================================================================
-        
+
         // INSTANCE SCOPE ======================================================
         private boolean abuseCheckEnabled = true;
 
@@ -110,16 +109,16 @@ public class AbuseCheckTest {
         protected void afterApplicationStart() {
             println(ConsoleColor.CYAN, "Application directory: %s", getDirectory());
         }
-        
+
         public void enableAbuseCheck(boolean enabled) {
             this.abuseCheckEnabled = enabled;
         }
-        
+
         @Override
         public boolean isAbuseCheckEnabled() {
             return abuseCheckEnabled;
         }
-        
+
         @Override
         public String getName() {
             return "ABUSE-CHECK-TEST";
@@ -131,7 +130,7 @@ public class AbuseCheckTest {
         }
         // =====================================================================
     }
-    
+
     @WebServlet("/*")
     public static class TestServlet extends HttpServlet {
 
@@ -151,17 +150,17 @@ public class AbuseCheckTest {
             .registerServlet(TestServlet.class)
             .registerFilter(AbuseCheckFilter.class, "/*")
             .build();
-        
-        sc.startServer();
+
+        sc.start();
         app = (TestApplication) TestApplication.getRunningInstance();
     }
-    
+
     @After
     public void after() throws IOException {
-        sc.stopServer();
+        sc.stop();
         app = null;
     }
-    
+
     @Test
     public void testAbuseCheck() {
         HttpClient client;
@@ -172,58 +171,58 @@ public class AbuseCheckTest {
             assertStatus(HttpServletResponse.SC_UNAUTHORIZED, resp);
         }
         // ---------------------------------------------------------------------
-        
+
         // Detecting abuse (with session cookie) -------------------------------
         client = new HttpClient();
-        
+
         for (int i = 0; i < TestApplication.ABUSE_COUNT_LIMIT + 1; i++) {
             HttpResponse.StringResponse resp = sc.doRequest(client, new HttpGet("/"));
             if (i == 0)
                 assertStatus(HttpServletResponse.SC_UNAUTHORIZED, resp);
-                
+
             if (i > 0 && i < TestApplication.ABUSE_COUNT_LIMIT)
                 assertStatus(HttpServletResponse.SC_OK, resp);
-            
+
             if (i > TestApplication.ABUSE_COUNT_LIMIT)
                 assertStatus(RateLimitingException.CODE, resp);
         }
         // ---------------------------------------------------------------------
-        
+
         // By-passing abuse (without session cookie) ---------------------------
         app.enableAbuseCheck(false);
-        
+
         for (int i = 0; i < TestApplication.ABUSE_COUNT_LIMIT + 1; i++) {
             HttpResponse.StringResponse resp = sc.doRequest(new HttpGet("/"));
             assertStatus(HttpServletResponse.SC_OK, resp);
         }
-        
+
         app.enableAbuseCheck(true);
         // ---------------------------------------------------------------------
-        
+
         // By-passing abuse (with session cookie) ---------------------------
         client = new HttpClient();
 
         app.enableAbuseCheck(false);
-        
+
         for (int i = 0; i < TestApplication.ABUSE_COUNT_LIMIT + 1; i++) {
             HttpResponse.StringResponse resp = sc.doRequest(client, new HttpGet("/"));
             assertStatus(HttpServletResponse.SC_OK, resp);
         }
-        
+
         app.enableAbuseCheck(true);
         // ---------------------------------------------------------------------
-        
+
         // By-passing abuse (with pauses) --------------------------------------
         client = new HttpClient();
-        
+
         for (int i = 0; i < TestApplication.ABUSE_COUNT_LIMIT + 5; i++) {
             HttpResponse.StringResponse resp = sc.doRequest(client, new HttpGet("/"));
             println(ConsoleColor.MAGENTA, "Pausing in order to pass abuse check filter...");
             pause(TestApplication.ABUSE_INTERVAL);
-            
+
             if (i == 0)
                 assertStatus(HttpServletResponse.SC_UNAUTHORIZED, resp);
-                
+
             if (i > 0)
                 assertStatus(HttpServletResponse.SC_OK, resp);
         }

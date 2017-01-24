@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ * Copyright 2016-2017 Agapsys Tecnologia Ltda-ME.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.agapsys.agreste.AgresteApplication;
 import com.agapsys.web.toolkit.modules.LogModule;
 import com.agapsys.web.toolkit.modules.LogModule.ConsoleLogStream;
 import com.agapsys.web.toolkit.utils.FileUtils;
+import com.agapsys.web.toolkit.utils.Settings;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import javax.servlet.annotation.WebListener;
 
 @WebListener
 public class MockedWebApplication extends AgresteApplication {
-    private File appFolder = null;
 
     @Override
     public String getName() {
@@ -40,16 +40,12 @@ public class MockedWebApplication extends AgresteApplication {
     }
 
     @Override
-    protected String getDirectoryAbsolutePath() {
-        if (appFolder == null) {
-            try {
-                appFolder = FileUtils.getInstance().getRandomNonExistentFile(FileUtils.DEFAULT_TEMPORARY_FOLDER, 8, 1000);
-            } catch (FileNotFoundException ex) {
-                throw new RuntimeException(ex);
-            }
+    protected File getParentDir() {
+        try {
+            return FileUtils.getRandomNonExistentFile(FileUtils.DEFAULT_TEMPORARY_FOLDER, 8, 1000);
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException(ex);
         }
-
-        return appFolder.getAbsolutePath();
     }
 
     @Override
@@ -58,21 +54,24 @@ public class MockedWebApplication extends AgresteApplication {
 
         try {
             super.afterApplicationStop();
-            FileUtils.getInstance().deleteFile(appFolder);
-            appFolder = null;
+            FileUtils.deleteFile(getDirectory());
         } catch (IOException ex) {
-            appFolder = null;
             throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public boolean isAbuseCheckEnabled() {
-        return false;
+    protected Settings getDefaults() {
+        Settings superSettings = super.getDefaults();
+        if (superSettings == null)
+            superSettings = new Settings();
+
+        superSettings.setProperty(KEY_ABUSE_CHECK_ENABLED, "" + false);
+        return superSettings;
     }
 
     @Override
-    protected void beforeApplicationStart() {
+    protected void beforeStart() {
         super.beforeApplicationStart();
 
         LogModule logModule = getModule(LogModule.class);

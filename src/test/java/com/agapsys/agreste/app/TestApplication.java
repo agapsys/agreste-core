@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ * Copyright 2016-2017 Agapsys Tecnologia Ltda-ME.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,28 +20,24 @@ import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
 import javax.persistence.EntityManager;
 
-/**
- *
- * @author Leandro Oliveira (leandro@agapsys.com)
- */
 public class TestApplication extends MockedWebApplication {
 
     @Override
-    protected void afterApplicationStart() {
+    protected void afterStart() {
         super.afterApplicationStart();
-        
+
         PersistenceModule persistenceModule = getModule(PersistenceModule.class);
-        
+
         EntityManager em = persistenceModule.getEntityManager();
-        
+
         // ---------------------------------------------------------------------
         em.getTransaction().begin();
-        
-        new User("username", "password").save(em);        
-        
+
+        new User("username", "password").save(em);
+
         em.getTransaction().commit();
         // ---------------------------------------------------------------------
-        
+
         em.close();
     }
 }

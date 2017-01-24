@@ -15,40 +15,33 @@
  */
 package com.agapsys.agreste.app.controllers;
 
-import com.agapsys.agreste.Controller;
-import com.agapsys.agreste.CsrfHttpExchange;
-import com.agapsys.agreste.HttpExchange;
+import com.agapsys.agreste.AgresteController;
 import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.app.entities.User;
+import com.agapsys.rcf.ActionRequest;
+import com.agapsys.rcf.ActionResponse;
+import java.io.IOException;
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-/**
- *
- * @author Leandro Oliveira (leandro@agapsys.com)
- */
-public class BaseController extends Controller {
+import javax.servlet.ServletException;
+
+public class BaseController extends AgresteController {
 
     @Override
-    protected HttpExchange getHttpExchange(HttpServletRequest req, HttpServletResponse resp) {
-        return new CsrfHttpExchange(req, resp) {
-            @Override
-            public User getCurrentUser() {
-                User user = (User) super.getCurrentUser();
+    protected com.agapsys.rcf.User getUser(ActionRequest request, ActionResponse response) throws ServletException, IOException {
+        User user = (User) super.getUser(request, response);
 
-                JpaTransaction jpa = getJpaTransaction();
+        JpaTransaction jpa = getJpaTransaction(request);
 
-                if (user != null && jpa != null) {
-                    EntityManager em = jpa.getEntityManager();
+        if (user != null && jpa != null) {
+            EntityManager em = jpa.getEntityManager();
 
-                    if (!em.contains(user)) {
-                        user = em.find(User.class, user.getId());
-                    }
-                }
-
-                return user;
+            if (!em.contains(user)) {
+                user = em.find(User.class, user.getId());
             }
-        };
+        }
+
+        return user;
+
     }
 
 }

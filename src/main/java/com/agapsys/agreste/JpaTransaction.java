@@ -18,9 +18,8 @@ package com.agapsys.agreste;
 
 import javax.persistence.EntityManager;
 
-/** 
+/**
  * Represents a transaction managed by a {@linkplain javax.servlet.Servlet}
- * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public interface JpaTransaction {
     /**
@@ -29,14 +28,14 @@ public interface JpaTransaction {
      * @return the entity manager associated with this transaction
      */
     public EntityManager getEntityManager();
-    
+
     /**
      * Queues given runnable to be executed after transaction commit.
      * If this transaction is not committed, given runnable will not be executed.
      * @param runnable runnable to be queued
      */
     public void invokeAfterCommit(Runnable runnable);
-    
+
     /**
      * Queues given runnable to be executed after transaction rollback.
      * If this transaction is not rolled back, given runnable will not be executed.

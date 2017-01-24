@@ -16,7 +16,7 @@
 package com.agapsys.agreste.app.entities;
 
 import com.agapsys.jpa.AbstractEntity;
-import com.agapsys.rcf.Dto;
+import com.agapsys.rcf.Controller.Dto;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -30,7 +30,6 @@ import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Represents an application user.
- * @author Leandro Oliveira (leandro@agapsys.com)
  */
 @Entity
 public class User extends AbstractEntity<User> implements com.agapsys.rcf.User, Dto{

@@ -20,16 +20,15 @@ import javax.persistence.EntityTransaction;
 
 /**
  * Wrapper for an {@linkplain EntityTransaction} instance.
- * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class EntityTransactionWrapper implements EntityTransaction {
+class EntityTransactionWrapper implements EntityTransaction {
     private final EntityTransaction wrappedTransaction;
-    
+
     /**
      * Constructor
      * @param wrappedTransaction wrapped instance.
      */
-    public EntityTransactionWrapper(EntityTransaction wrappedTransaction) {
+    EntityTransactionWrapper(EntityTransaction wrappedTransaction) {
         this.wrappedTransaction = wrappedTransaction;
     }
 

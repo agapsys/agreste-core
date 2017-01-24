@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ * Copyright 2016-2017 Agapsys Tecnologia Ltda-ME.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,21 +17,17 @@
 package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractApplication;
-import com.agapsys.web.toolkit.ApplicationSettings;
-import com.agapsys.web.toolkit.modules.WebModule;
-import java.util.Properties;
+import com.agapsys.web.toolkit.WebModule;
+import com.agapsys.web.toolkit.utils.Settings;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * Cross-Origin resource sharing module
- * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class CorsModule extends WebModule {
     // CLASS SCOPE =============================================================
-    private static final String[] EMPTY_STRING_ARRAY = new String[] {};
-
-    public static String SETTINGS_GROUP_NAME = CorsModule.class.getName();
+    public static String SETTINGS_SECTION_NAME = CorsModule.class.getName();
 
     public static final String KEY_ALLOWED_ORIGINS = "agapsys.agrest.cors.allowedOrigins";
     public static final String KEY_ALLOWED_METHODS = "agapsys.agrest.cors.allowedMethods";
@@ -53,82 +49,87 @@ public class CorsModule extends WebModule {
     private String allowedMethods;
     private String allowedHeaders;
 
-    private void reset() {
+    private void __reset() {
         allowedOrigins = null;
         allowedMethods = null;
         allowedHeaders = null;
     }
 
     public CorsModule() {
-        reset();
+        __reset();
     }
 
     @Override
-    protected final String getSettingsGroupName() {
-        return SETTINGS_GROUP_NAME;
+    protected final String getSettingsSection() {
+        return SETTINGS_SECTION_NAME;
     }
 
     @Override
-    public Properties getDefaultProperties() {
-        Properties defaultProperties = super.getDefaultProperties();
+    protected Settings getDefaultSettings() {
+        Settings defaults = super.getDefaultSettings();
 
-        defaultProperties.setProperty(KEY_ALLOWED_ORIGINS, DEFAULT_ALLOWED_ORIGINS);
-        defaultProperties.setProperty(KEY_ALLOWED_METHODS, DEFAULT_ALLOWED_METHODS);
-        defaultProperties.setProperty(KEY_ALLOWED_HEADERS, DEFAULT_ALLOWED_HEADERS);
+        if (defaults == null)
+            defaults = new Settings();
 
-        return defaultProperties;
+        defaults.setProperty(KEY_ALLOWED_ORIGINS, DEFAULT_ALLOWED_ORIGINS);
+        defaults.setProperty(KEY_ALLOWED_METHODS, DEFAULT_ALLOWED_METHODS);
+        defaults.setProperty(KEY_ALLOWED_HEADERS, DEFAULT_ALLOWED_HEADERS);
+
+        return defaults;
     }
 
     @Override
     protected void onInit(AbstractApplication webApp) {
         super.onInit(webApp);
 
-        reset();
+        __reset();
 
-        Properties props = getProperties();
+        Settings props = getSettings();
 
-        String val = ApplicationSettings.getProperty(props, KEY_ALLOWED_ORIGINS);
+        String val = props.getProperty(KEY_ALLOWED_ORIGINS, null);
 
         if (val != null) {
             allowedOrigins = val.split(Pattern.quote(ORIGIN_DELIMITER));
 
             for (int i = 0; i < allowedOrigins.length; i++)
                 allowedOrigins[i] = allowedOrigins[i].trim();
-        } else {
-            allowedOrigins = EMPTY_STRING_ARRAY;
-        }
 
-        allowedMethods = ApplicationSettings.getProperty(props, KEY_ALLOWED_METHODS);
-        allowedHeaders = ApplicationSettings.getProperty(props, KEY_ALLOWED_HEADERS);
+            allowedMethods = props.getMandatoryProperty(KEY_ALLOWED_METHODS);
+            allowedHeaders = props.getMandatoryProperty(KEY_ALLOWED_HEADERS);
+        } else {
+            allowedOrigins = null;
+            allowedMethods = null;
+            allowedHeaders = null;
+        }
     }
 
-    public String[] getAllowedOrigins() {
+    private String[] __getAllowedOrigins() {
         return allowedOrigins;
     }
 
-    public String getAllowedMethods() {
+    private String __getAllowedMethods() {
         return allowedMethods;
     }
 
-    public String getAllowedHeaders() {
+    private String __getAllowedHeaders() {
         return allowedHeaders;
     }
 
     public final void putCorsHeaders(HttpServletResponse resp) {
         if (!isActive()) throw new RuntimeException("Module is not running");
 
-        String _allowedMethod = getAllowedMethods();
-        String _allowedHeaders = getAllowedHeaders();
-        String[] _allowedOrigins = getAllowedOrigins();
+        String mAllowedMethods   = __getAllowedMethods();
+        String mAllowedHeaders   = __getAllowedHeaders();
+        String[] mAllowedOrigins = __getAllowedOrigins();
 
-        if (_allowedMethod != null && !_allowedMethod.isEmpty())
-            resp.setHeader(HEADER_ALLOWED_METHODS, getAllowedMethods());
+        if (mAllowedMethods != null && !mAllowedMethods.isEmpty())
+            resp.setHeader(HEADER_ALLOWED_METHODS, __getAllowedMethods());
 
-        if (_allowedHeaders != null && !_allowedHeaders.isEmpty())
-            resp.setHeader(HEADER_ALLOWED_HEADERS, getAllowedHeaders());
+        if (mAllowedHeaders != null && !mAllowedHeaders.isEmpty())
+            resp.setHeader(HEADER_ALLOWED_HEADERS, __getAllowedHeaders());
 
-        if (_allowedOrigins != null) {
-            for (String allowedOrigin : getAllowedOrigins())
+        if (mAllowedOrigins != null) {
+            for (String allowedOrigin : __getAllowedOrigins())
                 resp.addHeader(HEADER_ALLOWED_ORIGINS, allowedOrigin);
         }
     }

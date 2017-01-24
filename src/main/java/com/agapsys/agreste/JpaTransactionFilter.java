@@ -16,7 +16,7 @@
 
 package com.agapsys.agreste;
 
-import com.agapsys.web.toolkit.AbstractWebApplication;
+import com.agapsys.web.toolkit.AbstractApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -35,30 +35,29 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Exposes a JPA transaction to application servlets.
- * @author Leandro Oliveira (leandro@agapsys.com)
  */
 public class JpaTransactionFilter implements Filter {
     // STATIC SCOPE ============================================================
-    public static final String JPA_TRANSACTION_ATTRIBUTE = JpaTransactionFilter.class.getName() + ".jpaTransaction";
-    
+    public static final String JPA_TRANSACTION_ATTRIBUTE = JpaTransactionFilter.class.getName() + ".JPA_TRANSACTION_ATTRIBUTE";
+
     private static class ServletTransaction extends EntityTransactionWrapper implements JpaTransaction {
         private final UnsupportedOperationException unsupportedOperationException = new UnsupportedOperationException("Transaction is managed by servlet");
         private final EntityManager em;
         private final List<Runnable> commitQueue = new LinkedList<>();
         private final List<Runnable> rollbackQueue = new LinkedList<>();
-        
+
         public ServletTransaction(ServletEntityManger em, EntityTransaction wrappedTransaction) {
             super(wrappedTransaction);
             this.em = em;
         }
-        
+
         private void processQueue(List<Runnable> queue) {
             for (Runnable runnable : queue) {
                 runnable.run();
             }
             queue.clear();
         }
-        
+
         @Override
         public void commit() {
             throw unsupportedOperationException;
@@ -67,7 +66,7 @@ public class JpaTransactionFilter implements Filter {
             super.commit();
             processQueue(commitQueue);
         }
-        
+
         @Override
         public void begin() {
             throw unsupportedOperationException;
@@ -93,10 +92,10 @@ public class JpaTransactionFilter implements Filter {
         private void invokeAfter(List<Runnable> queue, Runnable runnable) {
             if (runnable == null)
                 throw new IllegalArgumentException("Null runnable");
-            
+
             queue.add(runnable);
         }
-        
+
         @Override
         public void invokeAfterCommit(Runnable runnable) {
             invokeAfter(commitQueue, runnable);
@@ -107,11 +106,11 @@ public class JpaTransactionFilter implements Filter {
             invokeAfter(rollbackQueue, runnable);
         }
     }
-    
+
     private static class ServletEntityManger extends EntityManagerWrapper {
         private final UnsupportedOperationException unsupportedOperationException = new UnsupportedOperationException("Entity manager is managed by servlet");
         private final ServletTransaction singleTransaction;
-        
+
         public ServletEntityManger(EntityManager wrappedEntityManager) {
             super(wrappedEntityManager);
             singleTransaction = new ServletTransaction(this, super.getTransaction());
@@ -131,21 +130,21 @@ public class JpaTransactionFilter implements Filter {
         }
     }
     // =========================================================================
-    
+
     // INSTANCE SCOPE ==========================================================
-    private AbstractWebApplication webApp;
-    
+    private AbstractApplication webApp;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        webApp = AbstractWebApplication.getRunningInstance();
+        webApp = AbstractApplication.getRunningInstance();
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        
+
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpServletRequest  req = (HttpServletRequest) request;
-        
+
         if (webApp != null) {
             PersistenceModule persistenceModule = webApp.getModule(PersistenceModule.class);
             ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceModule.getEntityManager()).getTransaction();
@@ -155,22 +154,22 @@ public class JpaTransactionFilter implements Filter {
             try {
                 chain.doFilter(request, response);
                 jpaTransaction.wrappedCommit();
-                
+
             } catch (Throwable error) {
                 jpaTransaction.wrappedRollback();
-                
+
                 if (error instanceof OptimisticLockException) {
                     resp.setStatus(HttpServletResponse.SC_CONFLICT);
                 } else {
                     if (error instanceof IOException)
                         throw (IOException)error;
-                    
+
                     if (error instanceof ServletException)
                         throw (ServletException) error;
-                    
+
                     if (error instanceof RuntimeException)
                         throw (RuntimeException) error;
-                    
+
                     throw new RuntimeException(error);
                 }
             } finally {

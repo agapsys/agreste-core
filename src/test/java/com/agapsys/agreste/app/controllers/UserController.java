@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ * Copyright 2016-2017 Agapsys Tecnologia Ltda-ME.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,17 @@
  */
 package com.agapsys.agreste.app.controllers;
 
-import com.agapsys.agreste.HttpExchange;
 import com.agapsys.agreste.app.entities.User;
 import com.agapsys.agreste.app.entities.User.UserDto;
 import com.agapsys.agreste.app.services.UserService;
+import com.agapsys.rcf.ActionRequest;
+import com.agapsys.rcf.ActionResponse;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
 import com.agapsys.rcf.exceptions.ForbiddenException;
+import java.io.IOException;
+import javax.servlet.ServletException;
 
-/**
- *
- * @author Leandro Oliveira
- */
 @WebController
 public class UserController extends BaseController {
 
@@ -39,26 +38,26 @@ public class UserController extends BaseController {
     }
 
     @WebAction(mapping = "login")
-    public UserDto login(HttpExchange exchange) {
+    public UserDto login(ActionRequest request, ActionResponse response) throws ServletException, IOException {
         final String PARAM_USERNAME = "username";
         final String PARAM_PASSWORD = "password";
 
-        String username = exchange.getRequest().getMandatoryParameter(PARAM_USERNAME);
-        String password = exchange.getRequest().getMandatoryParameter(PARAM_PASSWORD);
+        String username = request.getMandatoryParameter(PARAM_USERNAME);
+        String password = request.getMandatoryParameter(PARAM_PASSWORD);
 
-        User user = userService.getUserByCredentials(exchange.getJpaTransaction(), username, password);
+        User user = userService.getUserByCredentials(getJpaTransaction(request), username, password);
 
         if (user == null) {
             throw new ForbiddenException("Invalid credentials");
         } else {
-            exchange.setCurrentUser(user);
+            registerUser(request, response, user);
         }
 
         return new UserDto(user);
     }
 
     @WebAction(mapping = "me", secured = true)
-    public User me(HttpExchange exchange) {
-        return (User) exchange.getCurrentUser();
+    public User me(ActionRequest request, ActionResponse response) throws ServletException, IOException {
+        return (User) getUser(request, response);
     }
 }

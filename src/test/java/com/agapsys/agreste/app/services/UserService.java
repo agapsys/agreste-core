@@ -20,10 +20,6 @@ import com.agapsys.agreste.app.entities.User;
 import com.agapsys.jpa.FindBuilder;
 import com.agapsys.web.toolkit.Service;
 
-/**
- *
- * @author Leandro Oliveira (leandro@agapsys.com)
- */
 public class UserService extends Service {
 
     public User getUserByCredentials(JpaTransaction jpa, String username, String password) {

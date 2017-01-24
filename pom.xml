@@ -46,8 +46,8 @@ limitations under the License.
 
     <developers>
         <developer>
-            <name>Leandro Oliveira</name>
-            <email>leandro@agapsys.com</email>
+            <name>Agapsys Tecnologia Ltda-ME</name>
+            <email>contact@agapsys.com</email>
             <organization>Agapsys Tecnologia Ltda-ME</organization>
             <organizationUrl>http://www.agapsys.com</organizationUrl>
         </developer>
@@ -66,9 +66,9 @@ limitations under the License.
     <dependencies>
         <!-- Test dependencies -->
         <dependency>
-            <groupId>com.agapsys.libs</groupId>
+            <groupId>com.agapsys</groupId>
             <artifactId>console-utils</artifactId>
-            <version>1.0.0</version>
+            <version>0.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -78,7 +78,7 @@ limitations under the License.
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.agapsys.libs</groupId>
+            <groupId>com.agapsys</groupId>
             <artifactId>web-app-toolkit-test</artifactId>
             <version>[0.1.0, 1.0.0)</version>
             <scope>test</scope>
@@ -99,7 +99,7 @@ limitations under the License.
         <!-- Compile dependencies -->
         <dependency>
             <groupId>com.agapsys</groupId>
-            <artifactId>rcf</artifactId>
+            <artifactId>rcf-core</artifactId>
             <version>[0.1.0, 1.0.0)</version>
         </dependency>
         <dependency>
@@ -109,7 +109,7 @@ limitations under the License.
         </dependency>
         <dependency>
             <groupId>com.agapsys</groupId>
-            <artifactId>web-app-toolkit</artifactId>
+            <artifactId>web-app-toolkit-core</artifactId>
             <version>[0.1.0, 1.0.0)</version>
         </dependency>
 

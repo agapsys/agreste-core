@@ -17,34 +17,47 @@
 package com.agapsys.agreste.test;
 
 import com.agapsys.agreste.AbuseCheckFilter;
-import com.agapsys.agreste.ClientExceptionFilter;
 import com.agapsys.agreste.JpaTransactionFilter;
 import com.agapsys.rcf.Controller;
 import com.agapsys.rcf.ControllerRegistrationListener;
 import com.agapsys.rcf.WebController;
-import com.agapsys.sevlet.container.ServletContainer;
 import com.agapsys.web.toolkit.AbstractWebApplication;
+import com.agapsys.web.toolkit.WebApplicationContainer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
 
 /**
  * Servlet container builder for AGRESTE applications
- * @author Leandro Oliveira (leandro@agapsys.com)
  */
-public class ServletContainerBuilder<T extends ServletContainerBuilder> extends com.agapsys.web.toolkit.ServletContainerBuilder<T> {
+public class AgresteContainer<AC extends AgresteContainer<AC>> extends WebApplicationContainer<AC> {
     // STATIC SCOPE ============================================================
-    public static ServletContainer getControllerContainer(Class<? extends Controller>...controllers) {
-        return getControllerContainer(MockedWebApplication.class, controllers);
+
+    public static AgresteContainer<?> newInstance(Class<? extends HttpServlet>...servletsOrControllers) {
+        return newInstance(MockedWebApplication.class, servletsOrControllers);
     }
 
-    public static ServletContainer getControllerContainer(Class<? extends AbstractWebApplication> webApp, Class<? extends Controller>...controllers) {
-        ServletContainerBuilder builder = new ServletContainerBuilder(webApp);
-        for (Class<? extends Controller> controller : controllers) {
-            builder.registerController(controller);
+    public static AgresteContainer<?> newInstance(Class<? extends AbstractWebApplication> webApp, Class<? extends HttpServlet>...servletsOrControllers) {
+        AgresteContainer container = new AgresteContainer<>(webApp);
+
+        for (Class<? extends HttpServlet> servlet : servletsOrControllers) {
+
+            if (Controller.class.isAssignableFrom(servlet)) {
+                container.registerController(servlet);
+
+                if (servlet.getAnnotation(WebServlet.class) != null) {
+                    container.registerServlet(servlet);
+                }
+
+            } else {
+                container.registerServlet(servlet);
+            }
         }
-        return builder.build();
+
+        return container;
     }
 
     private static final String EMBEDDED_CONTROLER_INFO = "/META-INF/rcf.info";
@@ -52,11 +65,11 @@ public class ServletContainerBuilder<T extends ServletContainerBuilder> extends 
     // =========================================================================
 
     // INSTANCE SCOPE ==========================================================
-    private void registerScannedControllers() {
+    private void __registerScannedControllers() {
         InputStream is = null;
         try {
 
-            is = ServletContainerBuilder.class.getResourceAsStream(EMBEDDED_CONTROLER_INFO);
+            is = AgresteContainer.class.getResourceAsStream(EMBEDDED_CONTROLER_INFO);
 
             if (is == null)
                 return;
@@ -88,41 +101,38 @@ public class ServletContainerBuilder<T extends ServletContainerBuilder> extends 
         }
     }
 
-    private void init() {
+    private void __init() {
         super.registerFilter(AbuseCheckFilter.class, "/*");
-        super.registerFilter(ClientExceptionFilter.class, "/*");
         super.registerFilter(JpaTransactionFilter.class, "/*");
 
-        registerScannedControllers();
+        __registerScannedControllers();
     }
 
-    public ServletContainerBuilder(Class<? extends AbstractWebApplication> webApp) {
+    public AgresteContainer(Class<? extends AbstractWebApplication> webApp) {
         super(webApp);
-        init();
+        __init();
     }
 
-    public ServletContainerBuilder() {
+    public AgresteContainer() {
         this(MockedWebApplication.class);
     }
 
-    public ServletContainerBuilder registerController(Class<? extends Controller> controllerClass, String name) {
-        return (ServletContainerBuilder) super.registerServlet(controllerClass, String.format("/%s/*", name));
+    public AC registerController(Class<? extends Controller> controllerClass, String name) {
+        return (AC) super.registerServlet(controllerClass, String.format("/%s/*", name));
     }
 
-    public ServletContainerBuilder registerController(Class<? extends Controller> controllerClass) {
-        WebController annotation = controllerClass.getAnnotation(WebController.class);
+    public AC registerController(Class<? extends Controller> controllerClass) {
+        WebController webController = controllerClass.getAnnotation(WebController.class);
 
-        if (annotation == null)
+        if (webController == null)
             throw new IllegalArgumentException(String.format("Missing annotation '%s' for '%s'", WebController.class.getName(), controllerClass.getName()));
 
-        String name = annotation.value().trim();
+        String name = webController.value().trim();
 
         if (name.isEmpty())
             name = ControllerRegistrationListener.getDefaultMapping(controllerClass);
 
-        registerController(controllerClass, name);
-
-        return this;
+        return registerController(controllerClass, name);
     }
     // =========================================================================
 }

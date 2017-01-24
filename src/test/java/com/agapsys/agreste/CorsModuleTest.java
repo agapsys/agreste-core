@@ -16,20 +16,21 @@
 
 package com.agapsys.agreste;
 
+import com.agapsys.agreste.test.AgresteContainer;
 import com.agapsys.agreste.test.MockedWebApplication;
-import com.agapsys.agreste.test.ServletContainerBuilder;
 import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;
+import com.agapsys.rcf.ActionRequest;
+import com.agapsys.rcf.ActionResponse;
 import com.agapsys.rcf.Controller;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
-import com.agapsys.sevlet.container.ServletContainer;
 import com.agapsys.web.toolkit.AbstractWebApplication;
+import com.agapsys.web.toolkit.utils.Settings;
 import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpServletRequest;
@@ -59,17 +60,21 @@ public class CorsModuleTest {
         public static final String VAL_ALLOWED_METHODS = "testMethods";
 
         @Override
-        protected void beforeApplicationStart() {
+        protected void beforeStart() {
             super.beforeApplicationStart();
             registerModule(new CorsModule() {
-                @Override
-                public Properties getDefaultProperties() {
-                    Properties props = super.getDefaultProperties();
 
-                    props.setProperty(CorsModule.KEY_ALLOWED_HEADERS, VAL_ALLOWED_HEADERS);
-                    props.setProperty(CorsModule.KEY_ALLOWED_ORIGINS, VAL_ALLOWED_ORIGINS);
-                    props.setProperty(CorsModule.KEY_ALLOWED_METHODS, VAL_ALLOWED_METHODS);
-                    return props;
+                @Override
+                public Settings getDefaultSettings() {
+                    Settings defaults = super.getDefaultSettings();
+
+                    if (defaults == null)
+                        defaults = new Settings();
+
+                    defaults.setProperty(CorsModule.KEY_ALLOWED_HEADERS, VAL_ALLOWED_HEADERS);
+                    defaults.setProperty(CorsModule.KEY_ALLOWED_ORIGINS, VAL_ALLOWED_ORIGINS);
+                    defaults.setProperty(CorsModule.KEY_ALLOWED_METHODS, VAL_ALLOWED_METHODS);
+                    return defaults;
                 }
             });
         }
@@ -79,9 +84,9 @@ public class CorsModuleTest {
     public static class TestController extends Controller {
 
         @Override
-        public void beforeAction(com.agapsys.rcf.HttpExchange exchange) throws ServletException, IOException {
+        protected void beforeAction(ActionRequest request, ActionResponse response) throws ServletException, IOException {
             CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
-            corsModule.putCorsHeaders(exchange.getCoreResponse());
+            corsModule.putCorsHeaders(response.getServletResponse());
         }
 
         @WebAction
@@ -90,28 +95,27 @@ public class CorsModuleTest {
     // =========================================================================
 
     // INSTANCE SCOPE ==========================================================
-    private ServletContainer sc;
+    private AgresteContainer ac;
 
     @Before
     public void before() {
         System.out.println("Starting application...");
-        sc = new ServletContainerBuilder(TestApplication.class)
-            .registerController(TestController.class)
-            .build();
+        ac = new AgresteContainer<>()
+            .registerController(TestController.class);
 
-        sc.startServer();
+        ac.start();
     }
 
     @After
     public void after() {
         System.out.println("\nShutting down application...");
-        sc.stopServer();
+        ac.stop();
     }
 
     @Test
     public void testCorsHeaders() {
-        StringResponse resp = sc.doRequest(new HttpGet("/test/get"));
-        TestUtils.getInstance().assertStatus(200, resp);
+        StringResponse resp = ac.doRequest(new HttpGet("/test/get"));
+        TestUtils.assertStatus(200, resp);
 
         List<HttpHeader> allowedOrigins = resp.getHeaders("Access-Control-Allow-Origin");
         HttpHeader allowMethodsHeader = resp.getFirstHeader("Access-Control-Allow-Methods");

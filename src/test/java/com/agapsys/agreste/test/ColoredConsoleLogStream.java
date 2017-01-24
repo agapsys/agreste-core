@@ -22,10 +22,6 @@ import com.agapsys.web.toolkit.modules.LogModule;
 import com.agapsys.web.toolkit.utils.DateUtils;
 import java.util.Date;
 
-/**
- *
- * @author Leandro Oliveira (leandro@agapsys.com)
- */
 public class ColoredConsoleLogStream extends LogModule.ConsoleLogStream {
     private final boolean useLightColors;
 
@@ -55,6 +51,6 @@ public class ColoredConsoleLogStream extends LogModule.ConsoleLogStream {
 
     @Override
     protected String getMessage(Date timestamp, LogType logType, String message) {
-        return String.format("%s [%s] %s", DateUtils.getInstance().getIso8601Date(), ConsolePrinter.toString(getColor(logType), logType.name()), message);
+        return String.format("%s [%s] %s", DateUtils.getIso8601Date(), ConsolePrinter.toString(getColor(logType), logType.name()), message);
     }
 }

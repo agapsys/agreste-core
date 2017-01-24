@@ -33,22 +33,12 @@ limitations under the License.
     </filter>
 
     <filter>
-        <filter-name>com.agapsys.agreste.ClientExceptionFilter</filter-name>
-        <filter-class>com.agapsys.agreste.ClientExceptionFilter</filter-class>
-    </filter>
-
-    <filter>
         <filter-name>com.agapsys.agreste.JpaTransactionFilter</filter-name>
         <filter-class>com.agapsys.agreste.JpaTransactionFilter</filter-class>
     </filter>
 
     <filter-mapping>
         <filter-name>com.agapsys.agreste.AbuseCheckFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
-    <filter-mapping>
-        <filter-name>com.agapsys.agreste.ClientExceptionFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 

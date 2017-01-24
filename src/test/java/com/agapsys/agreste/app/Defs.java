@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Leandro Oliveira (leandro@agapsys.com).
+ * Copyright 2016 Agapsys Tecnologia Ltda-ME.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,8 @@
  */
 package com.agapsys.agreste.app;
 
-/**
- *
- * @author Leandro Oliveira (leandro@agapsys.com)
- */
 public class Defs {
     private Defs() {}
-    
+
     public static final String ACCESS_ROLE = "access";
 }

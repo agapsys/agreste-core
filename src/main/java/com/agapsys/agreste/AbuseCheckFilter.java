@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ * Copyright 2016-2017 Agapsys Tecnologia Ltda-ME.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,8 +42,8 @@ public class AbuseCheckFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         AgresteApplication app = (AgresteApplication) AgresteApplication.getRunningInstance();
-        
-        if (!app.isAbuseCheckEnabled()) {
+
+        if (!app._isAbuseCheckEnabled()) {
             chain.doFilter(request, response);
             return;
         }
@@ -51,7 +51,7 @@ public class AbuseCheckFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
-        
+
         if (session == null) {
             session = req.getSession(true);
             session.setAttribute(SESSION_ATTR_LAST_CHECK, null);
@@ -59,9 +59,9 @@ public class AbuseCheckFilter implements Filter {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
-        
-        long appAbuseInterval = app.getAbuseInterval();
-        int appAbuseCountLimit = app.getAbuseCountLimit();
+
+        long appAbuseInterval = app._getAbuseInterval();
+        int appAbuseCountLimit = app._getAbuseCountLimit();
 
         Date lastCheck = (Date) session.getAttribute(SESSION_ATTR_LAST_CHECK);
         int abuseCount = (int) session.getAttribute(SESSION_ATTR_ABUSE_COUNT);
@@ -90,7 +90,7 @@ public class AbuseCheckFilter implements Filter {
                 return;
             }
         }
-        
+
         chain.doFilter(request, response);
     }
 

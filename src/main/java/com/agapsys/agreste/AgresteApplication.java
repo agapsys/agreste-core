@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Agapsys Tecnologia Ltda-ME.
+ * Copyright 2016-2017 Agapsys Tecnologia Ltda-ME.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package com.agapsys.agreste;
 
+import com.agapsys.web.toolkit.AbstractApplication;
 import com.agapsys.web.toolkit.AbstractWebApplication;
-import com.agapsys.web.toolkit.ApplicationSettings;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
-import java.util.Properties;
+import com.agapsys.web.toolkit.utils.Settings;
 import java.util.TimeZone;
 import java.util.logging.Level;
 
@@ -39,14 +39,26 @@ public abstract class AgresteApplication extends AbstractWebApplication {
     private int     abuseCountLimit;
     private boolean abuseCheckEnabled;
 
+    /**
+     * This method implements required functionality for AGRESTE. Use {@linkplain AgresteApplication#beforeStart()} instead.
+     */
     @Override
-    protected void beforeApplicationStart() {
+    protected final void beforeApplicationStart() {
         TimeZone.setDefault(getDefaultTimeZone());
         java.util.logging.Logger.getLogger("org.hibernate").setLevel(getHibernateLogLevel());
 
         super.beforeApplicationStart();
         registerModule(PersistenceModule.class);
+        beforeStart();
     }
+
+    /**
+     * Called before application start.
+     *
+     * This method is equivalent to {@linkplain AbstractApplication#beforeApplicationStart()}.
+     * Default implementation does nothing.
+     */
+    protected void beforeStart() {}
 
     /**
      * Return application default time zone.
@@ -57,28 +69,60 @@ public abstract class AgresteApplication extends AbstractWebApplication {
         return TimeZone.getTimeZone("UTC");
     }
 
-    @Override
-    protected Properties getDefaultProperties() {
-        Properties properties = super.getDefaultProperties();
-
-        properties.setProperty(KEY_ABUSE_CHECK_ENABLED, "" + DEFAULT_ABUSE_CHECK_ENABLED);
-        properties.setProperty(KEY_ABUSE_INTERVAL,      "" + DEFAULT_ABUSE_INTERVAL);
-        properties.setProperty(KEY_ABUSE_COUNT_LIMIT,   "" + DEFAULT_ABUSE_COUNT_LIMIT);
-
-        return properties;
+    /**
+     * Return hibernate logging level.
+     * @return hibernate logging level. Default implementation disables log.
+     */
+    protected Level getHibernateLogLevel() {
+        return Level.OFF;
     }
 
+    /**
+     * This method implements required functionality for AGRESTE. Use {@linkplain AgresteApplication#getDefaults()} instead.
+     */
     @Override
-    protected void afterApplicationStart() {
+    protected final Settings getDefaultSettings() {
+        Settings defaultSettings = super.getDefaultSettings();
+
+        if (defaultSettings == null)
+            defaultSettings = new Settings();
+
+        defaultSettings.setProperty(KEY_ABUSE_CHECK_ENABLED, "" + DEFAULT_ABUSE_CHECK_ENABLED);
+        defaultSettings.setProperty(KEY_ABUSE_INTERVAL,      "" + DEFAULT_ABUSE_INTERVAL);
+        defaultSettings.setProperty(KEY_ABUSE_COUNT_LIMIT,   "" + DEFAULT_ABUSE_COUNT_LIMIT);
+
+        Settings agresteDefaults = getDefaults();
+
+        if (agresteDefaults != null) {
+            defaultSettings.setProperties(agresteDefaults);
+        }
+
+        return defaultSettings;
+    }
+
+    /**
+     * Returns default settings for this application.
+
+     * @return default settings for this application. Default implementation returns null.
+     */
+    protected Settings getDefaults() {
+        return null;
+    }
+
+    /**
+     * This method implements required functionality for AGRESTE. Use {@linkplain AgresteApplication#afterStart()} instead.
+     */
+    @Override
+    protected final void afterApplicationStart() {
         super.afterApplicationStart();
 
         String errFormatStr = "Invalid value for %s: %s";
 
-        Properties properties = getProperties();
+        Settings settings = getSettings();
 
-        String abuseCheckEnabledStr  = ApplicationSettings.getMandatoryProperty(properties, KEY_ABUSE_CHECK_ENABLED);
-        String abuseCheckIntervalStr = ApplicationSettings.getMandatoryProperty(properties, KEY_ABUSE_INTERVAL);
-        String abuseLimitStr         = ApplicationSettings.getMandatoryProperty(properties, KEY_ABUSE_COUNT_LIMIT);
+        String abuseCheckEnabledStr  = settings.getMandatoryProperty(KEY_ABUSE_CHECK_ENABLED);
+        String abuseCheckIntervalStr = settings.getMandatoryProperty(KEY_ABUSE_INTERVAL);
+        String abuseLimitStr         = settings.getMandatoryProperty(KEY_ABUSE_COUNT_LIMIT);
 
         try {
             abuseCheckEnabled = Boolean.parseBoolean(abuseCheckEnabledStr);
@@ -103,40 +147,28 @@ public abstract class AgresteApplication extends AbstractWebApplication {
 
         if (abuseCountLimit < 1)
             throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_COUNT_LIMIT, abuseCountLimit));
+
+        afterStart();
     }
 
-
-
     /**
-     * Return the abuse check interval (in milliseconds)
-     * @return  the abuse check interval (in milliseconds)
+     * Called after application start.
+     *
+     * This method is equivalent to {@linkplain AbstractApplication#afterApplicationStart()}.
+     * Default implementation does nothing.
      */
-    public long getAbuseInterval() {
+    protected void afterStart() {}
+
+    long _getAbuseInterval() {
         return abuseInterval;
     }
 
-    /**
-     * Returns the maximum number of requests to the application during an abuse check interval
-     * @return the maximum number of requests to the application during an abuse check interval
-     */
-    public int getAbuseCountLimit() {
+    int _getAbuseCountLimit() {
         return abuseCountLimit;
     }
 
-    /**
-     * Returns a boolean indicating if abuse check is enabled.
-     * @return a boolean indicating if abuse check is enabled.
-     */
-    public boolean isAbuseCheckEnabled() {
+    boolean _isAbuseCheckEnabled() {
         return abuseCheckEnabled;
     }
 
-    /**
-     * Return hibernate logging level.
-     * @return hibernate logging level. Default implementation disables log.
-     */
-    protected Level getHibernateLogLevel() {
-        return Level.OFF;
-    }
-    // =========================================================================
 }
