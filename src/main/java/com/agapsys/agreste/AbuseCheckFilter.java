@@ -43,7 +43,7 @@ public class AbuseCheckFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         AgresteApplication app = (AgresteApplication) AgresteApplication.getRunningInstance();
 
-        if (!app._isAbuseCheckEnabled()) {
+        if (!app.isAbuseCheckEnabled()) {
             chain.doFilter(request, response);
             return;
         }
@@ -60,8 +60,8 @@ public class AbuseCheckFilter implements Filter {
             return;
         }
 
-        long appAbuseInterval = app._getAbuseInterval();
-        int appAbuseCountLimit = app._getAbuseCountLimit();
+        long appAbuseInterval = app.getAbuseInterval();
+        int appAbuseCountLimit = app.getAbuseCountLimit();
 
         Date lastCheck = (Date) session.getAttribute(SESSION_ATTR_LAST_CHECK);
         int abuseCount = (int) session.getAttribute(SESSION_ATTR_ABUSE_COUNT);

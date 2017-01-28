@@ -49,11 +49,9 @@ public class MockedWebApplication extends AgresteApplication {
     }
 
     @Override
-    protected void afterApplicationStop() {
-        super.afterApplicationStop();
-
+    protected void afterAgresteStop() {
         try {
-            super.afterApplicationStop();
+            super.afterAgresteStop();
             FileUtils.deleteFile(getDirectory());
         } catch (IOException ex) {
             throw new RuntimeException(ex);
@@ -71,11 +69,23 @@ public class MockedWebApplication extends AgresteApplication {
     }
 
     @Override
-    protected void beforeStart() {
-        super.beforeApplicationStart();
+    protected void beforeAgresteStart() {
+        super.beforeAgresteStart();
 
         LogModule logModule = getModule(LogModule.class);
         ConsoleLogStream consoleLogStream = new ConsoleLogStream();
         logModule.addStream(consoleLogStream);
+    }
+
+    public long getAbuseInterval() {
+        return super.getAbuseInterval();
+    }
+
+    public int getAbuseCountLimit() {
+        return super.getAbuseCountLimit();
+    }
+
+    public boolean isAbuseCheckEnabled() {
+        return super.isAbuseCheckEnabled();
     }
 }

@@ -17,12 +17,12 @@
 package com.agapsys.agreste.app;
 
 import com.agapsys.agreste.AbuseCheckFilter;
+import com.agapsys.agreste.test.AgresteContainer;
 import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.http.HttpClient;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpResponse;
 import com.agapsys.http.HttpResponse.StringResponse;
-import com.agapsys.jee.ServletContainer;
 import com.agapsys.rcf.exceptions.RateLimitingException;
 import com.agapsys.utils.console.printer.ConsoleColor;
 import com.agapsys.utils.console.printer.ConsolePrinter;
@@ -106,7 +106,8 @@ public class AbuseCheckTest {
         }
 
         @Override
-        protected void afterApplicationStart() {
+        protected void afterAgresteStart() {
+            super.afterAgresteStart();
             println(ConsoleColor.CYAN, "Application directory: %s", getDirectory());
         }
 
@@ -141,15 +142,14 @@ public class AbuseCheckTest {
     // =========================================================================
 
     // INSTANCE SCOPE ==========================================================
-    private ServletContainer sc;
+    private AgresteContainer sc;
     private TestApplication app;
 
     @Before
     public void before() {
-        sc = new ServletContainerBuilder(TestApplication.class)
+        sc = new AgresteContainer<>(TestApplication.class)
             .registerServlet(TestServlet.class)
-            .registerFilter(AbuseCheckFilter.class, "/*")
-            .build();
+            .registerFilter(AbuseCheckFilter.class, "/*");
 
         sc.start();
         app = (TestApplication) TestApplication.getRunningInstance();

@@ -69,6 +69,8 @@ public abstract class AgresteController extends Controller {
     @Override
     protected final void onClientError(ActionRequest request, ActionResponse response, ClientException error) throws ServletException, IOException {
         logRequest(request, response, LogType.WARNING, error.getMessage());
+        super.onClientError(request, response, error);
+
         onClientException(request, response, error);
     }
 
@@ -81,9 +83,10 @@ public abstract class AgresteController extends Controller {
             String stackTrace = ExceptionReporterModule.getStackTrace(unacaughtError);
             logRequest(request, response, LogType.ERROR, stackTrace);
             return false;
+        } else {
+            super.onControllerError(request, response, unacaughtError);
+            return onUncaughtError(request, response, unacaughtError);
         }
-
-        return onUncaughtError(request, response, unacaughtError);
     }
 
     protected boolean onUncaughtError(ActionRequest request, ActionResponse response, Throwable uncaughtError) throws ServletException, IOException {

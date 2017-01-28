@@ -30,9 +30,12 @@ public class BaseController extends AgresteController {
     protected com.agapsys.rcf.User getUser(ActionRequest request, ActionResponse response) throws ServletException, IOException {
         User user = (User) super.getUser(request, response);
 
+        if (user == null)
+            return null;
+
         JpaTransaction jpa = getJpaTransaction(request);
 
-        if (user != null && jpa != null) {
+        if (jpa != null) {
             EntityManager em = jpa.getEntityManager();
 
             if (!em.contains(user)) {
@@ -41,7 +44,6 @@ public class BaseController extends AgresteController {
         }
 
         return user;
-
     }
 
 }

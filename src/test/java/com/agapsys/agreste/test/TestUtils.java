@@ -24,6 +24,9 @@ import com.agapsys.http.HttpRequest;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.http.HttpTrace;
 import com.agapsys.http.StringEntityRequest;
+import com.agapsys.http.StringEntityRequest.StringEntityPatch;
+import com.agapsys.http.StringEntityRequest.StringEntityPost;
+import com.agapsys.http.StringEntityRequest.StringEntityPut;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.JsonRequest;
 import com.agapsys.rcf.JsonResponse;
@@ -44,7 +47,7 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
 
     protected TestUtils() {}
 
-    private static boolean __isEntityMethod(HttpMethod method) {
+    static boolean __isEntityMethod(HttpMethod method) {
             switch(method) {
                 case POST:
                 case PUT:
@@ -55,19 +58,16 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
             return false;
         }
 
-    public static class RequestEndpoint {
+    public static class Endpoint {
         public final  HttpMethod method;
         public final  String uri;
 
-        public RequestEndpoint(HttpMethod method, String uri) {
+        public Endpoint(HttpMethod method, String uri) {
             if (method == null)
                 throw new IllegalArgumentException("Null HTTP method");
 
             if (uri == null || uri.trim().isEmpty())
                 throw new IllegalArgumentException("Null/Empty URI");
-
-            if (__isEntityMethod(method))
-                throw new IllegalArgumentException("Unsupported method: " + getMethod().name());
 
             this.method = method;
             this.uri = uri;
@@ -100,8 +100,17 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
                 case TRACE:
                     return new HttpTrace(finalUri);
 
-                default:
-                    throw new UnsupportedOperationException("Unsupported method: " + getMethod().name());
+				case PATCH:
+					return TestUtils.createJsonRequest(StringEntityPatch.class, null, finalUri);
+
+				case POST:
+					return TestUtils.createJsonRequest(StringEntityPost.class, null, finalUri);
+
+				case PUT:
+					return TestUtils.createJsonRequest(StringEntityPut.class, null, finalUri);
+
+				default:
+					throw new UnsupportedOperationException("Unsupported method: " + getMethod().name());
             }
         }
 
@@ -123,9 +132,9 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
         }
     }
 
-    public static class JsonRequestEndpoint extends RequestEndpoint {
+    public static class JsonEndpoint extends Endpoint {
 
-        public JsonRequestEndpoint(HttpMethod method, String uri) {
+        public JsonEndpoint(HttpMethod method, String uri) {
             super(method, uri);
 
             if (!__isEntityMethod(method))
@@ -167,6 +176,7 @@ public class TestUtils extends com.agapsys.web.toolkit.TestUtils {
             return getRequest(dto, "");
         }
     }
+
 
     public static <R extends StringEntityRequest> R createJsonRequest(Class<R> requestClass, Object obj, String uri, Object...uriParams) {
         try {

@@ -24,10 +24,8 @@ import com.agapsys.http.HttpHeader;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.rcf.ActionRequest;
 import com.agapsys.rcf.ActionResponse;
-import com.agapsys.rcf.Controller;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
-import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.utils.Settings;
 import java.io.IOException;
 import java.util.List;
@@ -55,13 +53,15 @@ public class CorsModuleTest {
 
     @WebListener
     public static class TestApplication extends MockedWebApplication {
+
         public static final String VAL_ALLOWED_HEADERS = "testHeaders";
         public static final String VAL_ALLOWED_ORIGINS = "testOrigin1, testOrigin2";
         public static final String VAL_ALLOWED_METHODS = "testMethods";
 
         @Override
-        protected void beforeStart() {
-            super.beforeApplicationStart();
+        protected void beforeAgresteStart() {
+            super.beforeAgresteStart();
+
             registerModule(new CorsModule() {
 
                 @Override
@@ -81,11 +81,11 @@ public class CorsModuleTest {
     }
 
     @WebController("test")
-    public static class TestController extends Controller {
+    public static class TestController extends AgresteController {
 
         @Override
         protected void beforeAction(ActionRequest request, ActionResponse response) throws ServletException, IOException {
-            CorsModule corsModule = (CorsModule) AbstractWebApplication.getRunningInstance().getModule(CorsModule.class);
+            CorsModule corsModule = getModule(CorsModule.class);
             corsModule.putCorsHeaders(response.getServletResponse());
         }
 
@@ -100,7 +100,7 @@ public class CorsModuleTest {
     @Before
     public void before() {
         System.out.println("Starting application...");
-        ac = new AgresteContainer<>()
+        ac = new AgresteContainer<>(TestApplication.class)
             .registerController(TestController.class);
 
         ac.start();

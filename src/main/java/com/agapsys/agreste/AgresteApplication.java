@@ -40,7 +40,7 @@ public abstract class AgresteApplication extends AbstractWebApplication {
     private boolean abuseCheckEnabled;
 
     /**
-     * This method implements required functionality for AGRESTE. Use {@linkplain AgresteApplication#beforeStart()} instead.
+     * This method implements required functionality for AGRESTE. Use {@link AgresteApplication#beforeAgresteStart()} instead.
      */
     @Override
     protected final void beforeApplicationStart() {
@@ -49,7 +49,8 @@ public abstract class AgresteApplication extends AbstractWebApplication {
 
         super.beforeApplicationStart();
         registerModule(PersistenceModule.class);
-        beforeStart();
+
+        beforeAgresteStart();
     }
 
     /**
@@ -58,7 +59,7 @@ public abstract class AgresteApplication extends AbstractWebApplication {
      * This method is equivalent to {@linkplain AbstractApplication#beforeApplicationStart()}.
      * Default implementation does nothing.
      */
-    protected void beforeStart() {}
+    protected void beforeAgresteStart() {}
 
     /**
      * Return application default time zone.
@@ -110,7 +111,7 @@ public abstract class AgresteApplication extends AbstractWebApplication {
     }
 
     /**
-     * This method implements required functionality for AGRESTE. Use {@linkplain AgresteApplication#afterStart()} instead.
+     * This method implements required functionality for AGRESTE. Use {@link AgresteApplication#afterAgresteStart()} instead.
      */
     @Override
     protected final void afterApplicationStart() {
@@ -148,7 +149,7 @@ public abstract class AgresteApplication extends AbstractWebApplication {
         if (abuseCountLimit < 1)
             throw new RuntimeException(String.format(errFormatStr, KEY_ABUSE_COUNT_LIMIT, abuseCountLimit));
 
-        afterStart();
+        afterAgresteStart();
     }
 
     /**
@@ -157,17 +158,35 @@ public abstract class AgresteApplication extends AbstractWebApplication {
      * This method is equivalent to {@linkplain AbstractApplication#afterApplicationStart()}.
      * Default implementation does nothing.
      */
-    protected void afterStart() {}
+    protected void afterAgresteStart() {}
 
-    long _getAbuseInterval() {
+    @Override
+    protected final void beforeApplicationStop() {
+        super.beforeApplicationStop();
+        beforeAgresteStop();
+    }
+
+
+    protected void beforeAgresteStop() {}
+
+    @Override
+    protected final void afterApplicationStop() {
+        super.afterApplicationStop();
+        afterAgresteStop();
+    }
+
+    protected void afterAgresteStop() {}
+
+
+    protected long getAbuseInterval() {
         return abuseInterval;
     }
 
-    int _getAbuseCountLimit() {
+    protected int getAbuseCountLimit() {
         return abuseCountLimit;
     }
 
-    boolean _isAbuseCheckEnabled() {
+    protected boolean isAbuseCheckEnabled() {
         return abuseCheckEnabled;
     }
 

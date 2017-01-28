@@ -37,7 +37,7 @@ public class UserController extends BaseController {
         userService = getService(UserService.class);
     }
 
-    @WebAction(mapping = "login")
+    @WebAction(mapping = "/login")
     public UserDto login(ActionRequest request, ActionResponse response) throws ServletException, IOException {
         final String PARAM_USERNAME = "username";
         final String PARAM_PASSWORD = "password";
@@ -56,7 +56,7 @@ public class UserController extends BaseController {
         return new UserDto(user);
     }
 
-    @WebAction(mapping = "me", secured = true)
+    @WebAction(secured = true)
     public User me(ActionRequest request, ActionResponse response) throws ServletException, IOException {
         return (User) getUser(request, response);
     }

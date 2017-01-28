@@ -23,8 +23,8 @@ import javax.persistence.EntityManager;
 public class TestApplication extends MockedWebApplication {
 
     @Override
-    protected void afterStart() {
-        super.afterApplicationStart();
+    protected void afterAgresteStart() {
+        super.afterAgresteStart();
 
         PersistenceModule persistenceModule = getModule(PersistenceModule.class);
 
