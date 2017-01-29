@@ -68,7 +68,7 @@ public abstract class AgresteController extends Controller {
 
     @Override
     protected final void onClientError(ActionRequest request, ActionResponse response, ClientException error) throws ServletException, IOException {
-        logRequest(request, response, LogType.WARNING, error.getMessage());
+        logRequest(request, LogType.WARNING, error.getMessage());
         super.onClientError(request, response, error);
 
         onClientException(request, response, error);
@@ -81,7 +81,7 @@ public abstract class AgresteController extends Controller {
 
         if (!(unacaughtError instanceof OptimisticLockException)) { // <-- OptimisticLockException will be handled by JpaFilter!
             String stackTrace = ExceptionReporterModule.getStackTrace(unacaughtError);
-            logRequest(request, response, LogType.ERROR, stackTrace);
+            logRequest(request, LogType.ERROR, stackTrace);
             return false;
         } else {
             super.onControllerError(request, response, unacaughtError);
@@ -94,9 +94,9 @@ public abstract class AgresteController extends Controller {
     }
 
 
-    protected String getLogMessage(ActionRequest request, ActionResponse response, String message) throws ServletException, IOException {
+    protected String getLogMessage(ActionRequest request, String message) throws ServletException, IOException {
 
-        User loggedUser = getUser(request, response);
+        User loggedUser = getUser(request);
 
         String requestUrl = request.getFullRequestUrl();
 
@@ -113,8 +113,8 @@ public abstract class AgresteController extends Controller {
 
     }
 
-    public void logRequest(ActionRequest request, ActionResponse response, LogType logType, String message) throws ServletException, IOException {
-        String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(request, response, null));
+    public void logRequest(ActionRequest request, LogType logType, String message) throws ServletException, IOException {
+        String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(request, null));
         AbstractApplication.getRunningInstance().log(logType, consoleLogMessage);
     }
 

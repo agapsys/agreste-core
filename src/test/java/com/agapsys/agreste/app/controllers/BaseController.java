@@ -19,7 +19,6 @@ import com.agapsys.agreste.AgresteController;
 import com.agapsys.agreste.JpaTransaction;
 import com.agapsys.agreste.app.entities.User;
 import com.agapsys.rcf.ActionRequest;
-import com.agapsys.rcf.ActionResponse;
 import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.servlet.ServletException;
@@ -27,8 +26,8 @@ import javax.servlet.ServletException;
 public class BaseController extends AgresteController {
 
     @Override
-    protected com.agapsys.rcf.User getUser(ActionRequest request, ActionResponse response) throws ServletException, IOException {
-        User user = (User) super.getUser(request, response);
+    protected com.agapsys.rcf.User getUser(ActionRequest request) throws ServletException, IOException {
+        User user = (User) super.getUser(request);
 
         if (user == null)
             return null;

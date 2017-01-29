@@ -57,7 +57,7 @@ public class UserController extends BaseController {
     }
 
     @WebAction(secured = true)
-    public User me(ActionRequest request, ActionResponse response) throws ServletException, IOException {
-        return (User) getUser(request, response);
+    public User me(ActionRequest request) throws ServletException, IOException {
+        return (User) getUser(request);
     }
 }
