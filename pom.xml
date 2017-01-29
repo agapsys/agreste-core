@@ -22,7 +22,7 @@ limitations under the License.
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.agapsys</groupId>
-    <artifactId>agreste</artifactId>
+    <artifactId>agreste-core</artifactId>
     <version>0.1.0</version>
 
     <packaging>jar</packaging>
@@ -33,7 +33,7 @@ limitations under the License.
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
 
-    <name>Agapsys REST Environment (AGRESTE)</name>
+    <name>AGRESTE (Core Library)</name>
     <description>A full-stack REST framework for java applications</description>
     <url>https://github.com/agapsys/agreste</url>
 
