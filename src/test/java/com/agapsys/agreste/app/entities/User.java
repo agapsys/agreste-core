@@ -19,6 +19,7 @@ import com.agapsys.jpa.AbstractEntity;
 import com.agapsys.rcf.Controller.Dto;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -26,7 +27,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import org.mindrot.jbcrypt.BCrypt;
 
 /**
  * Represents an application user.
@@ -45,15 +45,6 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User, 
             this.username = user.getUsername();
             this.roles = user.getRoles();
         }
-    }
-
-    private static String getPasswordHash(String password) {
-        int logRounds = 4;
-        return (BCrypt.hashpw(password, BCrypt.gensalt(logRounds)));
-    }
-
-    private static boolean checkPassword(String password, String passwordHash) {
-        return BCrypt.checkpw(password, passwordHash);
     }
     // =========================================================================
 
@@ -89,19 +80,16 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User, 
     // -------------------------------------------------------------------------
 
     // Password ----------------------------------------------------------------
-    private String passwordHash;
-    public String getPasswordHash() {
-        return passwordHash;
+    private String password;
+    public String getPassword() {
+        return password;
     }
-    public void setPasswordHash(String passwordHash) {
-        if (passwordHash == null || passwordHash.trim().isEmpty()) throw new IllegalArgumentException("Null/Empty password hash");
-            this.passwordHash = passwordHash;
-    }
-    public final void setPassword(String password) {
-        setPasswordHash(getPasswordHash(password));
+    public void setPassword(String password) {
+        if (password == null || password.trim().isEmpty()) throw new IllegalArgumentException("Null/Empty password hash");
+            this.password = password;
     }
     public boolean isPasswordValid(String password) {
-        return checkPassword(password, getPasswordHash());
+        return Objects.equals(getPassword(), password);
     }
     // -------------------------------------------------------------------------
 

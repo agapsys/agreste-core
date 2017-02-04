@@ -89,12 +89,7 @@ limitations under the License.
             <version>1.4.193</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>de.svenkubiak</groupId>
-            <artifactId>jBCrypt</artifactId>
-            <version>0.4.1</version>
-            <scope>test</scope>
-        </dependency>
+        
 
         <!-- Compile dependencies -->
         <dependency>
