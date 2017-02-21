@@ -82,7 +82,7 @@ public abstract class AgresteController extends Controller {
         if (!(unacaughtError instanceof OptimisticLockException)) { // <-- OptimisticLockException will be handled by JpaFilter!
             String stackTrace = ExceptionReporterModule.getStackTrace(unacaughtError);
             logRequest(request, LogType.ERROR, stackTrace);
-            return false;
+            return true;
         } else {
             super.onControllerError(request, response, unacaughtError);
             return onUncaughtError(request, response, unacaughtError);
