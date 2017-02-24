@@ -95,8 +95,13 @@ public abstract class AgresteController extends Controller {
 
 
     protected String getLogMessage(ActionRequest request, String message) throws ServletException, IOException {
-
-        User loggedUser = getUser(request);
+        User loggedUser;
+        
+        try {
+            loggedUser = getUser(request);
+        } catch (Throwable t) {
+            loggedUser = null;
+        }
 
         String requestUrl = request.getFullRequestUrl();
 

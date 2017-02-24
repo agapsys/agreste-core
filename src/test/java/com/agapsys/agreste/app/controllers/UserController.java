@@ -50,7 +50,7 @@ public class UserController extends BaseController {
         if (user == null) {
             throw new ForbiddenException("Invalid credentials");
         } else {
-            registerUser(request, response, user);
+            setUser(request, response, user);
         }
 
         return new UserDto(user);
