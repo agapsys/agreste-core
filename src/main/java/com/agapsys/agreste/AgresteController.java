@@ -56,6 +56,8 @@ public abstract class AgresteController extends Controller {
 
     /**
      * Returns the JPA transaction associated with given request.
+     * 
+     * NOTE: If persistence module is disabled, this method will return null.
      *
      * @param request action request.
      * @return the JPA transaction associated with given request.

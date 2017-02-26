@@ -21,7 +21,6 @@ import com.agapsys.web.toolkit.AbstractWebApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
 import com.agapsys.web.toolkit.utils.Settings;
 import java.util.TimeZone;
-import java.util.logging.Level;
 
 public abstract class AgresteApplication extends AbstractWebApplication {
     // CLASS SCOPE =============================================================
@@ -45,12 +44,18 @@ public abstract class AgresteApplication extends AbstractWebApplication {
     @Override
     protected final void beforeApplicationStart() {
         TimeZone.setDefault(getDefaultTimeZone());
-        java.util.logging.Logger.getLogger("org.hibernate").setLevel(getHibernateLogLevel());
 
         super.beforeApplicationStart();
-        registerModule(PersistenceModule.class);
+        PersistenceModule persistenceModule = getPersistenceModule();
+        if (persistenceModule != null) {
+            registerModule(persistenceModule);
+        }
 
         beforeAgresteStart();
+    }
+    
+    protected PersistenceModule getPersistenceModule() {
+        return new AgrestePersistenceModule();
     }
 
     /**
@@ -68,14 +73,6 @@ public abstract class AgresteApplication extends AbstractWebApplication {
      */
     protected TimeZone getDefaultTimeZone() {
         return TimeZone.getTimeZone("UTC");
-    }
-
-    /**
-     * Return hibernate logging level.
-     * @return hibernate logging level. Default implementation disables log.
-     */
-    protected Level getHibernateLogLevel() {
-        return Level.OFF;
     }
 
     /**

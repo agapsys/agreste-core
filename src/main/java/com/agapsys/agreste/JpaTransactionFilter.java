@@ -147,6 +147,12 @@ public class JpaTransactionFilter implements Filter {
 
         if (webApp != null) {
             PersistenceModule persistenceModule = webApp.getModule(PersistenceModule.class);
+            
+            if (persistenceModule == null) {
+                chain.doFilter(request, response);
+                return;
+            }
+            
             ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceModule.getEntityManager()).getTransaction();
             jpaTransaction.wrappedBegin();
             req.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);
