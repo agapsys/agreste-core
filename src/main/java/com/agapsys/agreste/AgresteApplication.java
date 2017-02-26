@@ -116,7 +116,7 @@ public abstract class AgresteApplication extends AbstractWebApplication {
 
         String errFormatStr = "Invalid value for %s: %s";
 
-        Settings settings = getSettings();
+        Settings settings = getRootSettings();
 
         String abuseCheckEnabledStr  = settings.getMandatoryProperty(KEY_ABUSE_CHECK_ENABLED);
         String abuseCheckIntervalStr = settings.getMandatoryProperty(KEY_ABUSE_INTERVAL);
