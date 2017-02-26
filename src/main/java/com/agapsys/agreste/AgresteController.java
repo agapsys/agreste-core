@@ -34,6 +34,16 @@ public abstract class AgresteController extends Controller {
 
     // <editor-fold desc="STATIC SCOPE">
     // =========================================================================
+    
+    /**
+     * Returns application running instance
+     * 
+     * @return application running instance or null it application is not running.
+     */
+    public static AbstractApplication getRunningInstance() {
+        return AbstractApplication.getRunningInstance();
+    }
+    
     /**
      * Returns an application module.
      * @param <M> module type
@@ -41,7 +51,7 @@ public abstract class AgresteController extends Controller {
      * @return application module associated with given class.
      */
     public static <M extends Module> M getModule(Class<M> moduleClass) {
-        return AbstractApplication.getRunningInstance().getModule(moduleClass);
+        return getRunningInstance().getModule(moduleClass);
     }
 
     /**
@@ -51,7 +61,7 @@ public abstract class AgresteController extends Controller {
      * @return application service associated with given class.
      */
     public static <S extends Service> S getService(Class<S> serviceClass) {
-        return AbstractApplication.getRunningInstance().getService(serviceClass);
+        return getRunningInstance().getService(serviceClass);
     }
 
     /**
