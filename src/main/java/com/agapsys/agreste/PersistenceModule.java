@@ -16,10 +16,9 @@
 package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractApplication;
-import com.agapsys.web.toolkit.modules.PersistenceModule;
 import java.util.logging.Level;
 
-public class AgrestePersistenceModule extends PersistenceModule {
+public class PersistenceModule extends com.agapsys.web.toolkit.modules.PersistenceModule {
     
     /**
      * Return hibernate logging level.

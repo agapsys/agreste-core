@@ -54,8 +54,12 @@ public abstract class AgresteApplication extends AbstractWebApplication {
         beforeAgresteStart();
     }
     
+    /**
+     * Persistence module is enabled by default. In order to disable it override this method and return null.
+     * @return the persistence module used by application or null to disable persistence module.
+     */
     protected PersistenceModule getPersistenceModule() {
-        return new AgrestePersistenceModule();
+        return new com.agapsys.agreste.PersistenceModule();
     }
 
     /**
