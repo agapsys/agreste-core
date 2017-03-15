@@ -34,7 +34,7 @@ public class AppWithoutPersistenceTest {
     public static class NormalApplication extends MockedWebApplication {
 
         @Override
-        public String getName() {
+        public String getRootName() {
             return "NORMAL-APPLICATION";
         }
         
@@ -43,7 +43,7 @@ public class AppWithoutPersistenceTest {
     public static class DisabledPersistenceApplication extends MockedWebApplication {
 
         @Override
-        public String getName() {
+        public String getRootName() {
             return "DISABLED-PERSISTENCE-APPLICATION";
         }
         

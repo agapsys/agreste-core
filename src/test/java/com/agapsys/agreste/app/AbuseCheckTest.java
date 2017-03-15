@@ -121,7 +121,7 @@ public class AbuseCheckTest {
         }
 
         @Override
-        public String getName() {
+        public String getRootName() {
             return "ABUSE-CHECK-TEST";
         }
 
