@@ -68,7 +68,7 @@ limitations under the License.
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>console-utils</artifactId>
-            <version>0.1.0</version>
+            <version>[0.1.0, 1.0.0)</version>
             <scope>test</scope>
         </dependency>
         <dependency>
