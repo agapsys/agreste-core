@@ -16,17 +16,17 @@
 package com.agapsys.agreste.app;
 
 import com.agapsys.agreste.app.entities.User;
-import com.agapsys.agreste.test.MockedWebApplication;
-import com.agapsys.web.toolkit.modules.PersistenceModule;
+import com.agapsys.web.toolkit.MockedWebApplication;
+import com.agapsys.web.toolkit.services.PersistenceService;
 import javax.persistence.EntityManager;
 
 public class TestApplication extends MockedWebApplication {
 
     @Override
-    protected void afterAgresteStart() {
-        super.afterAgresteStart();
+    protected void onStart() {
+        super.onStart();
 
-        PersistenceModule persistenceModule = getModule(PersistenceModule.class);
+        PersistenceService persistenceModule = getService(PersistenceService.class);
 
         EntityManager em = persistenceModule.getEntityManager();
 

@@ -23,47 +23,50 @@ import com.agapsys.rcf.User;
 import com.agapsys.rcf.exceptions.ClientException;
 import com.agapsys.web.toolkit.AbstractApplication;
 import com.agapsys.web.toolkit.LogType;
-import com.agapsys.web.toolkit.Module;
 import com.agapsys.web.toolkit.Service;
-import com.agapsys.web.toolkit.modules.ExceptionReporterModule;
+import com.agapsys.web.toolkit.services.ExceptionReporterService;
 import java.io.IOException;
-import javax.persistence.OptimisticLockException;
+import java.util.NoSuchElementException;
 import javax.servlet.ServletException;
 
 public abstract class AgresteController extends Controller {
 
-    // <editor-fold desc="STATIC SCOPE">
-    // =========================================================================
-    
     /**
      * Returns application running instance
      * 
      * @return application running instance or null it application is not running.
      */
-    public static AbstractApplication getRunningInstance() {
-        return AbstractApplication.getRunningInstance();
+    public AbstractApplication getApplication() {
+        synchronized (this) {
+            return AbstractApplication.getRunningInstance();
+        }
+    }
+   
+    /** See {@linkplain AbstractApplication#getService(java.lang.Class, boolean)}. */
+    public <S extends Service> S getService(Class<S> serviceClass, boolean autoRegistration) {
+        synchronized (this) {
+            AbstractApplication app = getApplication();
+            
+            if (app == null)
+                throw new IllegalStateException("Application is not running");
+            
+            return app.getService(serviceClass, autoRegistration);
+        }
+    }
+
+    public final <S extends Service> S getRegisteredService(Class<S> serviceClass) throws NoSuchElementException {
+        S service = getService(serviceClass, false);
+        
+        if (service == null)
+            throw new NoSuchElementException(serviceClass.getName());
+        
+        return service;
     }
     
-    /**
-     * Returns an application module.
-     * @param <M> module type
-     * @param moduleClass module class.
-     * @return application module associated with given class.
-     */
-    public static <M extends Module> M getModule(Class<M> moduleClass) {
-        return getRunningInstance().getModule(moduleClass);
+    public final <S extends Service> S getOnDemandService(Class<S> serviceClass) {
+        return getService(serviceClass, true);
     }
-
-    /**
-     * Returns an application service.
-     * @param <S> service type
-     * @param serviceClass service class.
-     * @return application service associated with given class.
-     */
-    public static <S extends Service> S getService(Class<S> serviceClass) {
-        return getRunningInstance().getService(serviceClass);
-    }
-
+    
     /**
      * Returns the JPA transaction associated with given request.
      * 
@@ -72,41 +75,29 @@ public abstract class AgresteController extends Controller {
      * @param request action request.
      * @return the JPA transaction associated with given request.
      */
-    public static JpaTransaction getJpaTransaction(ActionRequest request) {
+    public JpaTransaction getJpaTransaction(ActionRequest request) {
         return (JpaTransaction) request.getMetadata(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
     }
-    // =========================================================================
-    // </editor-fold>
 
     @Override
-    protected final void onClientError(ActionRequest request, ActionResponse response, ClientException error) throws ServletException, IOException {
-        logRequest(request, LogType.WARNING, error.getMessage());
+    protected void onClientError(ActionRequest request, ActionResponse response, ClientException error) throws ServletException, IOException {
+        __logRequest(request, LogType.WARNING, error.getMessage(), "");
+        
         super.onClientError(request, response, error);
-
-        onClientException(request, response, error);
     }
-
-    protected void onClientException(ActionRequest request, ActionResponse response, ClientException exception) throws ServletException, IOException {}
 
     @Override
-    protected final boolean onControllerError(ActionRequest request, ActionResponse response, Throwable unacaughtError) throws ServletException, IOException {
-
-        if (!(unacaughtError instanceof OptimisticLockException)) { // <-- OptimisticLockException will be handled by JpaFilter!
-            String stackTrace = ExceptionReporterModule.getStackTrace(unacaughtError);
-            logRequest(request, LogType.ERROR, stackTrace);
-            return true;
-        } else {
-            super.onControllerError(request, response, unacaughtError);
-            return onUncaughtError(request, response, unacaughtError);
-        }
+    protected boolean onUncaughtError(ActionRequest request, ActionResponse response, RuntimeException uncaughtError) throws ServletException, IOException {
+        __logRequest(request, LogType.ERROR, "Application error", String.format("Stack trace:\n%s", ExceptionReporterService.getStackTrace(uncaughtError)));
+        
+        return super.onUncaughtError(request, response, uncaughtError);
     }
-
-    protected boolean onUncaughtError(ActionRequest request, ActionResponse response, Throwable uncaughtError) throws ServletException, IOException {
-        return true;
+    
+    private void __logRequest(ActionRequest request, LogType logType, String title, String bottomMessage) {
+        getApplication().log(logType, __getLogMessage(request, title, bottomMessage));
     }
-
-
-    protected String getLogMessage(ActionRequest request, String message) throws ServletException, IOException {
+    
+    private String __getLogMessage(ActionRequest request, String title, String bottomMessage) {
         User loggedUser;
         
         try {
@@ -117,22 +108,18 @@ public abstract class AgresteController extends Controller {
 
         String requestUrl = request.getFullRequestUrl();
 
-        String finalMessage =  String.format("%s %s\nIP: %s\nUser-agent: %s\nUser id: %s%s",
-            request.getMethod().name(),
-            requestUrl,
-            request.getOriginIp(),
-            request.getUserAgent(),
-            loggedUser != null ? "" + loggedUser.toString(): "none",
-            message != null && !message.trim().isEmpty() ? "\n\n" + message : ""
-        );
+        StringBuilder sb = new StringBuilder(title).append('\n')
+            .append("----").append('\n')
+            .append(request.getMethod().name()).append(" ").append(requestUrl).append('\n')
+            .append("IP: ").append(request.getOriginIp()).append('\n')
+            .append("User-agent: ").append(request.getUserAgent()).append('\n')
+            .append("User ID: ").append(loggedUser != null ? "" + loggedUser.toString() : "none").append('\n')
+            .append(bottomMessage).append('\n')
+            .append("----").append('\n');
+        
 
-        return finalMessage;
+        return sb.toString();
 
-    }
-
-    public void logRequest(ActionRequest request, LogType logType, String message) throws ServletException, IOException {
-        String consoleLogMessage = String.format("%s\n----\n%s\n----", message, getLogMessage(request, null));
-        AbstractApplication.getRunningInstance().log(logType, consoleLogMessage);
     }
 
 }

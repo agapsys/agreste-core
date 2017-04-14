@@ -15,16 +15,16 @@
  */
 package com.agapsys.agreste.app;
 
-import com.agapsys.agreste.AgresteApplication;
 import com.agapsys.agreste.AgresteController;
 import com.agapsys.agreste.test.AgresteContainer;
-import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.TestUtils.Endpoint;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.rcf.ActionRequest;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
+import com.agapsys.web.toolkit.AbstractWebApplication;
+import com.agapsys.web.toolkit.MockedWebApplication;
 import com.agapsys.web.toolkit.modules.PersistenceModule;
 import org.junit.Assert;
 import org.junit.Test;
@@ -67,7 +67,7 @@ public class AppWithoutPersistenceTest {
     }
     
 
-    private void _test(Class<? extends AgresteApplication> applicationClass, String expectedResponse) {
+    private void _test(Class<? extends AbstractWebApplication> applicationClass, String expectedResponse) {
         AgresteContainer ac;
 
         ac = new AgresteContainer<>(applicationClass)

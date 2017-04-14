@@ -17,7 +17,6 @@
 package com.agapsys.agreste;
 
 import com.agapsys.agreste.test.AgresteContainer;
-import com.agapsys.agreste.test.MockedWebApplication;
 import com.agapsys.agreste.test.TestUtils;
 import com.agapsys.http.HttpGet;
 import com.agapsys.http.HttpHeader;
@@ -26,7 +25,7 @@ import com.agapsys.rcf.ActionRequest;
 import com.agapsys.rcf.ActionResponse;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
-import com.agapsys.web.toolkit.utils.Settings;
+import com.agapsys.web.toolkit.MockedWebApplication;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.ServletException;
@@ -39,11 +38,11 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class CorsModuleTest {
+public class CorsServiceTest {
     // CLASS SCOPE =============================================================
     @BeforeClass
     public static void beforeClass() {
-        System.out.println(String.format("=== %s ===", CorsModuleTest.class.getSimpleName()));
+        System.out.println(String.format("=== %s ===", CorsServiceTest.class.getSimpleName()));
     }
 
     @AfterClass
@@ -55,27 +54,29 @@ public class CorsModuleTest {
     public static class TestApplication extends MockedWebApplication {
 
         public static final String VAL_ALLOWED_HEADERS = "testHeaders";
-        public static final String VAL_ALLOWED_ORIGINS = "testOrigin1, testOrigin2";
+        public static final String[] VAL_ALLOWED_ORIGINS = new String[] {"testOrigin1", "testOrigin2"};
         public static final String VAL_ALLOWED_METHODS = "testMethods";
 
         @Override
-        protected void beforeAgresteStart() {
-            super.beforeAgresteStart();
+        protected void beforeStart() {
+            super.beforeStart();
 
-            registerModule(new CorsModule() {
+            registerService(new CorsService() {
+                @Override
+                public String getAllowedHeaders() {
+                    return VAL_ALLOWED_HEADERS;
+                }
 
                 @Override
-                public Settings getDefaultSettings() {
-                    Settings defaults = super.getDefaultSettings();
-
-                    if (defaults == null)
-                        defaults = new Settings();
-
-                    defaults.setProperty(CorsModule.KEY_ALLOWED_HEADERS, VAL_ALLOWED_HEADERS);
-                    defaults.setProperty(CorsModule.KEY_ALLOWED_ORIGINS, VAL_ALLOWED_ORIGINS);
-                    defaults.setProperty(CorsModule.KEY_ALLOWED_METHODS, VAL_ALLOWED_METHODS);
-                    return defaults;
+                public String[] getAllowedOrigins() {
+                    return VAL_ALLOWED_ORIGINS;
                 }
+
+                @Override
+                public String getAllowedMethods() {
+                    return VAL_ALLOWED_METHODS;
+                }
+                
             });
         }
     }
@@ -85,8 +86,8 @@ public class CorsModuleTest {
 
         @Override
         protected void beforeAction(ActionRequest request, ActionResponse response) throws ServletException, IOException {
-            CorsModule corsModule = getModule(CorsModule.class);
-            corsModule.putCorsHeaders(response.getServletResponse());
+            CorsService corsService = getService(CorsService.class);
+            corsService.putCorsHeaders(response.getServletResponse());
         }
 
         @WebAction

@@ -15,10 +15,9 @@
  */
 package com.agapsys.agreste;
 
-import com.agapsys.web.toolkit.AbstractApplication;
 import java.util.logging.Level;
 
-public class PersistenceModule extends com.agapsys.web.toolkit.modules.PersistenceModule {
+public class PersistenceService extends com.agapsys.web.toolkit.services.PersistenceService {
     
     /**
      * Return hibernate logging level.
@@ -29,10 +28,10 @@ public class PersistenceModule extends com.agapsys.web.toolkit.modules.Persisten
     }
 
     @Override
-    protected void onInit(AbstractApplication app) {
+    protected void onStart() {
         java.util.logging.Logger.getLogger("org.hibernate").setLevel(getHibernateLogLevel());
 
-        super.onInit(app);
+        super.onStart();
     }
     
 }

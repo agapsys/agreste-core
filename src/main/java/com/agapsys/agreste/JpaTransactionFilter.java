@@ -17,7 +17,7 @@
 package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractApplication;
-import com.agapsys.web.toolkit.modules.PersistenceModule;
+import com.agapsys.web.toolkit.services.PersistenceService;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -132,11 +132,15 @@ public class JpaTransactionFilter implements Filter {
     // =========================================================================
 
     // INSTANCE SCOPE ==========================================================
-    private AbstractApplication webApp;
+    private PersistenceService persistenceService;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        webApp = AbstractApplication.getRunningInstance();
+        AbstractApplication app = AbstractApplication.getRunningInstance();
+        
+        if (app != null) {
+            persistenceService = app.getService(PersistenceService.class, false);
+        }
     }
 
     @Override
@@ -144,16 +148,10 @@ public class JpaTransactionFilter implements Filter {
 
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpServletRequest  req = (HttpServletRequest) request;
-
-        if (webApp != null) {
-            PersistenceModule persistenceModule = webApp.getModule(PersistenceModule.class);
+        
+        if (persistenceService != null) {
             
-            if (persistenceModule == null) {
-                chain.doFilter(request, response);
-                return;
-            }
-            
-            ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceModule.getEntityManager()).getTransaction();
+            ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceService.getEntityManager()).getTransaction();
             jpaTransaction.wrappedBegin();
             req.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);
 
