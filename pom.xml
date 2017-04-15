@@ -23,7 +23,7 @@ limitations under the License.
 
     <groupId>com.agapsys</groupId>
     <artifactId>agreste-core</artifactId>
-    <version>0.1.0-20170412</version>
+    <version>0.1.0-20170415</version>
 
     <packaging>jar</packaging>
 
@@ -66,21 +66,15 @@ limitations under the License.
     <dependencies>
         <!-- Test dependencies -->
         <dependency>
-            <groupId>com.agapsys</groupId>
-            <artifactId>console-utils</artifactId>
-            <version>[0.1.0, 1.0.0)</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.10</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>web-app-toolkit-test</artifactId>
-            <version>[0.1.0-20170411, 1.0.0)</version>
+            <version>[0.1.0-20170415, 1.0.0)</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -95,17 +89,17 @@ limitations under the License.
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>rcf-core</artifactId>
-            <version>[0.1.0, 1.0.0)</version>
+            <version>[0.1.0-20170413, 1.0.0)</version>
         </dependency>
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>jpa-utils</artifactId>
-            <version>[0.1.0, 1.0.0)</version>
+            <version>[0.1.0-20170330, 1.0.0)</version>
         </dependency>
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>web-app-toolkit-core</artifactId>
-            <version>[0.1.0-20170411, 1.0.0)</version>
+            <version>[0.1.0-20170415, 1.0.0)</version>
         </dependency>
 
         <dependency>

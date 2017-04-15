@@ -76,7 +76,7 @@ public class CorsServiceTest {
                 public String getAllowedMethods() {
                     return VAL_ALLOWED_METHODS;
                 }
-                
+
             });
         }
     }
@@ -86,7 +86,7 @@ public class CorsServiceTest {
 
         @Override
         protected void beforeAction(ActionRequest request, ActionResponse response) throws ServletException, IOException {
-            CorsService corsService = getService(CorsService.class);
+            CorsService corsService = getServiceOnDemand(CorsService.class);
             corsService.putCorsHeaders(response.getServletResponse());
         }
 

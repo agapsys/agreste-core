@@ -34,7 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Exposes a JPA transaction to application servlets.
+ * Exposes a JPA transaction associated with a request.
+ * If application does not have a persistence service, this filter does nothing.
  */
 public class JpaTransactionFilter implements Filter {
     // STATIC SCOPE ============================================================
@@ -137,7 +138,7 @@ public class JpaTransactionFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         AbstractApplication app = AbstractApplication.getRunningInstance();
-        
+
         if (app != null) {
             persistenceService = app.getService(PersistenceService.class, false);
         }
@@ -145,12 +146,11 @@ public class JpaTransactionFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
-        HttpServletResponse resp = (HttpServletResponse) response;
-        HttpServletRequest  req = (HttpServletRequest) request;
-        
         if (persistenceService != null) {
-            
+
+            HttpServletResponse resp = (HttpServletResponse) response;
+            HttpServletRequest  req = (HttpServletRequest) request;
+
             ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceService.getEntityManager()).getTransaction();
             jpaTransaction.wrappedBegin();
             req.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);

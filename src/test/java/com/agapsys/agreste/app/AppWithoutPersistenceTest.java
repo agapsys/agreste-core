@@ -15,77 +15,75 @@
  */
 package com.agapsys.agreste.app;
 
+import com.agapsys.agreste.AgresteApplication;
 import com.agapsys.agreste.AgresteController;
+import com.agapsys.agreste.PersistenceService;
 import com.agapsys.agreste.test.AgresteContainer;
 import com.agapsys.agreste.test.TestUtils.Endpoint;
+import com.agapsys.agreste.test.MockedAgresteApplication;
 import com.agapsys.http.HttpResponse.StringResponse;
 import com.agapsys.rcf.ActionRequest;
 import com.agapsys.rcf.HttpMethod;
 import com.agapsys.rcf.WebAction;
 import com.agapsys.rcf.WebController;
-import com.agapsys.web.toolkit.AbstractWebApplication;
-import com.agapsys.web.toolkit.MockedWebApplication;
-import com.agapsys.web.toolkit.modules.PersistenceModule;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class AppWithoutPersistenceTest {
-    
-    public static class NormalApplication extends MockedWebApplication {
+
+    public static class NormalApplication extends MockedAgresteApplication {
 
         @Override
         public String getRootName() {
             return "NORMAL-APPLICATION";
         }
-        
+
     }
-    
-    public static class DisabledPersistenceApplication extends MockedWebApplication {
+
+    public static class DisabledPersistenceApplication extends MockedAgresteApplication {
 
         @Override
         public String getRootName() {
             return "DISABLED-PERSISTENCE-APPLICATION";
         }
-        
-        
-        
+
         @Override
-        protected PersistenceModule getPersistenceModule() {
-            return null; // <-- Disables persistence module
+        protected Factory<PersistenceService> getPersistenceServiceFactory() {
+            return null;
         }
-        
+
     }
-    
+
     @WebController("controller")
     public static class MyController extends AgresteController {
-        
+
         @WebAction(mapping = "/")
         public boolean onGet(ActionRequest request) {
             return getJpaTransaction(request) != null;
         }
 
     }
-    
 
-    private void _test(Class<? extends AbstractWebApplication> applicationClass, String expectedResponse) {
+
+    private void _test(Class<? extends AgresteApplication> applicationClass, String expectedResponse) {
         AgresteContainer ac;
 
         ac = new AgresteContainer<>(applicationClass)
             .registerController(MyController.class);
 
         ac.start();
-        
+
         Endpoint endpoint = new Endpoint(HttpMethod.GET, "/controller/");
         StringResponse response = ac.doRequest(endpoint.getRequest());
         Assert.assertEquals(expectedResponse, response.getContentString());
-        
+
         ac.stop();
     }
-    
+
     @Test
     public void test() {
 
-        // Normal application 
+        // Normal application
         _test(NormalApplication.class, "true");
         _test(DisabledPersistenceApplication.class, "false");
     }

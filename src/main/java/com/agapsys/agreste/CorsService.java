@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CorsService extends Service {
     // CLASS SCOPE =============================================================
-    private static String PROPERTY_PREFIX = CorsService.class.getName();
+    private static final String PROPERTY_PREFIX = CorsService.class.getName();
 
     public static final String KEY_ALLOWED_ORIGINS = PROPERTY_PREFIX + ".allowedOrigins";
     public static final String KEY_ALLOWED_METHODS = PROPERTY_PREFIX + ".allowedMethods";

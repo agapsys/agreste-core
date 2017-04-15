@@ -15,20 +15,20 @@
  */
 package com.agapsys.agreste.app;
 
+import com.agapsys.agreste.PersistenceService;
 import com.agapsys.agreste.app.entities.User;
-import com.agapsys.web.toolkit.MockedWebApplication;
-import com.agapsys.web.toolkit.services.PersistenceService;
+import com.agapsys.agreste.test.MockedAgresteApplication;
 import javax.persistence.EntityManager;
 
-public class TestApplication extends MockedWebApplication {
+public class TestApplication extends MockedAgresteApplication {
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        PersistenceService persistenceModule = getService(PersistenceService.class);
+        PersistenceService persistenceService = getServiceOnDemand(PersistenceService.class);
 
-        EntityManager em = persistenceModule.getEntityManager();
+        EntityManager em = persistenceService.getEntityManager();
 
         // ---------------------------------------------------------------------
         em.getTransaction().begin();

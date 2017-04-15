@@ -33,7 +33,7 @@ public abstract class AgresteController extends Controller {
 
     /**
      * Returns application running instance
-     * 
+     *
      * @return application running instance or null it application is not running.
      */
     public AbstractApplication getApplication() {
@@ -41,36 +41,36 @@ public abstract class AgresteController extends Controller {
             return AbstractApplication.getRunningInstance();
         }
     }
-   
+
     /** See {@linkplain AbstractApplication#getService(java.lang.Class, boolean)}. */
     public <S extends Service> S getService(Class<S> serviceClass, boolean autoRegistration) {
         synchronized (this) {
             AbstractApplication app = getApplication();
-            
+
             if (app == null)
                 throw new IllegalStateException("Application is not running");
-            
+
             return app.getService(serviceClass, autoRegistration);
         }
     }
 
     public final <S extends Service> S getRegisteredService(Class<S> serviceClass) throws NoSuchElementException {
         S service = getService(serviceClass, false);
-        
+
         if (service == null)
             throw new NoSuchElementException(serviceClass.getName());
-        
+
         return service;
     }
-    
-    public final <S extends Service> S getOnDemandService(Class<S> serviceClass) {
+
+    public final <S extends Service> S getServiceOnDemand(Class<S> serviceClass) {
         return getService(serviceClass, true);
     }
-    
+
     /**
      * Returns the JPA transaction associated with given request.
-     * 
-     * NOTE: If persistence module is disabled, this method will return null.
+     *
+     * NOTE: If a persistence service is not registered, this method will return null.
      *
      * @param request action request.
      * @return the JPA transaction associated with given request.
@@ -82,24 +82,24 @@ public abstract class AgresteController extends Controller {
     @Override
     protected void onClientError(ActionRequest request, ActionResponse response, ClientException error) throws ServletException, IOException {
         __logRequest(request, LogType.WARNING, error.getMessage(), "");
-        
+
         super.onClientError(request, response, error);
     }
 
     @Override
     protected boolean onUncaughtError(ActionRequest request, ActionResponse response, RuntimeException uncaughtError) throws ServletException, IOException {
         __logRequest(request, LogType.ERROR, "Application error", String.format("Stack trace:\n%s", ExceptionReporterService.getStackTrace(uncaughtError)));
-        
+
         return super.onUncaughtError(request, response, uncaughtError);
     }
-    
+
     private void __logRequest(ActionRequest request, LogType logType, String title, String bottomMessage) {
         getApplication().log(logType, __getLogMessage(request, title, bottomMessage));
     }
-    
+
     private String __getLogMessage(ActionRequest request, String title, String bottomMessage) {
         User loggedUser;
-        
+
         try {
             loggedUser = getUser(request);
         } catch (Throwable t) {
@@ -116,7 +116,7 @@ public abstract class AgresteController extends Controller {
             .append("User ID: ").append(loggedUser != null ? "" + loggedUser.toString() : "none").append('\n')
             .append(bottomMessage).append('\n')
             .append("----").append('\n');
-        
+
 
         return sb.toString();
 

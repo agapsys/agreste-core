@@ -34,7 +34,7 @@ public class UserController extends BaseController {
     @Override
     protected void onControllerInit() {
         super.onControllerInit();
-        userService = getService(UserService.class);
+        userService = getServiceOnDemand(UserService.class);
     }
 
     @WebAction(mapping = "/login")
