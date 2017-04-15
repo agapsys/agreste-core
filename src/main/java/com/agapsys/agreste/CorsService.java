@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Cross-Origin resource sharing module
+ * Cross-Origin resource sharing service
  */
 public class CorsService extends Service {
     // CLASS SCOPE =============================================================
@@ -105,7 +105,7 @@ public class CorsService extends Service {
     public void putCorsHeaders(HttpServletResponse resp) {
         synchronized(this) {
             if (!isRunning())
-                throw new RuntimeException("Module is not running");
+                throw new RuntimeException("Service is not running");
 
             String mAllowedMethods   = getAllowedMethods();
             String mAllowedHeaders   = getAllowedHeaders();
