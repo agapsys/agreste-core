@@ -130,6 +130,20 @@ public class JpaTransactionFilter implements Filter {
             super.close();
         }
     }
+    
+    private static JpaTransactionFilter singleton = null;
+    
+    private static void __setInstance(JpaTransactionFilter instance) {
+        synchronized(JpaTransactionFilter.class) {
+            singleton = instance;
+        }
+    }
+    
+    public static JpaTransactionFilter getInstance() {
+        synchronized(JpaTransactionFilter.class) {
+            return singleton;
+        }
+    }
     // =========================================================================
 
     // INSTANCE SCOPE ==========================================================

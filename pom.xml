@@ -23,7 +23,7 @@ limitations under the License.
 
     <groupId>com.agapsys</groupId>
     <artifactId>agreste-core</artifactId>
-    <version>0.1.0-20170415</version>
+    <version>0.1.0-20170423</version>
 
     <packaging>jar</packaging>
 
