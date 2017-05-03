@@ -17,7 +17,6 @@
 package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractApplication;
-import com.agapsys.web.toolkit.services.PersistenceService;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
  * If application does not have a persistence service, this filter does nothing.
  */
 public class JpaTransactionFilter implements Filter {
+
     // STATIC SCOPE ============================================================
     public static final String JPA_TRANSACTION_ATTRIBUTE = JpaTransactionFilter.class.getName() + ".JPA_TRANSACTION_ATTRIBUTE";
 
@@ -130,38 +130,19 @@ public class JpaTransactionFilter implements Filter {
             super.close();
         }
     }
-
-    private static JpaTransactionFilter singleton = null;
-
-    private static void __setInstance(JpaTransactionFilter instance) {
-        synchronized(JpaTransactionFilter.class) {
-            singleton = instance;
-        }
-    }
-
-    public static JpaTransactionFilter getInstance() {
-        synchronized(JpaTransactionFilter.class) {
-            return singleton;
-        }
-    }
     // =========================================================================
 
     // INSTANCE SCOPE ==========================================================
-    private PersistenceService persistenceService;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        __setInstance(this);
-
-        AbstractApplication app = AbstractApplication.getRunningInstance();
-
-        if (app != null) {
-            persistenceService = app.getService(PersistenceService.class, false);
-        }
-    }
+    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+        AbstractApplication app = AbstractApplication.getRunningInstance();
+        PersistenceService persistenceService = (app != null ? app.getService(PersistenceService.class, false) : null);
+
         if (persistenceService != null) {
 
             HttpServletResponse resp = (HttpServletResponse) response;
@@ -201,8 +182,6 @@ public class JpaTransactionFilter implements Filter {
     }
 
     @Override
-    public void destroy() {
-        __setInstance(null);
-    }
+    public void destroy() {}
     // =========================================================================
 }

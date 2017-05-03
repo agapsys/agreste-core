@@ -16,7 +16,6 @@
 package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractWebApplication;
-import javax.servlet.ServletException;
 
 public abstract class AgresteApplication extends AbstractWebApplication {
 
@@ -45,32 +44,6 @@ public abstract class AgresteApplication extends AbstractWebApplication {
             }
         }
 
-    }
-    
-    @Override
-    protected void onStart() {
-        super.onStart();
-        
-        try {
-
-            JpaTransactionFilter jpaTransactionFilter = JpaTransactionFilter.getInstance();
-            
-            if (jpaTransactionFilter != null)
-                jpaTransactionFilter.init(null);
-                        
-        } catch (ServletException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        
-        JpaTransactionFilter jpaTransactionFilter = JpaTransactionFilter.getInstance();
-            
-        if (jpaTransactionFilter != null)
-            jpaTransactionFilter.destroy();
     }
 
 }
