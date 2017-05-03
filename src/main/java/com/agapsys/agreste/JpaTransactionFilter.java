@@ -130,15 +130,15 @@ public class JpaTransactionFilter implements Filter {
             super.close();
         }
     }
-    
+
     private static JpaTransactionFilter singleton = null;
-    
+
     private static void __setInstance(JpaTransactionFilter instance) {
         synchronized(JpaTransactionFilter.class) {
             singleton = instance;
         }
     }
-    
+
     public static JpaTransactionFilter getInstance() {
         synchronized(JpaTransactionFilter.class) {
             return singleton;
@@ -151,6 +151,8 @@ public class JpaTransactionFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        __setInstance(this);
+
         AbstractApplication app = AbstractApplication.getRunningInstance();
 
         if (app != null) {
@@ -199,6 +201,8 @@ public class JpaTransactionFilter implements Filter {
     }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+        __setInstance(null);
+    }
     // =========================================================================
 }
