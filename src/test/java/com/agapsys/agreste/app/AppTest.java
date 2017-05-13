@@ -121,13 +121,13 @@ public class AppTest {
         resp = ac.doRequest(endpoint.getRequest());
         TestUtils.assertStatus(401, resp);
 
-        // Logged access (without CSRF)...
+        // Logged access (without XSRF)...
         LoginInfo loginInfo = doLogin(ac, "username", "password");
         resp = ac.doRequest(loginInfo.getClient(), endpoint.getRequest());
         TestUtils.assertStatus(401, resp);
 
-        // Logged access (with CSRF)...
-        loginInfo.getClient().addDefaultHeader(Controller.CSRF_HEADER, loginInfo.getResponse().getFirstHeader(Controller.CSRF_HEADER).getValue());
+        // Logged access (with XSRF)...
+        loginInfo.getClient().addDefaultHeader(Controller.XSRF_HEADER, loginInfo.getResponse().getCookie(Controller.XSRF_COOKIE).value);
         resp = ac.doRequest(loginInfo.getClient(), endpoint.getRequest());
         TestUtils.assertStatus(200, resp);
         UserDto dto = TestUtils.readJsonObject(UserDto.class, resp);

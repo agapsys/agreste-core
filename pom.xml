@@ -23,7 +23,7 @@ limitations under the License.
 
     <groupId>com.agapsys</groupId>
     <artifactId>agreste-core</artifactId>
-    <version>0.1.0-20170508</version>
+    <version>0.1.0-20170513</version>
 
     <packaging>jar</packaging>
 
@@ -89,17 +89,17 @@ limitations under the License.
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>rcf-core</artifactId>
-            <version>[0.1.0-20170502, 1.0.0)</version>
+            <version>[0.1.0, 1.0.0)</version>
         </dependency>
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>jpa-utils</artifactId>
-            <version>[0.1.0-20170330, 1.0.0)</version>
+            <version>[0.1.0, 1.0.0)</version>
         </dependency>
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>web-app-toolkit-core</artifactId>
-            <version>[0.1.0-20170508, 1.0.0)</version>
+            <version>[0.1.0, 1.0.0)</version>
         </dependency>
 
         <dependency>

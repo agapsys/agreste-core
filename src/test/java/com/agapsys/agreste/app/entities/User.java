@@ -84,7 +84,7 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User, 
     public String getPassword() {
         return password;
     }
-    public void setPassword(String password) {
+    public final void setPassword(String password) {
         if (password == null || password.trim().isEmpty()) throw new IllegalArgumentException("Null/Empty password hash");
             this.password = password;
     }
@@ -125,13 +125,27 @@ public class User extends AbstractEntity<User> implements com.agapsys.rcf.User, 
     }
     // -------------------------------------------------------------------------
 
+    // Permissions -------------------------------------------------------------
+    private long permissions;
+
+    @Override
+    public long getPermissions() {
+        return permissions;
+    }
+
+    public final void setPermissions(long permissions) {
+        this.permissions = permissions;
+    }
+    // -------------------------------------------------------------------------
+
     // Constructors ------------------------------------------------------------
     public User() {}
 
-    public User(String username, String password, String...roles) {
+    public User(String username, String password, long permissions, String...roles) {
         setUsername(username);
         setPassword(password);
         setRoles(roles);
+        setPermissions(permissions);
     }
     // -------------------------------------------------------------------------
 

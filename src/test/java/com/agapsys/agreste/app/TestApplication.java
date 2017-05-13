@@ -33,7 +33,7 @@ public class TestApplication extends MockedAgresteApplication {
         // ---------------------------------------------------------------------
         em.getTransaction().begin();
 
-        new User("username", "password").save(em);
+        new User("username", "password", 0).save(em);
 
         em.getTransaction().commit();
         // ---------------------------------------------------------------------
