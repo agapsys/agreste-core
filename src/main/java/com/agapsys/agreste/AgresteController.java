@@ -82,10 +82,10 @@ public abstract class AgresteController extends Controller {
     @Override
     protected void onClientError(ActionRequest request, ActionResponse response, ClientException error) throws ServletException, IOException {
         Integer appStatus = error.getAppStatus();
-        String title = String.format("%d%s - %s (%s)", 
+        String title = String.format("%d%s%s (%s)", 
             error.getHttpStatus(), 
             appStatus != null ? ":" + appStatus : "",
-            error.getMessage(),
+            (error.getMessage() == null || error.getMessage().trim().isEmpty()) ? "" : " - " + error.getMessage(),
             error.getClass().getName()
         );
         
