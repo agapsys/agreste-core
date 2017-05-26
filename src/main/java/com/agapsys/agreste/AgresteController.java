@@ -81,7 +81,15 @@ public abstract class AgresteController extends Controller {
 
     @Override
     protected void onClientError(ActionRequest request, ActionResponse response, ClientException error) throws ServletException, IOException {
-        __logRequest(request, LogType.WARNING, error.getMessage(), "");
+        Integer appStatus = error.getAppStatus();
+        String title = String.format("%d%s - %s (%s)", 
+            error.getHttpStatus(), 
+            appStatus != null ? ":" + appStatus : "",
+            error.getMessage(),
+            error.getClass().getName()
+        );
+        
+        __logRequest(request, LogType.WARNING, title, "");
 
         super.onClientError(request, response, error);
     }
