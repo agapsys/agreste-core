@@ -83,7 +83,7 @@ public abstract class AgresteController extends Controller {
     }
 
     @Override
-    protected ActionRequest getRequest(HttpServletRequest request, HttpServletResponse response) {
+    protected com.agapsys.agreste.ActionRequest getRequest(HttpServletRequest request, HttpServletResponse response) {
         ActionRequest coreRequest = super.getRequest(request, response);
         return new com.agapsys.agreste.ActionRequest(coreRequest);
     }
