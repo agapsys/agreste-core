@@ -28,6 +28,8 @@ import com.agapsys.web.toolkit.services.ExceptionReporterService;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public abstract class AgresteController extends Controller {
 
@@ -75,10 +77,17 @@ public abstract class AgresteController extends Controller {
      * @param request action request.
      * @return the JPA transaction associated with given request.
      */
+    @Deprecated
     public JpaTransaction getJpaTransaction(ActionRequest request) {
         return (JpaTransaction) request.getMetadata(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
     }
 
+    @Override
+    protected ActionRequest getRequest(HttpServletRequest request, HttpServletResponse response) {
+        ActionRequest coreRequest = super.getRequest(request, response);
+        return new com.agapsys.agreste.ActionRequest(coreRequest);
+    }
+    
     @Override
     protected void onClientError(ActionRequest request, ActionResponse response, ClientException error) throws ServletException, IOException {
         Integer appStatus = error.getAppStatus();
