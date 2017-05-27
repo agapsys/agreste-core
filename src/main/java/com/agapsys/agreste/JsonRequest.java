@@ -25,5 +25,4 @@ public class JsonRequest extends com.agapsys.rcf.JsonRequest {
         return (JpaTransaction) getMetadata(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
     }
 
-    
 }
