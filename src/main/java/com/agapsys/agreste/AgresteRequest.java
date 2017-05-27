@@ -15,14 +15,16 @@
  */
 package com.agapsys.agreste;
 
-public class JsonRequest extends com.agapsys.rcf.JsonRequest {
-    
-    public JsonRequest(ActionRequest wrappedRequest) {
+import com.agapsys.rcf.ActionRequest;
+
+public class AgresteRequest extends ActionRequest {
+
+    public AgresteRequest(ActionRequest wrappedRequest) {
         super(wrappedRequest);
     }
     
     public JpaTransaction getJpaTransaction() {
         return (JpaTransaction) getMetadata(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
     }
-
+    
 }

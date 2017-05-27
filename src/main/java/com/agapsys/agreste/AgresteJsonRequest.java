@@ -15,14 +15,27 @@
  */
 package com.agapsys.agreste;
 
-public class ActionRequest extends com.agapsys.rcf.ActionRequest {
+import com.agapsys.rcf.JsonRequest;
+import com.agapsys.rcf.exceptions.BadRequestException;
+import java.io.IOException;
+import java.util.List;
 
-    public ActionRequest(com.agapsys.rcf.ActionRequest wrappedRequest) {
-        super(wrappedRequest);
+public class AgresteJsonRequest extends AgresteRequest {
+    
+    public AgresteJsonRequest(AgresteRequest wrappedRequest) {
+        super(new JsonRequest(wrappedRequest));
+    }
+    
+    public final <T> T readObject(Class<T> targetClass) throws IOException, BadRequestException {
+        return ((JsonRequest)getWrappedRequest()).readObject(targetClass);
+    }
+    
+    public final <E> List<E> readList(Class<E> elementClass) throws IOException, BadRequestException {
+        return ((JsonRequest)getWrappedRequest()).readList(elementClass);
     }
     
     public JpaTransaction getJpaTransaction() {
         return (JpaTransaction) getMetadata(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
     }
-    
+
 }
