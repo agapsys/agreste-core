@@ -74,7 +74,7 @@ limitations under the License.
         <dependency>
             <groupId>com.agapsys</groupId>
             <artifactId>web-app-toolkit-test</artifactId>
-            <version>[0.1.0-20170415, 1.0.0)</version>
+            <version>[0.1.0, 1.0.0)</version>
             <scope>test</scope>
         </dependency>
         <dependency>
