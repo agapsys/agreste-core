@@ -20,12 +20,19 @@ import com.agapsys.rcf.JsonRequest;
 import com.agapsys.rcf.exceptions.BadRequestException;
 import java.io.IOException;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class AgresteJsonRequest extends AgresteRequest {
     
     public AgresteJsonRequest(ActionRequest wrappedRequest) {
         super(new JsonRequest(wrappedRequest));
     }
+
+    public AgresteJsonRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        super(servletRequest, servletResponse);
+    }
+    
     
     public final <T> T readObject(Class<T> targetClass) throws IOException, BadRequestException {
         return ((JsonRequest)getWrappedRequest()).readObject(targetClass);

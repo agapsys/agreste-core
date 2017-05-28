@@ -16,12 +16,19 @@
 package com.agapsys.agreste;
 
 import com.agapsys.rcf.ActionRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 public class AgresteRequest extends ActionRequest {
 
     public AgresteRequest(ActionRequest wrappedRequest) {
         super(wrappedRequest);
     }
+
+    public AgresteRequest(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        super(servletRequest, servletResponse);
+    }
+    
     
     public JpaTransaction getJpaTransaction() {
         return (JpaTransaction) getMetadata(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
