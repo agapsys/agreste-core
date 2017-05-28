@@ -15,6 +15,7 @@
  */
 package com.agapsys.agreste;
 
+import com.agapsys.rcf.ActionRequest;
 import com.agapsys.rcf.JsonRequest;
 import com.agapsys.rcf.exceptions.BadRequestException;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import java.util.List;
 
 public class AgresteJsonRequest extends AgresteRequest {
     
-    public AgresteJsonRequest(AgresteRequest wrappedRequest) {
+    public AgresteJsonRequest(ActionRequest wrappedRequest) {
         super(new JsonRequest(wrappedRequest));
     }
     
