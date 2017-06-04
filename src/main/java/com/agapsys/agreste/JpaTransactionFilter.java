@@ -43,6 +43,7 @@ public class JpaTransactionFilter implements Filter {
 
     private static class ServletTransaction extends EntityTransactionWrapper implements JpaTransaction {
         private final UnsupportedOperationException unsupportedOperationException = new UnsupportedOperationException("Transaction is managed by servlet");
+        
         private final EntityManager em;
         private final List<Runnable> commitQueue = new LinkedList<>();
         private final List<Runnable> rollbackQueue = new LinkedList<>();
@@ -149,15 +150,17 @@ public class JpaTransactionFilter implements Filter {
             HttpServletRequest  req = (HttpServletRequest) request;
 
             ServletTransaction jpaTransaction = (ServletTransaction) new ServletEntityManger(persistenceService.getEntityManager()).getTransaction();
-            jpaTransaction.wrappedBegin();
-            req.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);
 
             try {
+                jpaTransaction.wrappedBegin();
+                req.setAttribute(JPA_TRANSACTION_ATTRIBUTE, jpaTransaction);
+            
                 chain.doFilter(request, response);
                 jpaTransaction.wrappedCommit();
 
             } catch (Throwable error) {
-                jpaTransaction.wrappedRollback();
+                if (jpaTransaction.isActive())
+                    jpaTransaction.wrappedRollback();
 
                 if (error instanceof OptimisticLockException) {
                     resp.setStatus(HttpServletResponse.SC_CONFLICT);
