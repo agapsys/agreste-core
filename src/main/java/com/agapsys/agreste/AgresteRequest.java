@@ -15,6 +15,7 @@
  */
 package com.agapsys.agreste;
 
+import com.agapsys.rcf.ActionDispatcher;
 import com.agapsys.rcf.ActionRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,9 +30,32 @@ public class AgresteRequest extends ActionRequest {
         super(servletRequest, servletResponse);
     }
     
-    
     public JpaTransaction getJpaTransaction() {
         return (JpaTransaction) getMetadata(JpaTransactionFilter.JPA_TRANSACTION_ATTRIBUTE);
+    }
+    
+    public String getContextName() {
+        String contextPath = getServletRequest().getContextPath();
+        return contextPath.isEmpty() ? "/" : contextPath;
+    }
+    
+    public String getControllerPath() {
+        return ActionDispatcher.getRelativePath(getContextName(), getServletRequest().getServletPath());
+    }
+    
+    public String getActionPath() {
+        String relativePath = ActionDispatcher.getRelativePath(getControllerPath(), getRequestUri());
+        
+        if (relativePath.equals("/"))
+            return relativePath;
+        
+        String[] tokens = relativePath.split("/");
+        String result = "/" + tokens[1];
+        
+        if (getPathInfo().startsWith(result))
+            return "/";
+        
+        return result;
     }
     
 }
