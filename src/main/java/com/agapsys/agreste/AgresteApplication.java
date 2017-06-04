@@ -16,6 +16,7 @@
 package com.agapsys.agreste;
 
 import com.agapsys.web.toolkit.AbstractWebApplication;
+import javax.persistence.EntityManager;
 
 public abstract class AgresteApplication extends AbstractWebApplication {
 
@@ -30,6 +31,18 @@ public abstract class AgresteApplication extends AbstractWebApplication {
                 return new PersistenceService();
             }
         };
+    }
+    
+    public EntityManager getEntityManager() {
+        if (!isRunning())
+            throw new IllegalStateException("Application is not running");
+        
+        PersistenceService persistenceService = getService(PersistenceService.class, false);
+        
+        if (persistenceService == null)
+            return null;
+        
+        return persistenceService.getEntityManager();
     }
 
     @Override
