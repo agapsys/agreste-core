@@ -38,25 +38,21 @@ public abstract class AgresteController extends Controller {
      *
      * @return application running instance or null it application is not running.
      */
-    public AbstractApplication getApplication() {
-        synchronized (this) {
-            return AbstractApplication.getRunningInstance();
-        }
+    public static AbstractApplication getApplication() {
+        return AbstractApplication.getRunningInstance();
     }
 
     /** See {@linkplain AbstractApplication#getService(java.lang.Class, boolean)}. */
-    public <S extends Service> S getService(Class<S> serviceClass, boolean autoRegistration) {
-        synchronized (this) {
-            AbstractApplication app = getApplication();
+    public static <S extends Service> S getService(Class<S> serviceClass, boolean autoRegistration) {
+        AbstractApplication app = getApplication();
 
-            if (app == null)
-                throw new IllegalStateException("Application is not running");
+        if (app == null)
+            throw new IllegalStateException("Application is not running");
 
-            return app.getService(serviceClass, autoRegistration);
-        }
+        return app.getService(serviceClass, autoRegistration);
     }
 
-    public final <S extends Service> S getRegisteredService(Class<S> serviceClass) throws NoSuchElementException {
+    public static final <S extends Service> S getRegisteredService(Class<S> serviceClass) throws NoSuchElementException {
         S service = getService(serviceClass, false);
 
         if (service == null)
@@ -65,7 +61,7 @@ public abstract class AgresteController extends Controller {
         return service;
     }
 
-    public final <S extends Service> S getServiceOnDemand(Class<S> serviceClass) {
+    public static final <S extends Service> S getServiceOnDemand(Class<S> serviceClass) {
         return getService(serviceClass, true);
     }
 
